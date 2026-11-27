@@ -1,4 +1,4 @@
-"""Decides where the best practice of each kind lies and what of it each role gets: the run's own
+"""Decides where the best practice of each kind lies and what of it each role gets: the work's own
 best practices in `.rn/best-practices/<kind>/` before rn's, each read from its
 `best-practice.json`, the goal and conditions alone that an evaluator judges by, and the kind by
 which a deliverable is refactored."""
@@ -24,7 +24,7 @@ Practice = dict[str, Any]
 def kinds(plugin_root: str, worktree: str) -> dict[str, str]:
     """The folder of each kind's best practice.
 
-    Takes: rn's folder, and the run's worktree.
+    Takes: rn's folder, and the work's worktree.
     Gives: each kind by its folder's name, to the folder of its best practice: the worktree's
     `.rn/best-practices/<kind>/` where it holds one, else rn's `domain/best-practices/<kind>/`.
     Changes: nothing.

@@ -148,7 +148,7 @@
        },
        {
         "at": "make",
-        "text": "Write under the figure each component with its expected role in one sentence: what it answers for toward the users' aim, not its tasks, such as `leads the run to the people's aim`, so that a developer knows what to build and what to leave to the others."
+        "text": "Write under the figure each component with its expected role in one sentence: what it answers for toward the users' aim, not its tasks, such as `leads the work to the people's aim`, so that a developer knows what to build and what to leave to the others."
        },
        {
         "at": "make",
@@ -184,11 +184,11 @@
       "items": [
        {
         "at": "decide",
-        "text": "Walk each story and each principle item, and list each concept that the product keeps or hands on, by the name the README gives it where it gives one, such as a run's record."
+        "text": "Walk each story and each principle item, and list each concept that the product keeps or hands on, by the name the README gives it where it gives one, such as a work's record."
        },
        {
         "at": "decide",
-        "text": "For each pair that relates, name the relation, and give how many of each it joins at both ends, such as a run that holds one or more rounds."
+        "text": "For each pair that relates, name the relation, and give how many of each it joins at both ends, such as a work that holds one or more rounds."
        },
        {
         "at": "make",
@@ -200,7 +200,7 @@
        },
        {
         "at": "make",
-        "text": "Below the figure, say for each concept what it's for, in one or two sentences, with no role's name, such as `holds what to make, why, and how far the run got`."
+        "text": "Below the figure, say for each concept what it's for, in one or two sentences, with no role's name, such as `holds what to make, why, and how far the work got`."
        }
       ]
      },
@@ -266,7 +266,7 @@
        },
        {
         "at": "decide",
-        "text": "Place in its environment each component and each store of data by what runs there and where the data is kept, such as the run's folder in the user's repository. Name no process or other unit of the implementation."
+        "text": "Place in its environment each component and each store of data by what runs there and where the data is kept, such as the work's folder in the user's repository. Name no process or other unit of the implementation."
        },
        {
         "at": "decide",

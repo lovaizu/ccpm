@@ -1,5 +1,5 @@
-"""steering, as the orchestrator runs it to write where the run stands and to read what's due:
-`python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/steering <subcommand> <run> ...`. It runs the code of
+"""steering, as the orchestrator runs it to write where the work stands and to read what's due:
+`python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/steering <subcommand> <work> ...`. It runs the code of
 this folder, whose `command` module says what each subcommand takes and gives."""
 
 from __future__ import annotations

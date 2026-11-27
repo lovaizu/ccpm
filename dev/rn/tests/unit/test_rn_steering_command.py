@@ -16,7 +16,7 @@ import pytest
 import rn_files
 from gh import gh_double
 from host import Ran, run
-from place import RunPlace
+from place import WorkPlace
 from repo_files import git
 from steering.command import USAGE, main
 
@@ -27,33 +27,33 @@ MADE = {"result": "made", "files": [rn_files.COMMAND]}
 
 
 @pytest.fixture
-def made(tmp_path: Any) -> RunPlace:
-    """A run of the user's repository with origin, in its own worktree on the work's branch, its
+def made(tmp_path: Any) -> WorkPlace:
+    """A work of the user's repository with origin, in its own worktree on the work's branch, its
     folder empty."""
-    return rn_files.run_with_origin(str(tmp_path), NAME)
+    return rn_files.work_with_origin(str(tmp_path), NAME)
 
 
-def steering(run_: RunPlace, value: Any) -> None:
+def steering(work: WorkPlace, value: Any) -> None:
     """Writes the steering, and commits it on the work's branch."""
-    rn_files.write_json(run_.steering, value)
-    git(run_.worktree, "add", "-A")
-    git(run_.worktree, "commit", "-q", "-m", "steering")
+    rn_files.write_json(work.steering, value)
+    git(work.worktree, "add", "-A")
+    git(work.worktree, "commit", "-q", "-m", "steering")
 
 
-def call(run_: RunPlace, *argv: str, host: Any = None, words: str = "") -> tuple[int, str, str]:
-    """What `steering` gives with the arguments on the run, with git run for real and gh from its
+def call(work: WorkPlace, *argv: str, host: Any = None, words: str = "") -> tuple[int, str, str]:
+    """What `steering` gives with the arguments on the work, with git run for real and gh from its
     records, unless another host is given, and the words given on stdin."""
-    gh = host or gh_double.host(os.path.join(os.path.dirname(run_.worktree), "gh"))
+    gh = host or gh_double.host(os.path.join(os.path.dirname(work.worktree), "gh"))
     given = argv[:1] + (FOLDER,) + argv[1:]
-    return main(given, run_.worktree, rn_files.RN, gh, lambda: words)
+    return main(given, work.worktree, rn_files.RN, gh, lambda: words)
 
 
-def held(run_: RunPlace) -> Any:
-    with open(run_.steering, encoding="utf-8") as f:
+def held(work: WorkPlace) -> Any:
+    with open(work.steering, encoding="utf-8") as f:
         return json.load(f)
 
 
-def test_each_mark_is_committed_and_gives_whats_due(made: RunPlace) -> None:
+def test_each_mark_is_committed_and_gives_whats_due(made: WorkPlace) -> None:
     """Given a steering whose step has each deliverable done.
     When step 1 is marked trying.
     Then it's committed with its words, and the user's try is due."""
@@ -62,17 +62,17 @@ def test_each_mark_is_committed_and_gives_whats_due(made: RunPlace) -> None:
     assert git(made.worktree, "log", "-1", "--format=%s") == f"rn: {rn_files.SETTLES}: trying\n"
 
 
-def test_the_final_checks_pass_is_committed_and_gives_the_runs_end(made: RunPlace) -> None:
+def test_the_final_checks_pass_is_committed_and_gives_the_works_end(made: WorkPlace) -> None:
     """Given a steering whose one step is done.
     When the inspection is marked passed.
-    Then it's committed with its words, and the run's end is due."""
+    Then it's committed with its words, and the work's end is due."""
     steering(made, rn_files.steering([rn_files.step("done")]))
     assert call(made, "inspected") == (0, "ended\n", "")
     assert git(made.worktree, "log", "-1", "--format=%s") == "rn: the inspection passed\n"
     assert held(made)["state"]["inspected"] is True
 
 
-def test_whats_due_is_read_from_the_steering(made: RunPlace) -> None:
+def test_whats_due_is_read_from_the_steering(made: WorkPlace) -> None:
     """Given the walkthrough's steering.
     When `steering due` runs.
     Then the command is due to make."""
@@ -80,7 +80,7 @@ def test_whats_due_is_read_from_the_steering(made: RunPlace) -> None:
     assert call(made, "due") == (0, f"make\t1\t{rn_files.COMMAND}\tcode\tgenerator\n", "")
 
 
-def test_a_steering_out_of_its_schema_is_refused(made: RunPlace) -> None:
+def test_a_steering_out_of_its_schema_is_refused(made: WorkPlace) -> None:
     """Given a steering with no state.
     When `steering due` runs.
     Then it gives 1 naming the place."""
@@ -91,8 +91,8 @@ def test_a_steering_out_of_its_schema_is_refused(made: RunPlace) -> None:
     assert (code, "/state: is required" in err) == (1, True)
 
 
-def test_a_mark_on_a_run_with_no_steering_is_refused(made: RunPlace) -> None:
-    """Given a run with no steering yet.
+def test_a_mark_on_a_work_with_no_steering_is_refused(made: WorkPlace) -> None:
+    """Given a work with no steering yet.
     When a step is marked done.
     Then it gives 1 saying that no steering lies there."""
     code, _, err = call(made, "step", "1", "done")
@@ -107,7 +107,7 @@ def test_a_mark_on_a_run_with_no_steering_is_refused(made: RunPlace) -> None:
     ],
 )
 def test_a_mark_that_can_not_be_is_refused_and_commits_nothing(
-    made: RunPlace, argv: Sequence[str], says: str
+    made: WorkPlace, argv: Sequence[str], says: str
 ) -> None:
     """Given the walkthrough's steering, its step not made.
     When a step is marked by a word in place of its number, or trying.
@@ -118,7 +118,7 @@ def test_a_mark_that_can_not_be_is_refused_and_commits_nothing(
     assert (code, says in err, git(made.worktree, "rev-parse", "HEAD")) == (1, True, before)
 
 
-def test_git_refusing_the_commit_cant_run(made: RunPlace) -> None:
+def test_git_refusing_the_commit_cant_run(made: WorkPlace) -> None:
     """Given the walkthrough's steering, and git that refuses each commit.
     When step 1 is marked done.
     Then it gives 2 with what git said."""
@@ -142,27 +142,27 @@ def test_arguments_of_another_form_give_the_usage(argv: Sequence[str]) -> None:
     assert main(argv, "/", rn_files.RN, run, str) == (2, "", USAGE)
 
 
-def rounds_of(run_: RunPlace, path: str = rn_files.COMMAND) -> str:
+def rounds_of(work: WorkPlace, path: str = rn_files.COMMAND) -> str:
     """The folder of the deliverable's Rounds and Fixes in step 1."""
-    return os.path.join(run_.rounds, "1", quote(path, safe=""))
+    return os.path.join(work.rounds, "1", quote(path, safe=""))
 
 
-def at(run_: RunPlace, **fields: Any) -> None:
+def at(work: WorkPlace, **fields: Any) -> None:
     """Writes the walkthrough's steering, its command with the fields given."""
     value = rn_files.steering()
     value["state"]["steps"][0]["deliverables"][0].update(fields)
-    steering(run_, value)
+    steering(work, value)
 
 
-def command_of(run_: RunPlace) -> Any:
-    return held(run_)["state"]["steps"][0]["deliverables"][0]
+def command_of(work: WorkPlace) -> Any:
+    return held(work)["state"]["steps"][0]["deliverables"][0]
 
 
 def practice_of(kind: str) -> str:
     return os.path.join(rn_files.PRACTICES, kind)
 
 
-def test_a_round_of_content_starts_in_a_new_folder_and_again_in_the_same(made: RunPlace) -> None:
+def test_a_round_of_content_starts_in_a_new_folder_and_again_in_the_same(made: WorkPlace) -> None:
     """Given the walkthrough's steering, its command not started.
     When its next role is started, twice, as a stop left the first with no result.
     Then each gives its generator, content-1, and the code best practice, and the steering holds
@@ -177,7 +177,7 @@ def test_a_round_of_content_starts_in_a_new_folder_and_again_in_the_same(made: R
     assert (os.path.isdir(folder), command_of(made)["entry"]) == (True, "content-1")
 
 
-def test_a_round_made_again_starts_past_the_last(made: RunPlace) -> None:
+def test_a_round_made_again_starts_past_the_last(made: WorkPlace) -> None:
     """Given a command whose content-1 and fix-2 are made, and that a pruner has made again.
     When its next role is started.
     Then it's content-3."""
@@ -188,7 +188,7 @@ def test_a_round_made_again_starts_past_the_last(made: RunPlace) -> None:
     assert (code, out.split("\t")[1]) == (0, os.path.join(rounds_of(made), "content-3"))
 
 
-def test_the_evaluator_judges_its_round_by_the_conditions_alone(made: RunPlace) -> None:
+def test_the_evaluator_judges_its_round_by_the_conditions_alone(made: WorkPlace) -> None:
     """Given a command whose content-1 is made, its evaluator next.
     When its next role is started.
     Then it gives the evaluator, content-1, and judges-by.json there, holding the conditions."""
@@ -207,7 +207,7 @@ def test_the_evaluator_judges_its_round_by_the_conditions_alone(made: RunPlace) 
     ids=["findings", "point"],
 )
 def test_a_weighing_takes_the_result_to_weigh(
-    made: RunPlace, results: Sequence[str], weighed: str
+    made: WorkPlace, results: Sequence[str], weighed: str
 ) -> None:
     """Given a command waiting on a pruner's weighing of content-1, which holds an evaluator's
     findings, or a generator's point alone.
@@ -226,7 +226,7 @@ def test_a_weighing_takes_the_result_to_weigh(
     assert held(made) == before
 
 
-def test_a_fix_starts_with_the_problem_in_its_words(made: RunPlace) -> None:
+def test_a_fix_starts_with_the_problem_in_its_words(made: WorkPlace) -> None:
     """Given a command that a pruner has mended, its content-1 made.
     When its next role is started with the problem's words on stdin.
     Then it gives the fixer, fix-2, and the code best practice, with problem.md holding them."""
@@ -242,7 +242,7 @@ def test_a_fix_starts_with_the_problem_in_its_words(made: RunPlace) -> None:
         assert f.read() == "The total is off.\n"
 
 
-def test_a_refactoring_takes_its_kinds_refactor_best_practice(made: RunPlace) -> None:
+def test_a_refactoring_takes_its_kinds_refactor_best_practice(made: WorkPlace) -> None:
     """Given a command whose Rounds are good, its refactorer next.
     When its next role is started.
     Then it gives the refactorer, refactor-1, and refactor-code."""
@@ -268,7 +268,7 @@ def test_a_refactoring_takes_its_kinds_refactor_best_practice(made: RunPlace) ->
     ids=["unnamed", "done", "no-words", "no-practice", "no-round", "nothing-to-weigh"],
 )
 def test_a_start_that_can_not_be_is_refused(
-    made: RunPlace, fields: dict[str, Any], path: str, words: str, says: str
+    made: WorkPlace, fields: dict[str, Any], path: str, words: str, says: str
 ) -> None:
     """Given a command that no step names, done, mended with no words, of a kind rn has no best
     practice of, with its evaluator next and no Round made, or waiting on a weighing of a Round

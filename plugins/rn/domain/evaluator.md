@@ -24,10 +24,10 @@ answers.
 
 rn's rules for these steps:
 
-- Your start gives the run's folder, `<run>`, the worktree, the outcome and the need, the Round's
+- Your start gives the work's folder, `<work>`, the worktree, the outcome and the need, the Round's
   folder, `<round>`, the file you judge by, and the deliverable's path. The people have nothing
-  else of the run, so read nothing else of it.
-- `python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/repository trial <run> <round>` makes the people's
+  else of the work, so read nothing else of it.
+- `python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/repository trial <work> <round>` makes the people's
   folder anew and prints its path.
 - Write only `<round>/evaluator.json` and the people's folder. Write `${CLAUDE_PLUGIN_ROOT}` out in
   full, as your agent definition gives it.

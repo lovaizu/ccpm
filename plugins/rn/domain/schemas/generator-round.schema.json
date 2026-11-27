@@ -21,7 +21,7 @@
    "minLength": 1
   },
   "files": {
-   "description": "With made: each file it wrote, from the run's worktree.",
+   "description": "With made: each file it wrote, from the work's worktree.",
    "type": "array",
    "items": {
     "type": "string",

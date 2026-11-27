@@ -1,5 +1,5 @@
-"""The unit cases of place.py, where a run lies and what it's called: a name from the day and a
-slug, each path of a run that follows from its name, a run found from its folder, and each
+"""The unit cases of place.py, where a work lies and what it's called: a name from the day and a
+slug, each path of a work that follows from its name, a work found from its folder, and each
 refusal: a slug of another form, a path of another form, and a folder that isn't there."""
 
 from __future__ import annotations
@@ -10,14 +10,14 @@ from typing import Any
 
 import pytest
 from fault import Wrong
-from place import RunPlace, named, of_folder
+from place import WorkPlace, named, of_folder
 
 NAME = "20261126-invoice-from-statement"
 
 
-def test_a_run_is_named_by_its_day_and_slug() -> None:
+def test_a_work_is_named_by_its_day_and_slug() -> None:
     """Given the walkthrough's day and the slug invoice-from-statement.
-    When the run is named.
+    When the work is named.
     Then its name is the day as yyyymmdd, then the slug."""
     assert named(date(2026, 11, 26), "invoice-from-statement") == NAME
 
@@ -25,19 +25,19 @@ def test_a_run_is_named_by_its_day_and_slug() -> None:
 @pytest.mark.parametrize("slug", ["Invoice", "a-b-c-d-e-f", "", "invoice_from"])
 def test_a_slug_of_another_form_is_refused(slug: str) -> None:
     """Given a slug with a capital, of six words, empty, or joined by `_`.
-    When the run is named.
+    When the work is named.
     Then Wrong is raised, naming the slug and the form it takes."""
     with pytest.raises(Wrong, match="one to five lower-case English words"):
         named(date(2026, 11, 26), slug)
 
 
-def test_each_path_of_a_run_follows_from_its_name() -> None:
-    """Given a run in the worktree /work/invoices.
+def test_each_path_of_a_work_follows_from_its_name() -> None:
+    """Given a work in the worktree /home/ada/invoices.
     When its paths are asked.
     Then each lies where the architecture's Directory structure names it."""
-    run = RunPlace("/work/invoices", NAME)
-    folder = f"/work/invoices/.rn/{NAME}"
-    assert (run.folder, run.steering, run.pruner, run.rounds) == (
+    work = WorkPlace("/home/ada/invoices", NAME)
+    folder = f"/home/ada/invoices/.rn/{NAME}"
+    assert (work.folder, work.steering, work.pruner, work.rounds) == (
         folder,
         f"{folder}/steering.json",
         f"{folder}/pruner.json",
@@ -45,31 +45,31 @@ def test_each_path_of_a_run_follows_from_its_name() -> None:
     )
 
 
-def test_a_run_is_found_from_its_folder_by_a_path_from_the_folder_given(tmp_path: Any) -> None:
-    """Given a run's folder in a worktree.
+def test_a_work_is_found_from_its_folder_by_a_path_from_the_folder_given(tmp_path: Any) -> None:
+    """Given a work's folder in a worktree.
     When it's given by its path from the worktree's top, and by its absolute path.
-    Then the run is found each time, with the worktree and the name."""
-    run = RunPlace(str(tmp_path), NAME)
-    os.makedirs(run.folder)
-    assert (of_folder(run.worktree, f".rn/{NAME}"), of_folder("/", run.folder)) == (run, run)
+    Then the work is found each time, with the worktree and the name."""
+    work = WorkPlace(str(tmp_path), NAME)
+    os.makedirs(work.folder)
+    assert (of_folder(work.worktree, f".rn/{NAME}"), of_folder("/", work.folder)) == (work, work)
 
 
 @pytest.mark.parametrize(
     "folder",
-    ["/work/accounting/x", "/work/.rn/BAD NAME", f"/w/.rn/{NAME}/rounds"],
+    ["/home/ada/accounting/x", "/home/ada/.rn/BAD NAME", f"/w/.rn/{NAME}/rounds"],
 )
 def test_a_path_of_another_form_is_refused(folder: str) -> None:
-    """Given a path outside a run's folder, a folder not named as a run, or a folder inside a
-    run's.
-    When the run is found from it.
-    Then Wrong is raised, naming the form a run's folder takes."""
-    with pytest.raises(Wrong, match="isn't a run's folder"):
+    """Given a path outside a work's folder, a folder not named as a work, or a folder inside a
+    work's.
+    When the work is found from it.
+    Then Wrong is raised, naming the form a work's folder takes."""
+    with pytest.raises(Wrong, match="isn't a work's folder"):
         of_folder("/", folder)
 
 
 def test_a_folder_that_is_not_there_is_refused(tmp_path: Any) -> None:
-    """Given the path of a run's folder that no one made.
-    When the run is found from it.
+    """Given the path of a work's folder that no one made.
+    When the work is found from it.
     Then Wrong is raised, saying no such folder lies there."""
     with pytest.raises(Wrong, match="no such folder"):
-        of_folder("/", RunPlace(str(tmp_path), NAME).folder)
+        of_folder("/", WorkPlace(str(tmp_path), NAME).folder)

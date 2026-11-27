@@ -647,15 +647,15 @@
           {
             "path": "plugins/rn",
             "kind": "code",
-            "status": "open"
+            "status": "done"
           },
           {
             "path": "dev/rn",
             "kind": "architecture",
-            "status": "open"
+            "status": "done"
           }
         ],
-        "status": "open"
+        "status": "done"
       },
       {
         "for": "O1",

@@ -70,7 +70,7 @@
   <text class="name" x="200.0" y="291.0">rn</text>
   <text class="kind" x="200.0" y="311.0">[plugin: prompts, scripts, a hook, best practices]</text>
   <rect class="store" x="400" y="250" width="300" height="140" rx="6"/>
-  <text class="name" x="550.0" y="316.0">the run&#x27;s worktree</text>
+  <text class="name" x="550.0" y="316.0">the work&#x27;s worktree</text>
   <text class="kind" x="550.0" y="336.0">[steering, Rounds and Fixes, deliverables]</text>
   <rect class="ext" x="880" y="60" width="200" height="80" rx="6"/>
   <text class="name" x="980.0" y="96.0">Claude</text>

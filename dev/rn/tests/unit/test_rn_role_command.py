@@ -1,7 +1,7 @@
 """The unit cases of role/command.py, rn's hook once a role ends: an agent that isn't rn's left
 alone, the pruner's first result taken into the steering, committed, and pushed, a later one
 keeping the issues, a role's change committed and pushed, nothing committed where nothing
-changed, a folder that is no run's passed over, a session outside git, each result out of its
+changed, a folder that is no work's passed over, a session outside git, each result out of its
 schema keeping the role going, a push with no origin or to a remote that isn't there, and
 arguments of another form."""
 
@@ -14,7 +14,7 @@ from typing import Any
 import pytest
 import rn_files
 from gh import gh_double
-from place import RunPlace
+from place import WorkPlace
 from repo_files import git, write_files
 from role.command import USAGE, main
 
@@ -22,24 +22,24 @@ NAME = "20261126-invoice-from-statement"
 
 
 @pytest.fixture
-def made(tmp_path: Any) -> RunPlace:
-    """A run of the user's repository with origin, in its own worktree on the work's branch, its
+def made(tmp_path: Any) -> WorkPlace:
+    """A work of the user's repository with origin, in its own worktree on the work's branch, its
     folder empty."""
-    return rn_files.run_with_origin(str(tmp_path), NAME)
+    return rn_files.work_with_origin(str(tmp_path), NAME)
 
 
-def top(run_: RunPlace) -> str:
-    """The user's repository, beside the run's worktree."""
-    return os.path.join(os.path.dirname(run_.worktree), "accounting")
+def top(work: WorkPlace) -> str:
+    """The user's repository, beside the work's worktree."""
+    return os.path.join(os.path.dirname(work.worktree), "accounting")
 
 
-def ended(run_: RunPlace, agent: str, cwd: str = "", host: Any = None) -> tuple[int, str, str]:
+def ended(work: WorkPlace, agent: str, cwd: str = "", host: Any = None) -> tuple[int, str, str]:
     """What the hook gives once the agent ends in the session's folder, the repository's top
     unless another is given."""
     given = json.dumps(
         {
             "session_id": "abc123",
-            "cwd": cwd or top(run_),
+            "cwd": cwd or top(work),
             "hook_event_name": "SubagentStop",
             "stop_hook_active": False,
             "agent_id": "a1",
@@ -48,22 +48,22 @@ def ended(run_: RunPlace, agent: str, cwd: str = "", host: Any = None) -> tuple[
             "last_assistant_message": "done",
         }
     )
-    gh = host or gh_double.host(os.path.join(os.path.dirname(top(run_)), "gh"))
+    gh = host or gh_double.host(os.path.join(os.path.dirname(top(work)), "gh"))
     return main(["ended"], given, rn_files.RN, gh)
 
 
-def subject(run_: RunPlace) -> str:
-    return git(run_.worktree, "log", "-1", "--format=%s").strip()
+def subject(work: WorkPlace) -> str:
+    return git(work.worktree, "log", "-1", "--format=%s").strip()
 
 
-def pushed(run_: RunPlace) -> bool:
-    origin = os.path.join(os.path.dirname(top(run_)), "origin.git")
-    remote = git(origin, "rev-parse", "work").strip()
-    return remote == git(run_.worktree, "rev-parse", "HEAD").strip()
+def pushed(work: WorkPlace) -> bool:
+    origin = os.path.join(os.path.dirname(top(work)), "origin.git")
+    remote = git(origin, "rev-parse", "invoices").strip()
+    return remote == git(work.worktree, "rev-parse", "HEAD").strip()
 
 
-def test_an_agent_that_isnt_rns_is_left_alone(made: RunPlace) -> None:
-    """Given a run whose worktree holds a change.
+def test_an_agent_that_isnt_rns_is_left_alone(made: WorkPlace) -> None:
+    """Given a work whose worktree holds a change.
     When an agent that isn't one of rn's ends.
     Then it gives 0, and commits nothing."""
     write_files(made.worktree, {rn_files.COMMAND: "print('invoice')\n"})
@@ -72,8 +72,8 @@ def test_an_agent_that_isnt_rns_is_left_alone(made: RunPlace) -> None:
     assert git(made.worktree, "rev-parse", "HEAD") == before
 
 
-def test_the_pruners_first_result_is_taken_into_the_steering_and_pushed(made: RunPlace) -> None:
-    """Given a run with no steering, and the pruner's result with the pick still asked.
+def test_the_pruners_first_result_is_taken_into_the_steering_and_pushed(made: WorkPlace) -> None:
+    """Given a work with no steering, and the pruner's result with the pick still asked.
     When the pruner ends.
     Then the steering holds the result's tree and its question, committed as `rn: <message>` and
     pushed, and the result is gone."""
@@ -91,7 +91,7 @@ def test_the_pruners_first_result_is_taken_into_the_steering_and_pushed(made: Ru
         assert json.load(f)["ost"]["questions"] == ["Which need first?"]
 
 
-def test_a_later_result_takes_in_the_steps_and_keeps_the_issues(made: RunPlace) -> None:
+def test_a_later_result_takes_in_the_steps_and_keeps_the_issues(made: WorkPlace) -> None:
     """Given a steering with its issues and no step, and a result with the pick and the steps.
     When the pruner ends.
     Then the steering holds the steps open and the issues kept."""
@@ -105,11 +105,11 @@ def test_a_later_result_takes_in_the_steps_and_keeps_the_issues(made: RunPlace) 
         assert json.load(f) == rn_files.steering()
 
 
-def test_a_roles_change_is_committed_and_pushed_from_inside_the_runs_worktree(
-    made: RunPlace,
+def test_a_roles_change_is_committed_and_pushed_from_inside_the_works_worktree(
+    made: WorkPlace,
 ) -> None:
-    """Given a run with its steering, whose generator wrote the command, and a session in the
-    run's worktree.
+    """Given a work with its steering, whose generator wrote the command, and a session in the
+    work's worktree.
     When the generator ends.
     Then the change is committed as `rn: the generator ended`, and pushed."""
     rn_files.write_json(made.steering, rn_files.steering())
@@ -119,7 +119,7 @@ def test_a_roles_change_is_committed_and_pushed_from_inside_the_runs_worktree(
     assert pushed(made)
 
 
-def test_a_roles_result_moves_its_deliverable_on_in_the_steering(made: RunPlace) -> None:
+def test_a_roles_result_moves_its_deliverable_on_in_the_steering(made: WorkPlace) -> None:
     """Given a steering whose command works in content-1, and the generator's result made there.
     When the generator ends.
     Then the steering has the command's evaluator next, committed and pushed."""
@@ -136,7 +136,7 @@ def test_a_roles_result_moves_its_deliverable_on_in_the_steering(made: RunPlace)
     assert pushed(made)
 
 
-def test_a_pruners_result_the_steering_refuses_keeps_it_going(made: RunPlace) -> None:
+def test_a_pruners_result_the_steering_refuses_keeps_it_going(made: WorkPlace) -> None:
     """Given a steering whose command waits on a weighing, and a pruner's result that neither says
     what it takes next nor asks the user.
     When the pruner ends.
@@ -153,8 +153,8 @@ def test_a_pruners_result_the_steering_refuses_keeps_it_going(made: RunPlace) ->
     assert git(made.worktree, "rev-parse", "HEAD") == before
 
 
-def test_nothing_is_committed_where_nothing_changed(made: RunPlace) -> None:
-    """Given a run whose steering is committed, and nothing changed since.
+def test_nothing_is_committed_where_nothing_changed(made: WorkPlace) -> None:
+    """Given a work whose steering is committed, and nothing changed since.
     When the evaluator ends.
     Then it gives 0, and commits nothing."""
     rn_files.committed_steering(made.worktree, made.name, rn_files.steering())
@@ -163,8 +163,8 @@ def test_nothing_is_committed_where_nothing_changed(made: RunPlace) -> None:
     assert git(made.worktree, "rev-parse", "HEAD") == before
 
 
-def test_a_run_before_its_first_weighing_keeps_nothing(made: RunPlace) -> None:
-    """Given a run with no steering yet, its folder holding a note of the hearing.
+def test_a_work_before_its_first_weighing_keeps_nothing(made: WorkPlace) -> None:
+    """Given a work with no steering yet, its folder holding a note of the hearing.
     When a role ends.
     Then it gives 0, and commits nothing, as the pruner's first result makes the steering."""
     write_files(made.folder, {"hearing.md": "for the accountants\n"})
@@ -173,7 +173,7 @@ def test_a_run_before_its_first_weighing_keeps_nothing(made: RunPlace) -> None:
     assert git(made.worktree, "rev-parse", "HEAD") == before
 
 
-def test_a_session_outside_git_is_left_alone(made: RunPlace, tmp_path: Any) -> None:
+def test_a_session_outside_git_is_left_alone(made: WorkPlace, tmp_path: Any) -> None:
     """Given a session whose folder lies in no git repository.
     When the fixer ends.
     Then it gives 0."""
@@ -192,9 +192,9 @@ def test_a_session_outside_git_is_left_alone(made: RunPlace, tmp_path: Any) -> N
     ids=["pruner", "pruner-not-json", "round"],
 )
 def test_a_result_out_of_its_schema_keeps_the_role_going(
-    made: RunPlace, path: str, text: str, says: str
+    made: WorkPlace, path: str, text: str, says: str
 ) -> None:
-    """Given a run whose pruner's result leaves its schema or isn't JSON, or a Round's result
+    """Given a work whose pruner's result leaves its schema or isn't JSON, or a Round's result
     leaves its schema.
     When the role ends.
     Then it gives 2 naming the place, so that the role goes on, and commits nothing."""
@@ -210,13 +210,13 @@ def test_a_result_out_of_its_schema_keeps_the_role_going(
 
 @pytest.mark.parametrize(
     ("origin", "code", "says"),
-    [(None, 1, "no remote origin"), ("gone.git", 2, "can't push the run's work")],
+    [(None, 1, "no remote origin"), ("gone.git", 2, "can't push the work")],
     ids=["no-origin", "gone"],
 )
 def test_a_push_that_fails_is_said_after_the_commit(
-    made: RunPlace, origin: str | None, code: int, says: str
+    made: WorkPlace, origin: str | None, code: int, says: str
 ) -> None:
-    """Given a run with its steering whose change can't be pushed, as it has no origin, or one that
+    """Given a work with its steering whose change can't be pushed, as it has no origin, or one that
     isn't there.
     When the generator ends.
     Then it gives 1 or 2 saying why, and the commit is kept."""

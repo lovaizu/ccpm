@@ -1,5 +1,5 @@
 """The unit cases of repository/trial.py, the folder of the people's starting state in which an
-evaluator tries a deliverable: where it lies by its Round, a folder outside the run's Rounds
+evaluator tries a deliverable: where it lies by its Round, a folder outside the work's Rounds
 refused, the work's branch as committed cloned there without rn's folder, one left there made
 anew, and git that can't clone."""
 
@@ -13,7 +13,7 @@ import pytest
 import rn_files
 from fault import CantRun, Wrong
 from host import Ran, run
-from place import RunPlace
+from place import WorkPlace
 from repo_files import git, write_files
 from repository.trial import folder, starting_state
 
@@ -21,11 +21,11 @@ NAME = "20261126-invoice-from-statement"
 
 
 @pytest.fixture
-def made(tmp_path: Any) -> RunPlace:
-    """A run whose worktree holds its steering and the command committed, as rn's hook commits
+def made(tmp_path: Any) -> WorkPlace:
+    """A work whose worktree holds its steering and the command committed, as rn's hook commits
     each role's changes, and a draft written since, not committed."""
     repo = rn_files.repository(str(tmp_path / "accounting"))
-    held = RunPlace(rn_files.worktree_of(repo, str(tmp_path / "work"), "work"), NAME)
+    held = WorkPlace(rn_files.worktree_of(repo, str(tmp_path / "invoices"), "invoices"), NAME)
     rn_files.committed_steering(held.worktree, NAME, rn_files.steering())
     write_files(held.worktree, {rn_files.COMMAND: "print('invoice')\n"})
     git(held.worktree, "add", "-A")
@@ -34,20 +34,20 @@ def made(tmp_path: Any) -> RunPlace:
     return held
 
 
-def round_of(run_: RunPlace) -> str:
-    return os.path.join(run_.rounds, "invoice%2F__main__.py", "content-1")
+def round_of(work: WorkPlace) -> str:
+    return os.path.join(work.rounds, "invoice%2F__main__.py", "content-1")
 
 
-def test_the_folder_lies_in_the_temporary_folder_by_its_round(made: RunPlace, temp: str) -> None:
+def test_the_folder_lies_in_the_temporary_folder_by_its_round(made: WorkPlace, temp: str) -> None:
     """Given a Round of the command.
     When its folder is asked.
-    Then it lies in the system's temporary folder, named by the run and the Round."""
+    Then it lies in the system's temporary folder, named by the work and the Round."""
     expected = os.path.join(temp, f"rn-trial-{NAME}-invoice%2F__main__.py-content-1") + os.sep
     assert folder(made, round_of(made)) == expected
 
 
 @pytest.mark.parametrize("where", ["", "../steering.json"])
-def test_a_folder_outside_the_runs_rounds_is_refused(made: RunPlace, where: str) -> None:
+def test_a_folder_outside_the_works_rounds_is_refused(made: WorkPlace, where: str) -> None:
     """Given the Rounds' folder itself, or a path out of it.
     When its trial folder is asked.
     Then Wrong is raised, naming it."""
@@ -55,7 +55,7 @@ def test_a_folder_outside_the_runs_rounds_is_refused(made: RunPlace, where: str)
         folder(made, os.path.join(made.rounds, where))
 
 
-def test_the_starting_state_holds_the_work_as_committed_without_rns_folder(made: RunPlace) -> None:
+def test_the_starting_state_holds_the_work_as_committed_without_rns_folder(made: WorkPlace) -> None:
     """Given a folder of the Round left there from before, holding a stray file.
     When the starting state is made.
     Then it holds the README and the command, a git clone of the work's branch, and neither rn's
@@ -68,7 +68,7 @@ def test_the_starting_state_holds_the_work_as_committed_without_rns_folder(made:
         assert f.read() == "print('invoice')\n"
 
 
-def test_git_that_cant_clone_cant_run(made: RunPlace) -> None:
+def test_git_that_cant_clone_cant_run(made: WorkPlace) -> None:
     """Given git that can't clone.
     When the starting state is made.
     Then CantRun is raised, naming the folder."""

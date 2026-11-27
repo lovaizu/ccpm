@@ -1,7 +1,7 @@
-"""The unit cases of steering/due.py, what waits now in a run: open questions, which hold up the
+"""The unit cases of steering/due.py, what waits now in a work: open questions, which hold up the
 rest; the pruner's weighing where no need is picked or no step is set; the next deliverable to
 make; the hand-over; the user's try; a later step once the first is done; the inspection; and
-the run's end once it passed."""
+the work's end once it passed."""
 
 from __future__ import annotations
 
@@ -80,10 +80,10 @@ def test_the_final_check_is_due_once_each_step_is_done() -> None:
     assert due(rn_files.steering([rn_files.step("done", done=BOTH)])) == ["inspect"]
 
 
-def test_the_run_ends_once_the_final_check_passed() -> None:
+def test_the_work_ends_once_the_final_check_passed() -> None:
     """Given a steering whose one step is done, the inspection passed.
     When what's due is asked.
-    Then the run's end is due, and the inspection is not."""
+    Then the work's end is due, and the inspection is not."""
     held = rn_files.steering([rn_files.step("done", done=BOTH)])
     held["state"]["inspected"] = True
     assert due(held) == ["ended"]

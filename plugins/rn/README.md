@@ -43,7 +43,7 @@ with.
 At the end, you hold a command that prints an invoice from your accounting team's statement, made
 before anything else of the request.
 
-This run is the one that rn's architecture draws, with its talk in Japanese. No end-to-end run of
+This work is the one that rn's architecture draws, with its talk in Japanese. No end-to-end run of
 this version records it yet. Your accounting team asks a developer for each invoice, and you
 want them to print it themselves. At your repository's root in Claude Code, you type:
 
@@ -202,15 +202,15 @@ asks whether to mend it now. Then you try it yourself.
 No. Each need that you or the issue named stays on the list. Once you've tried what runs, rn
 proposes for each one left whether to make it now or keep it in an issue.
 
-### "Can a run stop and go on later?"
+### "Can a work stop and go on later?"
 
 Yes. rn pushes its work to GitHub as it goes, so nothing stays only on your computer. `/rn:dn`
-stops the run once what it's writing is whole, and `/rn:up` picks it up where it stopped, in any
+stops the work once what it's writing is whole, and `/rn:up` picks it up where it stopped, in any
 conversation.
 
-### "Can a run be called off?"
+### "Can a work be called off?"
 
-Yes. Say so, such as `中止して`. Once you confirm, rn removes the run's worktree, its branch, and its
+Yes. Say so, such as `中止して`. Once you confirm, rn removes the work's worktree, its branch, and its
 pull request.
 
 ### "Does it change the repository's files, or merge on its own?"

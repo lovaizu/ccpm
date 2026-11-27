@@ -1,7 +1,7 @@
 {
  "$schema": "http://json-schema.org/draft-07/schema#",
  "title": "steering",
- "description": "The steering of one run, at .rn/<run>/steering.json: ost, what the run aims at and why, which the pruner alone writes, and state, where the run stands, which rn's scripts alone write. It lives for the run alone, and git keeps the history of each point.",
+ "description": "The steering of one work, at .rn/<work>/steering.json: ost, what the work aims at and why, which the pruner alone writes, and state, where the work stands, which rn's scripts alone write. It lives for the work alone, and git keeps the history of each point.",
  "type": "object",
  "required": [
   "ost",
@@ -10,7 +10,7 @@
  "additionalProperties": false,
  "properties": {
   "ost": {
-   "description": "The run's opportunity solution tree, after Teresa Torres: the outcome at its root, the opportunities under it from the broadest to the most specific, the solution chosen for the opportunity that the user picked with its riskiest assumption, and the run's decisions and open questions.",
+   "description": "The work's opportunity solution tree, after Teresa Torres: the outcome at its root, the opportunities under it from the broadest to the most specific, the solution chosen for the opportunity that the user picked with its riskiest assumption, and the work's decisions and open questions.",
    "type": "object",
    "required": [
     "outcome",
@@ -22,26 +22,26 @@
    "additionalProperties": false,
    "properties": {
     "outcome": {
-     "description": "Whom the run is for, and what they do once it's reached, in one sentence.",
+     "description": "Whom the work is for, and what they do once it's reached, in one sentence.",
      "type": "string",
      "minLength": 1
     },
     "opportunities": {
-     "description": "The needs that the people named or the run found, broadest first, each more specific one under the one it serves. None is cut: the user picks.",
+     "description": "The needs that the people named or the work found, broadest first, each more specific one under the one it serves. None is cut: the user picks.",
      "type": "array",
      "items": {
       "$ref": "#/definitions/opportunity"
      }
     },
     "target": {
-     "description": "The id of the opportunity that the user picked, null until they pick, so a run with none waits on the user's pick. The run's solution hangs under it.",
+     "description": "The id of the opportunity that the user picked, null until they pick, so a work with none waits on the user's pick. The work's solution hangs under it.",
      "type": [
       "string",
       "null"
      ]
     },
     "decisions": {
-     "description": "Each decision of the run, as its aim and intent in one sentence.",
+     "description": "Each decision of the work, as its aim and intent in one sentence.",
      "type": "array",
      "items": {
       "$ref": "#/definitions/decision"
@@ -58,7 +58,7 @@
    }
   },
   "state": {
-   "description": "Where the run stands.",
+   "description": "Where the work stands.",
    "type": "object",
    "required": [
     "issues",
@@ -67,7 +67,7 @@
    "additionalProperties": false,
    "properties": {
     "issues": {
-     "description": "The issues of the run, by number: each that the merge closes, and each that the run only serves.",
+     "description": "The issues of the work, by number: each that the merge closes, and each that the work only serves.",
      "type": "object",
      "required": [
       "closes",
@@ -174,7 +174,7 @@
      }
     },
     "inspected": {
-     "description": "true once the inspector passed the pull request whole, so the run ends once nothing is asked; absent before.",
+     "description": "true once the inspector passed the pull request whole, so the work ends once nothing is asked; absent before.",
      "const": true
     }
    }

@@ -12,7 +12,7 @@ import os
 import subprocess
 from typing import Any
 
-from place import RunPlace
+from place import WorkPlace
 from repo_files import git, write_files
 
 TOP = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), *[".."] * 3))
@@ -181,13 +181,13 @@ def worktree_of(repo: str, folder: str, branch: str) -> str:
     return os.path.realpath(folder)
 
 
-def run_with_origin(folder: str, name: str) -> RunPlace:
+def work_with_origin(folder: str, name: str) -> WorkPlace:
     """Makes the user's repository `accounting` in the folder, with a bare `origin.git` beside it
-    as its remote, and a run of the name in a worktree `work` beside it on the branch `work`, its
-    folder empty, and gives the run."""
+    as its remote, and a work of the name in a worktree `invoices` beside it on the branch
+    `invoices`, its folder empty, and gives the work."""
     repo = repository(os.path.join(folder, "accounting"))
     with_origin(repo, os.path.join(folder, "origin.git"))
-    held = RunPlace(worktree_of(repo, os.path.join(folder, "work"), "work"), name)
+    held = WorkPlace(worktree_of(repo, os.path.join(folder, "invoices"), "invoices"), name)
     os.makedirs(held.folder)
     return held
 
@@ -195,8 +195,8 @@ def run_with_origin(folder: str, name: str) -> RunPlace:
 def committed_steering(
     worktree: str, name: str, value: Any, when: str = "2026-11-26T09:00:00"
 ) -> None:
-    """Writes the run's steering in its worktree, and commits it as made at the time given, as the
-    runs' branches are ordered by their last commit's time."""
+    """Writes the work's steering in its worktree, and commits it as made at the time given, as the
+    works' branches are ordered by their last commit's time."""
     write_json(os.path.join(worktree, ".rn", name, "steering.json"), value)
     git(worktree, "add", "-A")
     env = {**os.environ, "GIT_COMMITTER_DATE": when, "GIT_AUTHOR_DATE": when}

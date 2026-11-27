@@ -14,7 +14,7 @@
    "const": "fixed"
   },
   "files": {
-   "description": "Each file it wrote, from the run's worktree's top.",
+   "description": "Each file it wrote, from the work's worktree's top.",
    "type": "array",
    "items": {
     "type": "string",

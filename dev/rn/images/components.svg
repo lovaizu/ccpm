@@ -98,7 +98,7 @@
   <path class="line" d="M820,75 L900,75" marker-end="url(#arrow)"/>
   <text class="data halo mid" x="860" y="66">weighs by</text>
   <path class="line" d="M730,110 L730,220" marker-end="url(#arrow)"/>
-  <text class="data halo start" x="738" y="170">writes what the run aims at</text>
+  <text class="data halo start" x="738" y="170">writes what the work aims at</text>
   <path class="line" d="M520,255 L640,255" marker-end="url(#arrow)"/>
   <text class="data halo mid" x="580" y="246">writes where it stands</text>
   <path class="line" d="M440,110 L440,220" marker-end="url(#arrow)"/>

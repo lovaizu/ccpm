@@ -1,7 +1,7 @@
-"""Decides what each change makes of a run's steering: the pruner's result taken in, the tree
+"""Decides what each change makes of a work's steering: the pruner's result taken in, the tree
 whole and the way to the target, each step and deliverable that the steering already holds keeping
 its status and where it is on its way, unless the pruner says what it takes next; each deliverable
-moved on by the result of its next role, where nothing is to weigh; a step marked as the run moves
+moved on by the result of its next role, where nothing is to weigh; a step marked as the work moves
 on; and the inspection's pass."""
 
 from __future__ import annotations
@@ -18,18 +18,18 @@ Steering = dict[str, Any]
 STEP = ("open", "trying", "done")
 # How many judged Rounds of content a deliverable takes at most, as remaking that brings no remedy
 # has a limit (the architecture's P3.3). What they leave goes to the user, with no exception for a
-# decision made since, so that no Round records how many decisions the run held.
+# decision made since, so that no Round records how many decisions the work held.
 LIMIT = 2
 # What a deliverable keeps of where it is on its way, as the steering's schema names it.
 _WAY = ("next", "judged", "entry")
-# The issues of a run that no pruner has named yet.
+# The issues of a work that no pruner has named yet.
 _NO_ISSUES: dict[str, list[int]] = {"closes": [], "refs": []}
 
 
 def taken_in(steering: Steering | None, result: dict[str, Any]) -> Steering:
     """The steering with the pruner's result taken in.
 
-    Takes: the steering as it stands, or None where the run has none yet, and the pruner's result
+    Takes: the steering as it stands, or None where the work has none yet, and the pruner's result
     in its schema's form.
     Gives: a new steering: the result's tree whole; its issues, else the steering's, else none;
     and its steps, else the steering's, each step that the steering holds for the same need with

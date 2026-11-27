@@ -1,4 +1,4 @@
-"""Decides where each Round and each Fix of a deliverable lies in the run's folder and what it
+"""Decides where each Round and each Fix of a deliverable lies in the work's folder and what it
 holds: `rounds/<step>/<deliverable>/<stage>-<n>/`, `<step>` the number of the step that makes or
 adds to the deliverable, so that a later step that adds to it starts its own Rounds, the
 deliverable's path percent-encoded whole, so that no two paths share a folder, `<stage>`
@@ -14,7 +14,7 @@ from typing import Any, NamedTuple
 from urllib.parse import quote
 
 import form
-from place import RunPlace
+from place import WorkPlace
 
 # The stages of a deliverable's course, as each folder's name begins.
 CONTENT = "content"
@@ -40,9 +40,9 @@ class Entry(NamedTuple):
     results: dict[str, dict[str, Any]]
 
 
-def folder_of(run: RunPlace, step: int, deliverable: str) -> str:
+def folder_of(work: WorkPlace, step: int, deliverable: str) -> str:
     """The folder of the deliverable's Rounds and Fixes in the step."""
-    return os.path.join(run.rounds, str(step), quote(deliverable, safe=""))
+    return os.path.join(work.rounds, str(step), quote(deliverable, safe=""))
 
 
 def entries(root: str, schemas: str) -> list[Entry]:

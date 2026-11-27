@@ -1,4 +1,4 @@
-"""The unit cases of steering/record.py, what each change makes of a run's steering: the pruner's
+"""The unit cases of steering/record.py, what each change makes of a work's steering: the pruner's
 first result, a later one that keeps each status the steering holds, one with no steps or issues,
 what the pruner says comes next, each result moving a deliverable on, each mark of a step, and
 the inspection's pass, with each refusal."""
@@ -21,7 +21,7 @@ def result(**fields: Any) -> dict[str, Any]:
 
 
 def test_a_first_result_makes_the_steering_with_each_step_open() -> None:
-    """Given a run with no steering, and the pruner's result with its tree, issues, and steps.
+    """Given a work with no steering, and the pruner's result with its tree, issues, and steps.
     When the result is taken in.
     Then the steering holds the tree, the issues, and each step and deliverable open."""
     made = taken_in(None, result(issues={"closes": [38], "refs": []}, steps=[STEP]))
@@ -29,7 +29,7 @@ def test_a_first_result_makes_the_steering_with_each_step_open() -> None:
 
 
 def test_a_first_result_with_no_issues_or_steps_holds_none() -> None:
-    """Given a run with no steering, and a result with its tree alone, the need not picked.
+    """Given a work with no steering, and a result with its tree alone, the need not picked.
     When the result is taken in.
     Then the steering holds the tree, no issue, and no step."""
     made = taken_in(None, {"message": "m", "ost": rn_files.ost(target=None)})

@@ -10,7 +10,7 @@ from typing import Any
 
 import practice
 from fault import Wrong
-from place import RunPlace
+from place import WorkPlace
 
 from steering import rounds
 from steering.record import Steering
@@ -22,11 +22,11 @@ _WEIGHED = ("evaluator", "refactorer", "generator")
 
 
 def started(
-    run: RunPlace, steering: Steering, path: str, words: str, plugin_root: str
+    work: WorkPlace, steering: Steering, path: str, words: str, plugin_root: str
 ) -> tuple[Steering, str]:
     """The steering with the deliverable's next role started, and the line that gives the role.
 
-    Takes: the run, its steering, the deliverable's path as its step names it, the problem's
+    Takes: the work, its steering, the deliverable's path as its step names it, the problem's
     words for a Fix, and rn's folder.
     Gives: the steering as it is, and for a weighing, `pruner\\t<result>`, the evaluator's result
     of its entry where it holds one, else the refactorer's or the generator's point; for its
@@ -40,7 +40,7 @@ def started(
     judge, where a Fix's words are empty, or where rn has no best practice of the kind.
     """
     number, each = _open(steering, path)
-    root = rounds.folder_of(run, number, path)
+    root = rounds.folder_of(work, number, path)
     role = each.get("next", "generator")
     if role == "weigh":
         return steering, f"pruner\t{_weighed(os.path.join(root, each['entry']))}\n"
@@ -48,9 +48,9 @@ def started(
         if "entry" not in each:
             raise Wrong(f"{path} has no Round to judge; start its generator first")
         folder = os.path.join(root, each["entry"])
-        return steering, f"evaluator\t{folder}\t{_judges_by(run, plugin_root, each, folder)}\n"
+        return steering, f"evaluator\t{folder}\t{_judges_by(work, plugin_root, each, folder)}\n"
     by = practice.refactoring(each["kind"]) if role == "refactorer" else each["kind"]
-    found = _practice(run, plugin_root, by)
+    found = _practice(work, plugin_root, by)
     if role == "fixer" and not words.strip():
         raise Wrong("the problem's words are empty; give them on stdin as they were said")
     folder = _entry(root, role, each, os.path.join(plugin_root, "domain", "schemas"))
@@ -91,8 +91,8 @@ def _entry(root: str, role: str, each: dict[str, Any], schemas: str) -> str:
     return folder
 
 
-def _practice(run: RunPlace, plugin_root: str, kind: str | None) -> str:
-    found = practice.kinds(plugin_root, run.worktree)
+def _practice(work: WorkPlace, plugin_root: str, kind: str | None) -> str:
+    found = practice.kinds(plugin_root, work.worktree)
     if kind not in found:
         raise Wrong(
             f"rn has no best practice of the kind {kind!r}; give the deliverable a kind it has"
@@ -100,8 +100,8 @@ def _practice(run: RunPlace, plugin_root: str, kind: str | None) -> str:
     return found[kind]
 
 
-def _judges_by(run: RunPlace, plugin_root: str, each: dict[str, Any], folder: str) -> str:
-    held = practice.judged(practice.read(_practice(run, plugin_root, each["kind"])))
+def _judges_by(work: WorkPlace, plugin_root: str, each: dict[str, Any], folder: str) -> str:
+    held = practice.judged(practice.read(_practice(work, plugin_root, each["kind"])))
     path = os.path.join(folder, "judges-by.json")
     with open(path, "w", encoding="utf-8") as f:
         json.dump(held, f, indent=1, ensure_ascii=False)
