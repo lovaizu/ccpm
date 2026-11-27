@@ -321,6 +321,18 @@
       {
         "decision": "Have the generator's and the refactorer's prompts differ only in their purpose, what they start from, and the best practice they use.",
         "by": "user"
+      },
+      {
+        "decision": "Have the pruner weigh each problem before the fixer gets it, and the fixer only mend, as a decision is weighed before the mend.",
+        "by": "user"
+      },
+      {
+        "decision": "Have the fixer find, before it mends, how to confirm that nothing already there breaks, confirm it so, mend the least, and confirm it again the same way, naming no means such as a hook, as the means are the repository's.",
+        "by": "user"
+      },
+      {
+        "decision": "Have the fixer remove no file a check leaves and report no check that fails elsewhere, as a file a check leaves is git-ignored or committed, and the confirming before the mend finds what fails elsewhere.",
+        "by": "user"
       }
     ],
     "questions": []
