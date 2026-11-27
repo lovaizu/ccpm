@@ -159,10 +159,6 @@
         "by": "user"
       },
       {
-        "decision": "Give work outside #86's purpose its own issue, herdr worktree, and pull request, so it reaches main without waiting.",
-        "by": "user"
-      },
-      {
         "decision": "Speak to the user in plain words, never in rn's or the plan's own terms, so the user follows without learning them.",
         "by": "user"
       },
@@ -216,10 +212,6 @@
       },
       {
         "decision": "Write each role's prompt from the architecture and the prompt best practice: its Role from its component's line, its steps from its arrows in the sequences with the intent of their rules and strategies, and only the plugin's rules beside them, then trace both ways, so that what rn has built up stays in the architecture and nothing in a prompt comes from nowhere.",
-        "by": "user"
-      },
-      {
-        "decision": "Where the user works in herdr, open each run's worktree in a workspace of herdr, and have herdr remove it on a cancel, else keep Claude Code's default place, as the user finds the run's worktree where they work, and herdr shows only those it holds.",
         "by": "user"
       },
       {
@@ -307,10 +299,6 @@
         "by": "user"
       },
       {
-        "decision": "Make a run's worktree by `herdr worktree create` where HERDR_ENV is set, else by git, as herdr shows only the worktrees it makes and rn needs no herdr.",
-        "by": "user"
-      },
-      {
         "decision": "Keep the fixer and the refactorer outside the Rounds, in this order: the Rounds make the deliverable, the user confirms what more they leave, the fixer mends it, the refactorer refactors the whole, and then the user tries it.",
         "by": "user"
       },
@@ -369,6 +357,10 @@
       {
         "decision": "Have ccpm's issue rules open an issue only once the user agrees to it, in this pull request, so that the user decides what work the repository takes on, and a talk with them goes on unbroken.",
         "by": "user"
+      },
+      {
+        "decision": "Have each run work in a worktree, and have the orchestrator judge from where it was started which: the worktree it was started in, one made by the repository's rules, or one at the default place, so that the user's own work stays as they left it, with no case of it written in a prompt or a script.",
+        "by": "user"
       }
     ],
     "questions": []
@@ -376,7 +368,8 @@
   "state": {
     "issues": {
       "closes": [
-        86
+        86,
+        99
       ],
       "refs": [
         62
@@ -652,6 +645,28 @@
             "path": "plugins/rn/CHANGELOG.md",
             "kind": "light",
             "status": "done"
+          }
+        ],
+        "status": "open"
+      },
+      {
+        "for": "O1",
+        "settles": "a run works in the worktree that the orchestrator judges from where it was started, and the scripts take the worktree they're given",
+        "deliverables": [
+          {
+            "path": "plugins/rn/domain/scripts",
+            "kind": "code",
+            "status": "open"
+          },
+          {
+            "path": "plugins/rn/domain",
+            "kind": "prompt",
+            "status": "open"
+          },
+          {
+            "path": "dev/rn/architecture.md",
+            "kind": "architecture",
+            "status": "open"
           }
         ],
         "status": "open"
