@@ -1,0 +1,4 @@
+{
+  "result": "point",
+  "point": "No step makes overnight's own LICENSE, plugin.json, CHANGELOG.md, or marketplace entry, so the README's License links the repository's LICENSE on GitHub in place of the plugin's own copy, and its install command finds no plugin named overnight; should the first step make those four files too? I recommend yes, as ccpm's rules say each plugin carries its own LICENSE, README, CHANGELOG, and unit tests, and a reader can't install a plugin that has no manifest and no marketplace entry; once the plugin's LICENSE exists, the README links it by its path."
+}

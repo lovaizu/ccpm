@@ -60,7 +60,7 @@
           }
         ],
         "solution": {
-          "solution": "A command of a new overnight plugin, in Python 3 and its standard library alone, that runs a queue file of commands, any command such as `claude -p`, tries a failed one again at an interval that doubles each try, and writes how each one ended to a report file for the morning; the count of tries, the start time, and the number side by side come as additions, one step each.",
+          "solution": "A command of a new overnight plugin, in Python 3 and its standard library alone, that runs a queue file of commands, any command such as `claude -p`, tries a failed one again after 1 minute, doubling the wait each try up to 15 minutes and then every 15 minutes, and writes how each one ended to a report file for the morning; the count of tries, the start time, and the number side by side come as additions, one step each.",
           "why": "The user said needs 1 to 3 are logic apart from Claude Code and that the comeback is a retry, so a runner that knows only commands and exit statuses meets all three without reading when the limit lifts, and a queue file is what an AI can write and run, which is all the user asked of need 4.",
           "assumption": {
             "assumption": "A `claude -p` run that stops at the usage limit exits with a failure, so the runner sees it and the same command run again after the limit lifts finishes the work.",
@@ -95,9 +95,21 @@
       {
         "decision": "Hold the runner in a new plugin, overnight, under plugins/overnight, as the issue names it and the plugin guide puts what runs on users' machines there.",
         "by": "rn"
+      },
+      {
+        "decision": "Try a failed command again after 1 minute, doubling the wait each try up to 15 minutes and then every 15 minutes, as the usage limit lifts within the 5 hours of its window that the user named, a doubling without a cap would wait hours past the lift and waste the night, and a try at the limit fails at once, so the work comes back within 15 minutes of the lift.",
+        "by": "rn"
+      },
+      {
+        "decision": "Ship plugins/overnight/LICENSE as a copy of the repository's MIT license, as the README links it, an installed plugin holds only its own folder, and plugins/rn ships its own copy the same way.",
+        "by": "rn"
       }
     ],
-    "questions": []
+    "questions": [
+      "回数を指定しないときの試行回数の既定はいくつにしますか？\n1. 25回（推奨）: 1, 2, 4, 8分、その後15分おきに試すと、25回目は最初に止まってから約5時間15分後になり、5時間制限の解除をまたいで待てます。ほかの理由で壊れたコマンドは、朝までに止まり、利用枠を使い続けません。\n2. 無制限: 成功するまで一晩中試します。壊れたコマンドが後ろの作業を止め続けます。\n3. 3回など少なく: 制限の解除より前にあきらめるので、制限で止まった作業が戻りません。",
+      "並行数を指定しないときの既定はいくつにしますか？\n1. 1（推奨）: リストに書いた順に一つずつ走ります。並べて走らせても利用枠は一つを分け合い、制限でそろって止まるので、一晩で終わる量は増えません。前の作業の結果に頼る作業も、順に走れば壊れません。\n2. 2以上: 利用枠より待ち時間が詰まる作業では早く終わりますが、書いた順は保たれません。",
+      "plugins/overnight/LICENSE はリポジトリの MIT ライセンスをそのまま写すだけなので、ライセンス文書のベストプラクティスを作らずに軽い種類（light）で作ってよいですか？\n1. light で作る（推奨）: 中身は既にある LICENSE の写しで、plugins/rn/LICENSE と同じ形です。新しく書く文はありません。\n2. 先にライセンス文書のベストプラクティスを作る: 写すだけのファイルのために手間が増えます。"
+    ]
   },
   "state": {
     "issues": {
@@ -114,11 +126,18 @@
           {
             "path": "plugins/overnight/README.md",
             "kind": "readme",
-            "status": "open"
+            "status": "open",
+            "next": "evaluator",
+            "entry": "content-1"
           },
           {
             "path": "plugins/overnight/domain/scripts/overnight",
             "kind": "code",
+            "status": "open"
+          },
+          {
+            "path": "plugins/overnight/LICENSE",
+            "kind": "light",
             "status": "open"
           }
         ],
@@ -131,7 +150,8 @@
           {
             "path": "plugins/overnight/README.md",
             "kind": "readme",
-            "status": "open"
+            "status": "open",
+            "next": "evaluator"
           },
           {
             "path": "plugins/overnight/domain/scripts/overnight",
@@ -148,7 +168,8 @@
           {
             "path": "plugins/overnight/README.md",
             "kind": "readme",
-            "status": "open"
+            "status": "open",
+            "next": "evaluator"
           },
           {
             "path": "plugins/overnight/domain/scripts/overnight",
@@ -165,7 +186,8 @@
           {
             "path": "plugins/overnight/README.md",
             "kind": "readme",
-            "status": "open"
+            "status": "open",
+            "next": "evaluator"
           },
           {
             "path": "plugins/overnight/domain/scripts/overnight",
