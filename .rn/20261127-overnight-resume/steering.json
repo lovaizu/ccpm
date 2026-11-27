@@ -1,0 +1,60 @@
+{
+  "ost": {
+    "outcome": "A user who instructs an AI and leaves the AI to arrange the work lets it move on while they sleep, past the usage limit, and in the morning only checks the results.",
+    "opportunities": [
+      {
+        "id": "O1",
+        "opportunity": "I want the work I gave the AI to move on while I sleep, so that in the morning I only check the results.",
+        "by": "Issue #62 Situation, and the user's answer to Q3 of the hearing on 2026-11-27",
+        "opportunities": [
+          {
+            "id": "O1.1",
+            "opportunity": "Once the usage limit lifts, I want the work that stopped at it to go on from where it stopped, without me.",
+            "by": "Issue #62 Desired State, and the user's answer to Q2 of the hearing on 2026-11-27",
+            "opportunities": [],
+            "solution": null
+          },
+          {
+            "id": "O1.2",
+            "opportunity": "In the morning, I want to see what stopped at the limit and what resumed.",
+            "by": "The user's answer to Q2 of the hearing on 2026-11-27",
+            "opportunities": [],
+            "solution": null
+          }
+        ],
+        "solution": null
+      }
+    ],
+    "target": null,
+    "decisions": [
+      {
+        "decision": "The run is for a user who instructs an AI and leaves the AI to arrange the work, as the user answered 「ユーザーがAIに指示してAIが段取る」.",
+        "by": "user"
+      },
+      {
+        "decision": "Once the limit lifts, the stopped work goes on from where it stopped, and a record remains of what stopped and what resumed, as the user answered 「１と２」.",
+        "by": "user"
+      },
+      {
+        "decision": "The aim is that work moves on while the user sleeps and in the morning they only check the results, as the user answered 「１」.",
+        "by": "user"
+      },
+      {
+        "decision": "The talk is in Japanese, the language of the user's words, and the deliverables are in English, the language of the repository's documents, so each reader reads their own.",
+        "by": "rn"
+      }
+    ],
+    "questions": [
+      "最初に作るものはどれにしますか。1: 上限が解けたら、止まった作業が止まったところから自動で続く (推奨。issue #62 の望む状態そのもので、2 の記録も再開があってはじめて意味を持つため) 2: 朝、上限で止まったものと再開したものの記録が見られる"
+    ]
+  },
+  "state": {
+    "issues": {
+      "closes": [
+        62
+      ],
+      "refs": []
+    },
+    "steps": []
+  }
+}
