@@ -110,7 +110,7 @@
           {
             "path": "plugins/overnight/.claude-plugin/plugin.json",
             "kind": "light",
-            "status": "open"
+            "status": "done"
           },
           {
             "path": ".claude-plugin/marketplace.json",
