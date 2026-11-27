@@ -522,6 +522,62 @@
       },
       {
         "for": "O1",
+        "settles": "the scripts and hooks of the zero-based review: the old removed first, then each part in order",
+        "deliverables": [
+          {
+            "path": "plugins/rn/domain/scripts",
+            "kind": "code",
+            "status": "open"
+          },
+          {
+            "path": "plugins/rn/hooks/hooks.json",
+            "kind": "code",
+            "status": "open"
+          }
+        ],
+        "status": "open"
+      },
+      {
+        "for": "O1",
+        "settles": "the roles of the zero-based review: the prompts, the refactorer and the inspector, and the references",
+        "deliverables": [
+          {
+            "path": "plugins/rn/domain",
+            "kind": "prompt",
+            "status": "open"
+          },
+          {
+            "path": "plugins/rn/agents",
+            "kind": "prompt",
+            "status": "open"
+          }
+        ],
+        "status": "open"
+      },
+      {
+        "for": "O1",
+        "settles": "the architecture, the README, and the CHANGELOG, for what the review changed",
+        "deliverables": [
+          {
+            "path": "dev/rn/architecture.md",
+            "kind": "architecture",
+            "status": "open"
+          },
+          {
+            "path": "plugins/rn/README.md",
+            "kind": "readme",
+            "status": "open"
+          },
+          {
+            "path": "plugins/rn/CHANGELOG.md",
+            "kind": "light",
+            "status": "open"
+          }
+        ],
+        "status": "open"
+      },
+      {
+        "for": "O1",
         "settles": "the user's E2E run of rn from this branch on #62, up to the first real check, as the solution's assumption test",
         "deliverables": [],
         "status": "open"
