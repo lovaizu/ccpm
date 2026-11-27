@@ -1,6 +1,7 @@
 {
   "result": "made",
   "files": [
-    "plugins/overnight/.claude-plugin/plugin.json"
+    "plugins/overnight/.claude-plugin/plugin.json",
+    "plugins/overnight/LICENSE"
   ]
 }
