@@ -7,8 +7,6 @@ import os
 from collections.abc import Callable, Sequence
 from datetime import date
 
-import form
-import push
 from fault import Answer, answered
 from host import Host
 from place import WorkPlace, named, of_folder
@@ -18,23 +16,20 @@ from repository import trial, worktree
 USAGE = """\
 usage: repository new <slug>
        repository works
-       repository stop <work>
        repository trial <work> <round>
 """
 
 
 def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     """The exit code, stdout, and stderr of `repository` with the arguments, from the folder
-    `cwd`, a folder in the user's repository, with rn's folder at `plugin_root`, and git and gh
-    reached through `host`.
+    `cwd`, a folder in the user's repository, with rn's folder at `plugin_root`, and git reached
+    through `host`.
 
     - `new <slug>`, a short English slug of what the work is for: 0 printing the new work's folder,
       absolute, as `worktree.new` makes it at the top of the worktree that `cwd` lies in, named by
       `place.named` from today and the slug.
     - `works`: 0 printing the folder, absolute, of each piece of work that `worktree.left` gives,
       a line each, newest first, and nothing where there's none.
-    - `stop <work>`: 0 printing the hash that `push.stop` gives, with the work's steering, read as
-      its schema holds it, where it has one.
     - `trial <work> <round>`, the Round's folder from `cwd`: 0 printing the folder that
       `trial.starting_state` makes.
 
@@ -57,15 +52,6 @@ def _works(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     return 0, "".join(f"{each.folder}\n" for each in worktree.left(cwd, host)), ""
 
 
-def _stop(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
-    work = of_folder(cwd, given[0])
-    schema = os.path.join(plugin_root, "domain", "schemas", "steering.schema.json")
-    steering = (
-        form.held(work.steering, schema, "the steering") if os.path.isfile(work.steering) else None
-    )
-    return 0, f"{push.stop(work, steering, host)}\n", ""
-
-
 def _trial(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     work = of_folder(cwd, given[0])
     return 0, f"{trial.starting_state(work, os.path.join(cwd, given[1]), host)}\n", ""
@@ -76,6 +62,5 @@ _Subcommand = Callable[[list[str], str, str, Host], Answer]
 _SUBCOMMANDS: dict[str, tuple[_Subcommand, int]] = {
     "new": (_new, 1),
     "works": (_works, 0),
-    "stop": (_stop, 1),
     "trial": (_trial, 2),
 }

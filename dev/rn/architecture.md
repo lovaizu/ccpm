@@ -145,8 +145,8 @@ Strategies:
 - scripts (script)\
   Does each step that has one right result, and alone writes where the work stands.
 - hook (hook)\
-  Once a role ends, checks its result, moves each deliverable on by its role's result, and
-  commits and pushes the work, every time.
+  Once a role ends, checks its result, and moves each deliverable on by its role's result, every
+  time.
 
 Strategies:
 
@@ -222,17 +222,21 @@ Strategies:
 - A cancel taken from the user's words once they confirm what goes, such as the pull request, the
   branch, or the worktree, removed by the orchestrator. [S3]\
   Intent: a cancel can't be undone, so only the user starts it, and only what they confirm goes.
-- A stop that lets the orchestrator's write of the steering end, then stops each role and pushes
-  the work's folder. [P6.2]\
+- A stop that lets the orchestrator's write of the steering end, then stops each role, and
+  commits and pushes the work. [P6.2]\
   Intent: a pick-up reads a whole steering, and GitHub keeps the work so far as well as the
   user's computer.
 - Each role's result checked against its schema by the hook before the role ends, the role kept
   going until it holds. [P5.3]\
   Intent: the role mends its own result, and the orchestrator starts no role again.
-- Each role's changes committed and pushed by the hook once it ends, and each commit of a script
-  pushed at once. [P6.1]\
-  Intent: nothing the work makes lies only on the user's computer, and a trial clones what's
-  committed.
+- The work committed and pushed by the orchestrator at the end of each purpose, such as the aim
+  agreed, a deliverable done, a step marked, or a stop, in the repository's shape of commits.
+  [P6.1]\
+  Intent: each commit says one thing done, and nothing the work makes lies only on the user's
+  computer.
+- A trial of the worktree as it stands, its changes not yet committed with it. [P3.2]\
+  Intent: the evaluator tries what was made, though the orchestrator commits only at the end of a
+  purpose.
 
 ### Sequences
 
@@ -263,7 +267,7 @@ sequenceDiagram
     U->>O: agrees, or corrects what's off [P2.5]
   end
   O->>S: makes the work's folder where it's started, and takes in the aim: the outcome, each need, the target, its solution, and the steps, the walking skeleton first, each deliverable the user would see ending a step before what rests on it (Steering, Opportunity, Solution, Step) [P5.2]
-  S->>S: commits and pushes it, and opens the draft pull request [P6.1, P7.2]
+  O->>O: commits and pushes it, and opens the draft pull request in the repository's shape [P6.1, P7.2]
   O->>U: what is made before the try, listed once [P2.3]
   opt the user asks a question, at any point [P2.7]
     U->>O: the question, in their own words [P2.7]
@@ -278,9 +282,9 @@ sequenceDiagram
       else
         G->>G: makes it by every necessary condition of its kind's best practice, by the work's decisions [P3.1]
         G-->>O: ends, with the Round written (Round) [P5.2]
-        H->>S: checks the result against its schema, moves the deliverable on to its evaluator, and commits and pushes the work (Round, Steering) [P5.3]
+        H->>S: checks the result against its schema, and moves the deliverable on to its evaluator (Round, Steering) [P5.3]
         O->>E: starts one with the deliverable and what it judges by (Round, Best practice) [P3.2]
-        E->>S: makes a folder of the people's starting state, a clone of what's committed [P3.2]
+        E->>S: makes a folder of the people's starting state, a clone of the worktree as it stands [P3.2]
         E->>E: tries it there as its people would, and names for each condition what's good or what would make it good [P3.2]
         E-->>O: ends, with the Round judged (Round) [P5.2]
         H->>S: moves the deliverable on, to the orchestrator's weighing of what was found, else to its refactoring (Steering) [P5.3]
@@ -301,7 +305,8 @@ sequenceDiagram
     O->>R: starts one with the refactor best practice of its kind (Best practice) [P3.1]
     R->>R: refactors the whole, keeping what it does for its people [P3.1]
     R-->>O: ends, which ends the deliverable's Rounds (Round) [P5.2]
-    H->>S: marks it done, committed and pushed in the draft pull request (Steering, Deliverable) [P6.1]
+    H->>S: marks it done (Steering, Deliverable) [P5.3]
+    O->>O: commits and pushes it in the draft pull request [P6.1]
     O->>U: what was done, with how far the work is to the try [P2.3]
   end
   O->>S: marks the step trying (Step) [P6.1]
@@ -351,7 +356,7 @@ sequenceDiagram
   U->>O: /rn:dn, or asks to stop for now [S2]
   O->>O: lets its write of the steering end, as it stays whole [P6.2]
   O->>W: stops it [S2]
-  O->>S: commits and pushes what the work has made (Steering, Round, Fix) [P6.2]
+  O->>O: commits and pushes what the work has made (Steering, Round, Fix) [P6.2]
   O->>U: where it stopped, and what waits for the user [P2.3]
   Note over U,O: Later, in any conversation
   U->>O: /rn:up [S2]
@@ -404,7 +409,7 @@ Strategies:
 plugins/rn/                        what Claude Code installs for the user
 ├── skills/                        /rn:on, /rn:up, /rn:dn, /rn:ty, and /rn:gm, each pointing to the orchestrator
 ├── agents/                        each role's start
-├── hooks/                         the hook that checks and pushes each role's result once it ends
+├── hooks/                         the hook that checks each role's result once it ends
 └── domain/
     ├── orchestrator.md            each event's own steps, then those that every event shares
     ├── generator.md               what the generator does
@@ -418,8 +423,7 @@ plugins/rn/                        what Claude Code installs for the user
     └── scripts/                   each step with one right result, as a role runs it
 
 dev/rn/                            what only rn's developers use
-├── tests/unit/                    the unit tests of rn's code
-└── tests/gh/                      the double of gh, with its records
+└── tests/unit/                    the unit tests of rn's code
 
 <worktree>/.rn/                    what rn writes on the work's branch, in the work's worktree
 └── <yyyymmdd>-<slug>/             the folder of one piece of work

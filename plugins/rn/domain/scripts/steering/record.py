@@ -41,14 +41,12 @@ def taken_in(steering: Steering | None, aim: dict[str, Any]) -> Steering:
     so and the aim adds no step, as a step added grows the pull request.
     Changes: nothing.
     Refuses: Wrong where it would make a deliverable again past LIMIT judged Rounds, as the user
-    confirms what they leave, or would leave one waiting on a weighing with no question asked,
-    naming it.
+    confirms what they leave, naming it.
     """
     state = steering["state"] if steering else {"issues": _NO_ISSUES, "steps": []}
     steps = state["steps"]
     if "steps" in aim:
         steps = [_kept(each, state["steps"]) for each in aim["steps"]]
-    _settled(steps, aim["ost"]["questions"])
     issues = copy.deepcopy(aim.get("issues", state["issues"]))
     held = [(each["for"], each["settles"]) for each in state["steps"]]
     added = any((each["for"], each["settles"]) not in held for each in steps)
@@ -105,24 +103,11 @@ def _deliverable(told: dict[str, Any], had: dict[str, Any] | None) -> dict[str, 
     return {**kept, "status": "open", "next": said}
 
 
-def _settled(steps: list[dict[str, Any]], questions: list[str]) -> None:
-    """Refuses a weighing that leaves a deliverable waiting on it with no question asked."""
-    if questions:
-        return
-    for step in steps:
-        for each in step["deliverables"]:
-            if each["status"] == "open" and each.get("next") == "weigh":
-                raise Wrong(
-                    f"{each['path']} waits on this weighing; say what it takes next, or ask the"
-                    " user"
-                )
-
-
-def step_marked(steering: Steering, number: int, status: str) -> tuple[Steering, str]:
+def step_marked(steering: Steering, number: int, status: str) -> Steering:
     """The steering with a step marked.
 
     Takes: the steering, the step's number from 1 in the order of its steps, and its new status.
-    Gives: a new steering with the step at that status, and the step's words.
+    Gives: a new steering with the step at that status.
     Changes: nothing.
     Refuses: Wrong where no step has the number, where the status is none of the step's, or where
     the step would be trying with a deliverable not done, as the user tries only what's made.
@@ -138,7 +123,7 @@ def step_marked(steering: Steering, number: int, status: str) -> tuple[Steering,
         raise Wrong(f"step {number} isn't made yet: {', '.join(left)} not done; make each first")
     marked = copy.deepcopy(steering)
     marked["state"]["steps"][number - 1]["status"] = status
-    return marked, step["settles"]
+    return marked
 
 
 def moved(steering: Steering, results: dict[str, dict[str, dict[str, Any]]]) -> Steering:

@@ -1,10 +1,11 @@
 """Decides where the folder of the people's starting state lies and what it holds, in which an
 evaluator tries a deliverable: a folder named by its Round in the system's temporary folder,
-holding the work's branch as its people would get it, and nothing of how rn made it, removed once
-the role that tried it ends."""
+holding the work as it stands in its worktree, as its people would get it, and nothing of how rn
+made it, removed once the role that tried it ends."""
 
 from __future__ import annotations
 
+import contextlib
 import os
 import shutil
 import tempfile
@@ -12,7 +13,6 @@ import tempfile
 from fault import CantRun, Wrong
 from host import Host, checked
 from place import WorkPlace
-from push import branch
 
 
 def folder(work: WorkPlace, round_: str) -> str:
@@ -36,17 +36,37 @@ def starting_state(work: WorkPlace, round_: str, host: Host) -> str:
 
     Takes: the work, the Round's folder, absolute, and the host.
     Gives: the folder's absolute path, as `folder` gives it.
-    Changes: makes the folder anew, removing one left there, holding a clone of the work's branch
-    as committed, as rn's hook commits each role's changes once it ends, without `.rn/`.
-    Refuses: CantRun where git can't clone, with what it said.
+    Changes: makes the folder anew, removing one left there, holding a clone of the work's
+    worktree with each change in it not yet committed, as the orchestrator commits only at the end
+    of a purpose, and without `.rn/`.
+    Refuses: CantRun where git can't clone or list the changes, with what it said.
     """
     made = folder(work, round_)
     if os.path.exists(made):
         shutil.rmtree(made)
-    clone = ["git", "clone", "-q", "--branch", branch(work, host), work.worktree, made]
-    checked(host, clone, work.worktree, CantRun, f"git can't clone the work's branch into {made}")
+    clone = ["git", "clone", "-q", work.worktree, made]
+    checked(host, clone, work.worktree, CantRun, f"git can't clone the work's worktree into {made}")
+    _changes_copied(work, made, host)
     shutil.rmtree(os.path.join(made, ".rn"), ignore_errors=True)
     return made
+
+
+def _changes_copied(work: WorkPlace, made: str, host: Host) -> None:
+    """Copies each file of the worktree that changed or is new since its last commit into the
+    clone, and removes each that was deleted, leaving out what git ignores."""
+    what = "git can't list the worktree's changes"
+    listed = ["git", "ls-files", "-z", "--modified", "--others", "--exclude-standard"]
+    changed = checked(host, listed, work.worktree, CantRun, what).out.split("\0")
+    deleted = ["git", "ls-files", "-z", "--deleted"]
+    gone = set(checked(host, deleted, work.worktree, CantRun, what).out.split("\0"))
+    for each in filter(None, changed):
+        target = os.path.join(made, each)
+        if each in gone:
+            with contextlib.suppress(FileNotFoundError):
+                os.remove(target)
+            continue
+        os.makedirs(os.path.dirname(target), exist_ok=True)
+        shutil.copy2(os.path.join(work.worktree, each), target)
 
 
 def removed(work: WorkPlace) -> None:

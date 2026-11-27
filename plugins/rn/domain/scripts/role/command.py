@@ -1,8 +1,7 @@
 """Decides what rn's hook does once one of rn's roles ends, so that no instruction to a role or
 restart of it holds what must happen every time: it checks each result of the work against its
 schema and keeps the role going until each holds, moves each deliverable on by its role's result,
-commits and pushes the work's changes at once, and removes the trials' folders that the role
-leaves."""
+and removes the trials' folders that the role leaves."""
 
 from __future__ import annotations
 
@@ -13,8 +12,7 @@ from collections.abc import Sequence
 from typing import Any
 
 import form
-import push
-from fault import Answer, CantRun, Missing, Wrong
+from fault import Answer, Wrong
 from host import Host
 from place import WorkPlace
 from repository import trial, worktree
@@ -27,7 +25,7 @@ _ROLES = {"generator", "refactorer", "evaluator", "fixer"}
 
 def main(argv: Sequence[str], given: str, plugin_root: str, host: Host) -> Answer:
     """The exit code, stdout, and stderr of `role ended`, with Claude Code's input of the
-    SubagentStop event, with rn's folder at `plugin_root`, and git and gh reached through `host`.
+    SubagentStop event, with rn's folder at `plugin_root`, and git reached through `host`.
 
     - For an agent that isn't one of rn's roles that write a result, as `agent_type` names it,
       `rn:<role>` or `<role>`: 0, doing nothing.
@@ -35,11 +33,8 @@ def main(argv: Sequence[str], given: str, plugin_root: str, host: Host) -> Answe
       in, the one rn runs in, as `worktree.works` gives them: 2 with each result that leaves its
       schema, a Round's or a Fix's, a line each as `form.held` names it, changing nothing, so that
       Claude Code keeps the role going with those words until each holds. Otherwise it moves each
-      deliverable on by its next role's result as `record.moved` does, then commits and pushes each
-      piece of work whose worktree holds a change as `push.kept` does, as `rn: the <role> ended`,
-      removes each of its trials' folders as `trial.removed` does, and gives 0.
-    - 1 with `role: <what's wrong>` where something `push.kept` needs is Missing, or 2 where it
-      CantRun, the commit kept where only the push failed, as the role can't mend either.
+      deliverable on by its next role's result as `record.moved` does, writing the steering where
+      it changes, removes each of its trials' folders as `trial.removed` does, and gives 0.
     - 2 with the usage where the arguments are other than `ended`.
     """
     if list(argv) != ["ended"]:
@@ -53,12 +48,9 @@ def main(argv: Sequence[str], given: str, plugin_root: str, host: Host) -> Answe
     faults = [fault for work in works for fault in _faults(work, schemas)]
     if faults:
         return 2, "", "".join(f"role: {each}\n" for each in faults)
-    try:
-        for work in works:
-            _kept(work, role, schemas, host)
-            trial.removed(work)
-    except (Missing, CantRun) as stopped:
-        return (1 if isinstance(stopped, Missing) else 2), "", f"role: {stopped}\n"
+    for work in works:
+        _moved(work, schemas)
+        trial.removed(work)
     return 0, "", ""
 
 
@@ -73,10 +65,9 @@ def _faults(work: WorkPlace, schemas: str) -> list[str]:
     return found
 
 
-def _kept(work: WorkPlace, role: str, schemas: str, host: Host) -> None:
-    """Moves each deliverable on by its next role's result, then commits and pushes the work where
-    its worktree holds a change; the work with no steering yet, before its first aim, has nothing
-    to keep."""
+def _moved(work: WorkPlace, schemas: str) -> None:
+    """Moves each deliverable on by its next role's result, writing the steering where it changes;
+    the work with no steering yet, before its first aim, has nothing to move."""
     held = _steering(work, schemas)
     if held is None:
         return
@@ -85,8 +76,6 @@ def _kept(work: WorkPlace, role: str, schemas: str, host: Host) -> None:
         with open(work.steering, "w", encoding="utf-8") as f:
             json.dump(steering, f, indent=2, ensure_ascii=False)
             f.write("\n")
-    if host(["git", "status", "--porcelain"], work.worktree).out.strip():
-        push.kept(work, steering, f"rn: the {role} ended", host)
 
 
 def _results(work: WorkPlace, steering: dict[str, Any], schemas: str) -> dict[str, Any]:

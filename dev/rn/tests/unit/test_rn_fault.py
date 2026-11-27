@@ -1,11 +1,26 @@
-"""The unit cases of fault.py's `end`, how each of rn's commands ends: with the exit code that a
-`main` gives and what it prints on stdout and on stderr; and with 2 and the traceback where its
-`main` raises an error that no fault names."""
+"""The unit cases of fault.py: `answered`, the exit code of each fault a call raises; and `end`,
+how each of rn's commands ends: with the exit code that a `main` gives and what it prints on stdout
+and on stderr; and with 2 and the traceback where its `main` raises an error that no fault
+names."""
 
 from __future__ import annotations
 
 import pytest
-from fault import Answer, end
+from fault import Answer, CantRun, Missing, Wrong, answered, end
+
+
+@pytest.mark.parametrize(
+    ("fault", "code"), [(Wrong, 1), (Missing, 1), (CantRun, 2)], ids=["wrong", "missing", "cant"]
+)
+def test_answered_gives_each_faults_exit_code_with_what_it_says(fault: type, code: int) -> None:
+    """Given a call that raises a fault.
+    When it's answered for a script.
+    Then it gives the fault's exit code, with the script's name and what the fault says."""
+
+    def call() -> Answer:
+        raise fault("git can't clone")
+
+    assert answered("repository", call) == (code, "", "repository: git can't clone\n")
 
 
 def test_end_exits_with_the_code_printing_each_stream(capsys: pytest.CaptureFixture[str]):

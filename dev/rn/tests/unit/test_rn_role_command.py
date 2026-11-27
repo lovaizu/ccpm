@@ -1,8 +1,7 @@
 """The unit cases of role/command.py, rn's hook once a role ends: an agent that isn't rn's left
-alone, a role's change committed and pushed, a role's result moving its deliverable on, nothing
-committed where nothing changed, a folder outside rn's work passed over, a session outside git, each
-result out of its schema keeping the role going, a push with no origin or to a remote that isn't
-there, and arguments of another form."""
+alone, a role's result moving its deliverable on with nothing committed, a session outside git, each
+result out of its schema keeping the role going, work in another worktree left alone, the trials'
+folders removed, the inspector left alone, and arguments of another form."""
 
 from __future__ import annotations
 
@@ -12,7 +11,7 @@ from typing import Any
 
 import pytest
 import rn_files
-from gh import gh_double
+from host import run
 from place import WorkPlace
 from repo_files import git, write_files
 from role.command import USAGE, main
@@ -32,7 +31,7 @@ def top(work: WorkPlace) -> str:
     return os.path.join(os.path.dirname(work.worktree), "accounting")
 
 
-def ended(work: WorkPlace, agent: str, cwd: str = "", host: Any = None) -> tuple[int, str, str]:
+def ended(work: WorkPlace, agent: str, cwd: str = "") -> tuple[int, str, str]:
     """What the hook gives once the agent ends in the session's folder, the work's worktree, where
     rn runs, unless another is given."""
     given = json.dumps(
@@ -47,18 +46,7 @@ def ended(work: WorkPlace, agent: str, cwd: str = "", host: Any = None) -> tuple
             "last_assistant_message": "done",
         }
     )
-    gh = host or gh_double.host(os.path.join(os.path.dirname(top(work)), "gh"))
-    return main(["ended"], given, rn_files.RN, gh)
-
-
-def subject(work: WorkPlace) -> str:
-    return git(work.worktree, "log", "-1", "--format=%s").strip()
-
-
-def pushed(work: WorkPlace) -> bool:
-    origin = os.path.join(os.path.dirname(top(work)), "origin.git")
-    remote = git(origin, "rev-parse", "invoices").strip()
-    return remote == git(work.worktree, "rev-parse", "HEAD").strip()
+    return main(["ended"], given, rn_files.RN, run)
 
 
 def test_an_agent_that_isnt_rns_is_left_alone(made: WorkPlace) -> None:
@@ -71,24 +59,11 @@ def test_an_agent_that_isnt_rns_is_left_alone(made: WorkPlace) -> None:
     assert git(made.worktree, "rev-parse", "HEAD") == before
 
 
-def test_a_roles_change_is_committed_and_pushed_from_inside_the_worktree_of_the_work(
-    made: WorkPlace,
-) -> None:
-    """Given the work with its steering, whose generator wrote the command, and a session in the
-    work's worktree.
-    When the generator ends.
-    Then the change is committed as `rn: the generator ended`, and pushed."""
-    rn_files.write_json(made.steering, rn_files.steering())
-    write_files(made.worktree, {rn_files.COMMAND: "print('invoice')\n"})
-    assert ended(made, "rn:generator", cwd=made.worktree) == (0, "", "")
-    assert subject(made) == "rn: the generator ended"
-    assert pushed(made)
-
-
 def test_a_roles_result_moves_its_deliverable_on_in_the_steering(made: WorkPlace) -> None:
     """Given a steering whose command works in content-1, and the generator's result made there.
     When the generator ends.
-    Then the steering has the command's evaluator next, committed and pushed."""
+    Then the steering has the command's evaluator next, not committed, as the orchestrator
+    commits."""
     value = rn_files.steering()
     value["state"]["steps"][0]["deliverables"][0]["entry"] = "content-1"
     rn_files.write_json(made.steering, value)
@@ -99,7 +74,7 @@ def test_a_roles_result_moves_its_deliverable_on_in_the_steering(made: WorkPlace
     assert ended(made, "rn:generator") == (0, "", "")
     with open(made.steering, encoding="utf-8") as f:
         assert json.load(f)["state"]["steps"][0]["deliverables"][0]["next"] == "evaluator"
-    assert pushed(made)
+    assert git(made.worktree, "log", "--format=%s") == "accounting\n"
 
 
 def test_nothing_is_committed_where_nothing_changed(made: WorkPlace) -> None:
@@ -155,43 +130,17 @@ def test_a_result_out_of_its_schema_keeps_the_role_going(
     assert git(made.worktree, "rev-parse", "HEAD") == before
 
 
-@pytest.mark.parametrize(
-    ("origin", "code", "says"),
-    [(None, 1, "no remote origin"), ("gone.git", 2, "can't push the work")],
-    ids=["no-origin", "gone"],
-)
-def test_a_push_that_fails_is_said_after_the_commit(
-    made: WorkPlace, origin: str | None, code: int, says: str
-) -> None:
-    """Given the work with its steering whose change can't be pushed, as it has no origin, or one
-    that isn't there.
-    When the generator ends.
-    Then it gives 1 or 2 saying why, and the commit is kept."""
-    git(top(made), "remote", "remove", "origin")
-    if origin:
-        gone = os.path.join(os.path.dirname(top(made)), origin)
-        git(top(made), "remote", "add", "origin", gone)
-    rn_files.write_json(made.steering, rn_files.steering())
-    write_files(made.worktree, {rn_files.COMMAND: "print('invoice')\n"})
-    given, _, err = ended(made, "rn:generator")
-    assert (given, says in err) == (code, True)
-    assert subject(made) == "rn: the generator ended"
-
-
 def test_the_hook_leaves_work_in_another_worktree_alone(made: WorkPlace, tmp_path: Any) -> None:
-    """Given the work with its steering and the command written, and other work in another
-    worktree whose role is still writing its result.
+    """Given the work with its steering, and other work in another worktree whose role is still
+    writing its result.
     When the generator ends in the work's worktree.
-    Then it gives 0, committing the work alone, and leaves the other's result unchecked."""
+    Then it gives 0, leaving the other's result unchecked."""
     rn_files.write_json(made.steering, rn_files.steering())
-    write_files(made.worktree, {rn_files.COMMAND: "print('invoice')\n"})
     other = WorkPlace(
         rn_files.worktree_of(top(made), str(tmp_path / "rules"), "rules"), "20261127-invoice-rules"
     )
     write_files(other.folder, {"rounds/1/a/content-1/generator.json": "{"})
     assert ended(made, "rn:generator") == (0, "", "")
-    assert subject(made) == "rn: the generator ended"
-    assert git(other.worktree, "status", "--porcelain").strip() != ""
 
 
 def test_the_trials_of_the_work_are_removed_once_its_role_ends(made: WorkPlace, temp: str) -> None:
@@ -219,4 +168,4 @@ def test_arguments_of_another_form_give_the_usage() -> None:
     """Given no subcommand.
     When role runs.
     Then it gives 2 with the usage."""
-    assert main([], "{}", rn_files.RN, gh_double.host("/unused")) == (2, "", USAGE)
+    assert main([], "{}", rn_files.RN, run) == (2, "", USAGE)

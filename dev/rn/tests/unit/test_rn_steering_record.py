@@ -89,10 +89,9 @@ def test_a_result_that_adds_a_step_takes_the_final_check_again() -> None:
 def test_a_step_with_each_deliverable_done_is_marked_trying() -> None:
     """Given a steering whose step has each deliverable done.
     When step 1 is marked trying.
-    Then it's trying, and its words are given."""
+    Then it's trying."""
     held = rn_files.steering([rn_files.step(done=(rn_files.COMMAND, rn_files.GUIDE))])
-    marked, words = step_marked(held, 1, "trying")
-    assert (marked["state"]["steps"][0]["status"], words) == ("trying", rn_files.SETTLES)
+    assert step_marked(held, 1, "trying")["state"]["steps"][0]["status"] == "trying"
 
 
 @pytest.mark.parametrize(
@@ -186,22 +185,12 @@ def test_a_round_past_the_limit_is_refused() -> None:
         taken_in(held, told("generator"))
 
 
-def test_a_weighing_that_leaves_its_deliverable_waiting_is_refused() -> None:
+def test_a_weighing_that_says_nothing_of_its_deliverable_leaves_it_waiting() -> None:
     """Given a steering whose command waits on the orchestrator's weighing.
-    When a result that neither says what it takes next nor asks the user is taken in.
-    Then Wrong is raised, naming the command."""
+    When an aim that says nothing of what the command takes next is taken in.
+    Then the command still waits on the weighing, as `steering due` keeps showing it."""
     held = holding(next="weigh", entry="content-1")
-    with pytest.raises(Wrong, match=rn_files.COMMAND):
-        taken_in(held, result(steps=[STEP]))
-
-
-def test_a_weighing_that_asks_the_user_leaves_its_deliverable_waiting() -> None:
-    """Given a steering whose command waits on the orchestrator's weighing.
-    When a result that asks the user a question is taken in.
-    Then the command still waits on the weighing of the user's answer."""
-    held = holding(next="weigh", entry="content-1")
-    answered = result(ost=rn_files.ost(questions=["Mend the totals now?"]))
-    assert command(taken_in(held, answered))["next"] == "weigh"
+    assert command(taken_in(held, result(steps=[STEP])))["next"] == "weigh"
 
 
 def results(**by_role: Any) -> dict[str, dict[str, Any]]:

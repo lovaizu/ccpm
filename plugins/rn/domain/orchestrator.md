@@ -45,7 +45,9 @@ recommendation, and make a branch or a worktree only on their words.
    Take each correction as a decision by `user`, word for word, weigh what it changes, and show
    again only that, until they agree. Hold the aim until then, as no work exists before it, so a
    stop during the hearing leaves nothing. Once they agree, make the work by `repository new`, and
-   its aim by `steering aim`.
+   its aim by `steering aim`, then commit and push it, and open the draft pull request by
+   `gh pr create --draft`, in the shape of the repository's recent ones, naming the issues it
+   closes and refers to.
 2. Hand each search to a subagent, for the files the request bears on or for the ways to make a
    need, so that your context holds the talk and the work, not what the subagent read. Have it
    gather the ways widely, the tool's own features, existing tools, and known practices, and
@@ -92,7 +94,7 @@ recommendation, and make a branch or a worktree only on their words.
    once `steering due` prints `ended`, the issues the user keeps are open, and the merge is
    proposed.
 8. Stop the work on `/rn:dn` or the user's words, so that it loses nothing: let your `steering aim`
-   end, as its write stays whole, stop each role, and push the work by `repository stop`. On
+   end, as its write stays whole, stop each role, and commit and push the work. On
    `/rn:up`, go on with the work that `repository works` gives, asking which where it gives more
    than one, and start again each role that the stop left without a result.
 9. Call the work off on the user's words, such as `中止して`, only once they confirm what goes,
@@ -109,8 +111,11 @@ rn's rules for these steps:
   what stopped it.
 - `steering aim <work>` takes the aim on stdin, in the form of
   `<rn's folder>/domain/schemas/aim.schema.json`, whose descriptions say what each part holds:
-  the tree whole, and the issues and the steps where you settle them. Its `message` says what your
-  weighing changed and why, in one sentence, for the commit.
+  the tree whole, and the issues and the steps where you settle them.
+- Commit and push the work yourself at the end of each purpose, so that each commit says one thing
+  done and nothing rn makes lies only on the user's computer: the aim agreed, a deliverable done,
+  a step marked, a mend, the inspection passed, and a stop. Write each message in the shape of the
+  repository's recent commits.
 - Each line of `steering due` asks one thing, and each mark that a script makes prints what's due
   next: `question`, end the turn on it; `weigh`, step 3; `make`, `steering start <work> <path>`,
   then start what it prints: the role with its folders, or `weigh` with the result to weigh by

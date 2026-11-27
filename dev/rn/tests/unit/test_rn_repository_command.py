@@ -50,31 +50,27 @@ def test_new_prints_the_folder_of_the_work_and_works_lists_it(repo: str, host: A
     assert main(["works"], worktree, rn_files.RN, host) == (0, f"{work_folder}\n", "")
 
 
-def test_each_subcommand_on_the_work_prints_what_its_module_gives(
-    repo: str, host: Any, temp: str
-) -> None:
+def test_trial_prints_the_folder_its_module_makes(repo: str, host: Any, temp: str) -> None:
     """Given the work with its command written.
-    When `trial` and `stop` run on it.
-    Then each gives 0: the trial's folder, and the hash pushed."""
+    When `trial` runs on it.
+    Then it gives 0 with the trial's folder."""
     work_folder = started(repo, host)
     round_ = os.path.join(work_folder, "rounds", "1", "invoice", "content-1")
     trial = main(["trial", work_folder, round_], repo, rn_files.RN, host)
     assert trial[0] == 0 and trial[1].startswith(os.path.join(temp, "rn-trial-"))
-    code, out, _ = main(["stop", work_folder], repo, rn_files.RN, host)
-    assert (code, len(out.strip())) == (0, 40)
 
 
 def test_a_refusal_gives_its_exit_code_with_what_is_wrong(repo: str, host: Any) -> None:
     """Given a repository.
-    When `stop` is given a folder outside rn's work.
-    Then it gives 1, saying what's wrong."""
-    code, _, err = main(["stop", "docs"], repo, rn_files.RN, host)
+    When `trial` is given a folder outside rn's work, and `new` runs outside git.
+    Then each gives 1, saying what's wrong."""
+    code, _, err = main(["trial", "docs", "docs"], repo, rn_files.RN, host)
     assert (code, err.startswith("repository: ")) == (1, True)
     code, _, err = main(["new", SLUG], "/", rn_files.RN, host)
     assert (code, "lies in no git worktree" in err) == (1, True)
 
 
-@pytest.mark.parametrize("argv", [[], ["make"], ["new"], ["stop", "a", "b"]])
+@pytest.mark.parametrize("argv", [[], ["make"], ["new"], ["trial", "a"]])
 def test_arguments_of_another_form_give_the_usage(argv: list[str], host: Any) -> None:
     """Given no subcommand, one that isn't repository's, or the wrong count of arguments.
     When repository runs.

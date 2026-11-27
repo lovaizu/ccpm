@@ -9,9 +9,7 @@ from collections.abc import Callable, Sequence
 from typing import Any
 
 import form
-import push
 from fault import Answer, Wrong, answered
-from host import Host
 from place import WorkPlace, of_folder
 
 from steering import due, record, start
@@ -25,31 +23,27 @@ usage: steering aim <work>   (the aim on stdin)
 """
 
 
-def main(
-    argv: Sequence[str], cwd: str, plugin_root: str, host: Host, stdin: Callable[[], str]
-) -> Answer:
+def main(argv: Sequence[str], cwd: str, plugin_root: str, stdin: Callable[[], str]) -> Answer:
     """The exit code, stdout, and stderr of `steering` with the arguments, from the folder `cwd`,
-    with rn's folder at `plugin_root`, git reached through `host`, and what it's given on stdin
-    read by `stdin`, which `aim` and `start` of a Fix read.
+    with rn's folder at `plugin_root`, and what it's given on stdin read by `stdin`, which `aim`
+    and `start` of a Fix read. Each writes the steering alone, as the orchestrator commits and
+    pushes the work at each end of a purpose.
 
     - `aim <work>`: takes the aim on stdin, in the form of `aim.schema.json`, into the steering
-      as `record.taken_in` makes it, the steering made where the work has none yet, commits and
-      pushes as `rn: <the aim's message>`, and gives 0 printing what's due.
-    - `step <work> <number> <status>`: marks the step as `record.step_marked` does, commits and
-      pushes as `rn: <its words>: <status>`, and gives 0 printing what's due.
+      as `record.taken_in` makes it, the steering made where the work has none yet, and gives 0
+      printing what's due.
+    - `step <work> <number> <status>`: marks the step as `record.step_marked` does, and gives 0
+      printing what's due.
     - `start <work> <path>`: starts the deliverable's next role as `start.started` does, writing
-      the steering where it changes, which rn's hook commits once the role ends, and gives 0
-      printing the line that gives the role.
-    - `inspected <work>`: marks the inspection passed as `record.inspected_marked` does, commits
-      and pushes as `rn: the inspection passed`, and gives 0 printing what's due.
+      the steering where it changes, and gives 0 printing the line that gives the role.
+    - `inspected <work>`: marks the inspection passed as `record.inspected_marked` does, and gives
+      0 printing what's due.
     - `due <work>`: gives 0 printing each line that `due.due` gives, a line each.
 
     `<work>` is the work's folder, as `place.of_folder` takes it. 1 with `steering: <what's wrong>`,
     changing nothing, where the input is Wrong: a result or a steering that's missing, isn't JSON,
     or leaves its schema, naming each place, an aim that isn't JSON or leaves its schema, or an aim
-    or a mark that `record` refuses; 1 where something
-    `push.kept` needs is Missing. 2 with what stopped it where it CantRun, such as git refusing the
-    commit, with what git said; 2 with the usage where the arguments are other than these.
+    or a mark that `record` refuses; 2 with the usage where the arguments are other than these.
     """
     if not argv or argv[0] not in _SUBCOMMANDS or len(argv) != _SUBCOMMANDS[argv[0]][1]:
         return 2, "", USAGE
@@ -58,15 +52,15 @@ def main(
             "steering", lambda: _start(of_folder(cwd, argv[1]), argv[2], plugin_root, stdin)
         )
     if argv[0] == "aim":
-        return answered("steering", lambda: _aim(of_folder(cwd, argv[1]), plugin_root, stdin, host))
+        return answered("steering", lambda: _aim(of_folder(cwd, argv[1]), plugin_root, stdin))
     subcommand = _SUBCOMMANDS[argv[0]][0]
     schemas = os.path.join(plugin_root, "domain", "schemas")
     return answered(
-        "steering", lambda: subcommand(of_folder(cwd, argv[1]), list(argv[2:]), schemas, host)
+        "steering", lambda: subcommand(of_folder(cwd, argv[1]), list(argv[2:]), schemas)
     )
 
 
-def _aim(work: WorkPlace, plugin_root: str, stdin: Callable[[], str], host: Host) -> Answer:
+def _aim(work: WorkPlace, plugin_root: str, stdin: Callable[[], str]) -> Answer:
     schemas = os.path.join(plugin_root, "domain", "schemas")
     try:
         aim = json.loads(stdin())
@@ -77,15 +71,15 @@ def _aim(work: WorkPlace, plugin_root: str, stdin: Callable[[], str], host: Host
         raise Wrong("the aim leaves its schema, aim.schema.json: " + "; ".join(found))
     held = _steering(work, schemas) if os.path.isfile(work.steering) else None
     steering = record.taken_in(held, aim)
-    _committed(work, steering, aim["message"], host)
+    _written(work, steering)
     return 0, _lines(due.due(steering)), ""
 
 
-def _step(work: WorkPlace, given: list[str], schemas: str, host: Host) -> Answer:
+def _step(work: WorkPlace, given: list[str], schemas: str) -> Answer:
     if not given[0].isdigit():
         raise Wrong(f"{given[0]!r} isn't a step's number; give its number from 1")
-    steering, words = record.step_marked(_steering(work, schemas), int(given[0]), given[1])
-    _committed(work, steering, f"{words}: {given[1]}", host)
+    steering = record.step_marked(_steering(work, schemas), int(given[0]), given[1])
+    _written(work, steering)
     return 0, _lines(due.due(steering)), ""
 
 
@@ -107,23 +101,18 @@ def _next(steering: dict[str, Any], path: str) -> str:
     return ""
 
 
-def _inspected(work: WorkPlace, given: list[str], schemas: str, host: Host) -> Answer:
+def _inspected(work: WorkPlace, given: list[str], schemas: str) -> Answer:
     steering = record.inspected_marked(_steering(work, schemas))
-    _committed(work, steering, "the inspection passed", host)
+    _written(work, steering)
     return 0, _lines(due.due(steering)), ""
 
 
-def _due(work: WorkPlace, given: list[str], schemas: str, host: Host) -> Answer:
+def _due(work: WorkPlace, given: list[str], schemas: str) -> Answer:
     return 0, _lines(due.due(_steering(work, schemas))), ""
 
 
 def _steering(work: WorkPlace, schemas: str) -> dict[str, Any]:
     return form.held(work.steering, os.path.join(schemas, "steering.schema.json"), "the steering")
-
-
-def _committed(work: WorkPlace, steering: dict[str, Any], message: str, host: Host) -> str:
-    _written(work, steering)
-    return push.kept(work, steering, f"rn: {message}", host)
 
 
 def _written(work: WorkPlace, steering: dict[str, Any]) -> None:
@@ -137,7 +126,7 @@ def _lines(lines: list[str]) -> str:
 
 
 # Each subcommand, by its name, with the number of arguments it takes, its name among them.
-_SUBCOMMANDS: dict[str, tuple[Callable[[WorkPlace, list[str], str, Host], Answer], int]] = {
+_SUBCOMMANDS: dict[str, tuple[Callable[[WorkPlace, list[str], str], Answer], int]] = {
     "aim": (_due, 2),
     "step": (_step, 4),
     "start": (_due, 3),

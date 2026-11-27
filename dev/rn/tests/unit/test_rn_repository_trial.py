@@ -1,7 +1,7 @@
 """The unit cases of repository/trial.py, the folder of the people's starting state in which an
 evaluator tries a deliverable: where it lies by its Round, a folder outside the work's Rounds
-refused, the work's branch as committed cloned there without rn's folder, one left there made
-anew, and git that can't clone."""
+refused, the work's worktree as it stands cloned there without rn's folder or what git ignores,
+one left there made anew, the trials removed, and git that can't clone."""
 
 from __future__ import annotations
 
@@ -22,15 +22,20 @@ NAME = "20261126-invoice-from-statement"
 
 @pytest.fixture
 def made(tmp_path: Any) -> WorkPlace:
-    """The work whose worktree holds its steering and the command committed, as rn's hook commits
-    each role's changes, and a draft written since, not committed."""
+    """The work whose worktree holds its steering and the command committed, and since then a
+    draft written, the README changed, a note deleted, and a log that git ignores, none
+    committed."""
     repo = rn_files.repository(str(tmp_path / "accounting"))
     held = WorkPlace(rn_files.worktree_of(repo, str(tmp_path / "invoices"), "invoices"), NAME)
     rn_files.committed_steering(held.worktree, NAME, rn_files.steering())
     write_files(held.worktree, {rn_files.COMMAND: "print('invoice')\n"})
+    write_files(held.worktree, {"note.md": "old\n", ".gitignore": "*.log\n"})
     git(held.worktree, "add", "-A")
     git(held.worktree, "commit", "-q", "-m", "the command")
-    write_files(held.worktree, {"draft.md": "not yet\n"})
+    write_files(
+        held.worktree, {"draft.md": "not yet\n", "README.md": "# Invoices\n", "run.log": "x\n"}
+    )
+    os.remove(os.path.join(held.worktree, "note.md"))
     return held
 
 
@@ -55,15 +60,19 @@ def test_a_folder_outside_the_rounds_of_the_work_is_refused(made: WorkPlace, whe
         folder(made, os.path.join(made.rounds, where))
 
 
-def test_the_starting_state_holds_the_work_as_committed_without_rns_folder(made: WorkPlace) -> None:
+def test_the_starting_state_holds_the_worktree_as_it_stands_without_rns_folder(
+    made: WorkPlace,
+) -> None:
     """Given a folder of the Round left there from before, holding a stray file.
     When the starting state is made.
-    Then it holds the README and the command, a git clone of the work's branch, and neither rn's
-    folder, the draft not committed, nor the stray file."""
+    Then it holds a git clone of the worktree with the draft, the README as changed, and the
+    command, and neither rn's folder, the note deleted, the log git ignores, nor the stray file."""
     stale = folder(made, round_of(made))
     write_files(stale, {"stray.txt": "old\n"})
     made_at = starting_state(made, round_of(made), run)
-    assert sorted(os.listdir(made_at)) == [".git", "README.md", "invoice"]
+    assert sorted(os.listdir(made_at)) == [".git", ".gitignore", "README.md", "draft.md", "invoice"]
+    with open(os.path.join(made_at, "README.md"), encoding="utf-8") as f:
+        assert f.read() == "# Invoices\n"
     with open(os.path.join(made_at, rn_files.COMMAND), encoding="utf-8") as f:
         assert f.read() == "print('invoice')\n"
 
@@ -89,5 +98,5 @@ def test_git_that_cant_clone_cant_run(made: WorkPlace) -> None:
     def refusing(argv: Sequence[str], cwd: str, env: Mapping[str, str] | None = None) -> Ran:
         return Ran(128, "", "fatal: no room\n") if argv[1] == "clone" else run(argv, cwd, env)
 
-    with pytest.raises(CantRun, match="can't clone the work's branch into"):
+    with pytest.raises(CantRun, match="can't clone the work's worktree into"):
         starting_state(made, round_of(made), refusing)

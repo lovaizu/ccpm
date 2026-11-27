@@ -1,22 +1,20 @@
 """The unit cases of steering/command.py, steering's command line as the orchestrator runs it: each
-aim taken in, committed, and pushed, each mark committed and pushed, the inspection's pass
-committed, what's due read, each start of a deliverable's next role with what it's given, and each
-refusal: a steering missing or out of its schema, an aim that isn't JSON, leaves its schema, or that
-the steering refuses, a step's number that isn't one, a mark that the steering refuses, a start that
-can't be, git refusing the commit, and arguments of another form."""
+aim taken in, each mark, the inspection's pass, each written to the steering alone, what's due
+read, each start of a deliverable's next role with what it's given, and each refusal: a steering
+missing or out of its schema, an aim that isn't JSON, leaves its schema, or that the steering
+refuses, a step's number that isn't one, a mark that the steering refuses, a start that can't be,
+and arguments of another form."""
 
 from __future__ import annotations
 
 import json
 import os
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from typing import Any
 from urllib.parse import quote
 
 import pytest
 import rn_files
-from gh import gh_double
-from host import Ran, run
 from place import WorkPlace
 from repo_files import git
 from steering.command import USAGE, main
@@ -25,6 +23,11 @@ NAME = "20261126-invoice-from-statement"
 FOLDER = f".rn/{NAME}"
 STEP = rn_files.WAY
 MADE = {"result": "made", "files": [rn_files.COMMAND]}
+# The walkthrough's walking skeleton, its command made again by its generator.
+AGAIN = {
+    **rn_files.WAY,
+    "deliverables": [{**rn_files.WAY["deliverables"][0], "next": "generator"}],
+}
 
 
 @pytest.fixture
@@ -41,12 +44,15 @@ def steering(work: WorkPlace, value: Any) -> None:
     git(work.worktree, "commit", "-q", "-m", "steering")
 
 
-def call(work: WorkPlace, *argv: str, host: Any = None, words: str = "") -> tuple[int, str, str]:
-    """What `steering` gives with the arguments on the work, with git run for real and gh from its
-    records, unless another host is given, and the words given on stdin."""
-    gh = host or gh_double.host(os.path.join(os.path.dirname(work.worktree), "gh"))
+def call(work: WorkPlace, *argv: str, words: str = "") -> tuple[int, str, str]:
+    """What `steering` gives with the arguments on the work, and the words given on stdin."""
     given = argv[:1] + (FOLDER,) + argv[1:]
-    return main(given, work.worktree, rn_files.RN, gh, lambda: words)
+    return main(given, work.worktree, rn_files.RN, lambda: words)
+
+
+def unchanged(work: WorkPlace) -> bool:
+    """Whether the work's worktree holds nothing but what was committed, as no script commits."""
+    return git(work.worktree, "status", "--porcelain") == ""
 
 
 def held(work: WorkPlace) -> Any:
@@ -54,19 +60,15 @@ def held(work: WorkPlace) -> Any:
         return json.load(f)
 
 
-def test_the_first_aim_makes_the_steering_and_is_pushed(made: WorkPlace) -> None:
+def test_the_first_aim_makes_the_steering_and_commits_nothing(made: WorkPlace) -> None:
     """Given the work with no steering, and an aim with the pick still asked.
     When it's given to `steering aim`.
-    Then the steering holds its tree and its question, committed as `rn: <message>` and pushed,
+    Then the steering holds its tree and its question, not committed, as the orchestrator commits,
     and the question is due."""
-    aim = {
-        "message": "the needs, with the pick asked",
-        "ost": rn_files.ost(target=None, questions=["Which need first?"]),
-    }
+    aim = {"ost": rn_files.ost(target=None, questions=["Which need first?"])}
+    before = git(made.worktree, "rev-parse", "HEAD")
     assert call(made, "aim", words=json.dumps(aim)) == (0, "question\tWhich need first?\n", "")
-    assert git(made.worktree, "log", "-1", "--format=%s") == "rn: the needs, with the pick asked\n"
-    origin = os.path.join(os.path.dirname(made.worktree), "origin.git")
-    assert git(origin, "rev-parse", "invoices") == git(made.worktree, "rev-parse", "HEAD")
+    assert git(made.worktree, "rev-parse", "HEAD") == before
     assert held(made)["ost"]["questions"] == ["Which need first?"]
 
 
@@ -75,7 +77,7 @@ def test_a_later_aim_takes_in_the_steps_and_keeps_the_issues(made: WorkPlace) ->
     When it's given to `steering aim`.
     Then the steering holds the steps open and the issues kept, and the command is due to make."""
     steering(made, rn_files.steering([]))
-    aim = {"message": "printing first", "ost": rn_files.ost(), "steps": [rn_files.WAY]}
+    aim = {"ost": rn_files.ost(), "steps": [rn_files.WAY]}
     assert call(made, "aim", words=json.dumps(aim)) == (
         0,
         f"make\t1\t{rn_files.COMMAND}\tcode\tgenerator\n",
@@ -88,43 +90,38 @@ def test_a_later_aim_takes_in_the_steps_and_keeps_the_issues(made: WorkPlace) ->
     ("words", "says"),
     [
         ("{", "the aim isn't JSON"),
-        (json.dumps({"ost": {}}), "aim.schema.json: /message: is required"),
-        (
-            json.dumps({"message": "m", "ost": rn_files.ost(), "steps": [rn_files.WAY]}),
-            rn_files.COMMAND,
-        ),
+        (json.dumps({}), "aim.schema.json: /ost: is required"),
+        (json.dumps({"ost": rn_files.ost(), "steps": [AGAIN]}), "has had its 2 judged Rounds"),
     ],
     ids=["not-json", "schema", "refused"],
 )
-def test_an_aim_that_can_not_be_taken_in_is_refused_and_commits_nothing(
+def test_an_aim_that_can_not_be_taken_in_is_refused_and_changes_nothing(
     made: WorkPlace, words: str, says: str
 ) -> None:
-    """Given a steering whose command waits on a weighing, and an aim that isn't JSON, leaves its
-    schema, or neither says what the command takes next nor asks the user.
+    """Given a steering whose command has had its judged Rounds, and an aim that isn't JSON, leaves
+    its schema, or makes the command again.
     When it's given to `steering aim`.
-    Then it gives 1 saying why, and commits nothing."""
-    at(made, next="weigh", entry="content-1")
-    before = git(made.worktree, "rev-parse", "HEAD")
+    Then it gives 1 saying why, and changes nothing."""
+    at(made, next="weigh", entry="content-2", judged=2)
     code, _, err = call(made, "aim", words=words)
-    assert (code, says in err, git(made.worktree, "rev-parse", "HEAD")) == (1, True, before)
+    assert (code, says in err, unchanged(made)) == (1, True, True)
 
 
-def test_each_mark_is_committed_and_gives_whats_due(made: WorkPlace) -> None:
+def test_each_mark_is_written_and_gives_whats_due(made: WorkPlace) -> None:
     """Given a steering whose step has each deliverable done.
     When step 1 is marked trying.
-    Then it's committed with its words, and the user's try is due."""
+    Then the steering holds it, and the user's try is due."""
     steering(made, rn_files.steering([rn_files.step(done=(rn_files.COMMAND, rn_files.GUIDE))]))
     assert call(made, "step", "1", "trying") == (0, f"trying\t1\t{rn_files.SETTLES}\n", "")
-    assert git(made.worktree, "log", "-1", "--format=%s") == f"rn: {rn_files.SETTLES}: trying\n"
+    assert held(made)["state"]["steps"][0]["status"] == "trying"
 
 
-def test_the_final_checks_pass_is_committed_and_ends_the_work(made: WorkPlace) -> None:
+def test_the_final_checks_pass_is_written_and_ends_the_work(made: WorkPlace) -> None:
     """Given a steering whose one step is done.
     When the inspection is marked passed.
-    Then it's committed with its words, and the work's end is due."""
+    Then the steering holds it, and the work's end is due."""
     steering(made, rn_files.steering([rn_files.step("done")]))
     assert call(made, "inspected") == (0, "ended\n", "")
-    assert git(made.worktree, "log", "-1", "--format=%s") == "rn: the inspection passed\n"
     assert held(made)["state"]["inspected"] is True
 
 
@@ -162,32 +159,15 @@ def test_a_mark_on_the_work_with_no_steering_is_refused(made: WorkPlace) -> None
         (("step", "1", "trying"), "isn't made yet"),
     ],
 )
-def test_a_mark_that_can_not_be_is_refused_and_commits_nothing(
+def test_a_mark_that_can_not_be_is_refused_and_changes_nothing(
     made: WorkPlace, argv: Sequence[str], says: str
 ) -> None:
     """Given the walkthrough's steering, its step not made.
     When a step is marked by a word in place of its number, or trying.
-    Then it gives 1 saying why, and commits nothing."""
+    Then it gives 1 saying why, and changes nothing."""
     steering(made, rn_files.steering())
-    before = git(made.worktree, "rev-parse", "HEAD")
     code, _, err = call(made, *argv)
-    assert (code, says in err, git(made.worktree, "rev-parse", "HEAD")) == (1, True, before)
-
-
-def test_git_refusing_the_commit_cant_run(made: WorkPlace) -> None:
-    """Given the walkthrough's steering, and git that refuses each commit.
-    When step 1 is marked done.
-    Then it gives 2 with what git said."""
-    steering(made, rn_files.steering())
-
-    def refusing(argv: Sequence[str], cwd: str, env: Mapping[str, str] | None = None) -> Ran:
-        return Ran(1, "", "hook refused\n") if argv[1] == "commit" else run(argv, cwd, env)
-
-    assert call(made, "step", "1", "done", host=refusing) == (
-        2,
-        "",
-        "steering: git commit fails: hook refused\n",
-    )
+    assert (code, says in err, unchanged(made)) == (1, True, True)
 
 
 @pytest.mark.parametrize("argv", [(), ("push", FOLDER), ("due",), ("aim",), ("step", FOLDER, "1")])
@@ -195,7 +175,7 @@ def test_arguments_of_another_form_give_the_usage(argv: Sequence[str]) -> None:
     """Given no subcommand, one that isn't steering's, or too few arguments.
     When steering runs.
     Then it gives 2 with the usage."""
-    assert main(argv, "/", rn_files.RN, run, str) == (2, "", USAGE)
+    assert main(argv, "/", rn_files.RN, str) == (2, "", USAGE)
 
 
 def rounds_of(work: WorkPlace, path: str = rn_files.COMMAND) -> str:

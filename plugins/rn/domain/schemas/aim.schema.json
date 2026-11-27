@@ -4,16 +4,10 @@
  "description": "What the orchestrator gives `steering aim` on stdin, for it to take into the steering: the work's opportunity solution tree whole as the orchestrator weighed it, and, where it settled them, the issues of the work and the steps to the target.",
  "type": "object",
  "required": [
-  "message",
   "ost"
  ],
  "additionalProperties": false,
  "properties": {
-  "message": {
-   "description": "What the weighing changed and why, in one sentence, for the commit's message.",
-   "type": "string",
-   "minLength": 1
-  },
   "ost": {
    "$ref": "steering.schema.json#/properties/ost"
   },

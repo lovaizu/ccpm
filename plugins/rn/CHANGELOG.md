@@ -11,13 +11,13 @@
 - rn keeps your decisions in your own words.
 - rn works on the branch you start it on, and asks you what to do where that branch isn't one for the work, such as the default branch. It makes a branch or a worktree only when you ask for one.
 - On a cancel, rn asks what goes, and removes only what you confirm.
+- rn commits and pushes once each purpose ends, such as a part made or a step tried, each commit in the shape of your repository's, and opens its draft pull request in the shape of your recent ones.
 - The need's tree is one flat list, and a solution no longer carries a riskiest assumption to test, as the least that runs in your hands tests it.
 
 ### Fixed
 
 - A role's end moves on only the work of its own worktree, so work in another worktree never stops it or gets committed half written.
 - rn removes the folders it tries a deliverable in once the try is over, and on a cancel.
-- A check of your repository that fails a push with the word "permission" no longer reads as a missing login.
 
 ### Removed
 
