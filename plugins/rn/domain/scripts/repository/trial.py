@@ -64,9 +64,9 @@ def _changes_copied(work: WorkPlace, made: str, host: Host) -> None:
         if each in gone:
             with contextlib.suppress(FileNotFoundError):
                 os.remove(target)
-            continue
-        os.makedirs(os.path.dirname(target), exist_ok=True)
-        shutil.copy2(os.path.join(work.worktree, each), target)
+        else:
+            os.makedirs(os.path.dirname(target), exist_ok=True)
+            shutil.copy2(os.path.join(work.worktree, each), target)
 
 
 def removed(work: WorkPlace) -> None:
