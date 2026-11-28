@@ -1,0 +1,64 @@
+{
+  "result": "judged",
+  "good": [
+    {
+      "condition": "N1",
+      "lines": [
+        "\"\"\"Decides what the `overnight` command takes from the user and what it gives back.\"\"\"",
+        "\"\"\"The code of the `overnight` command: `command` for what it takes and gives.\"\"\"",
+        "# The `overnight` command, which Claude Code puts on the PATH of its own shell from the plugin's",
+        "# Python puts this folder first on the import path. The code imports its package from scripts/,",
+        "\"\"\"The double of `claude` that overnight's unit cases run in its place. It gives each run from one"
+      ]
+    },
+    {
+      "condition": "N2",
+      "lines": [
+        "def main(argv: Sequence[str], plugin: str) -> None:",
+        "Takes: the words, and the plugin's folder, whose .claude-plugin/plugin.json holds its version.",
+        "Gives: for `--version`, `overnight <version>` on stdout, and exits 0."
+      ]
+    },
+    {
+      "condition": "N3",
+      "lines": [
+        "In Claude Code, `! overnight --version` shows `overnight 0.1.0`.",
+        "parser.add_argument(\"--version\", action=\"version\", version=f\"overnight {version}\")"
+      ]
+    },
+    {
+      "condition": "N4",
+      "lines": [
+        "env={**os.environ, **env, \"HOME\": str(tmp_path)},",
+        "stdin=subprocess.DEVNULL,"
+      ]
+    },
+    {
+      "condition": "N5",
+      "lines": [
+        "def test_version_shows_the_version_that_plugin_json_holds(tmp_path):"
+      ]
+    },
+    {
+      "condition": "N6",
+      "lines": [
+        "COMMAND = os.path.join(PLUGIN, \"bin\", \"overnight\")",
+        "[COMMAND, \"--version\"],"
+      ]
+    },
+    {
+      "condition": "N7",
+      "lines": [
+        "assert (ran.returncode, ran.stdout, ran.stderr) == (0, f\"overnight {version}\\n\", \"\")"
+      ]
+    },
+    {
+      "condition": "N8",
+      "lines": [
+        "parser = argparse.ArgumentParser(prog=\"overnight\")",
+        "parser.parse_args(argv)"
+      ]
+    }
+  ],
+  "more": []
+}

@@ -42,16 +42,12 @@
   },
   "tasks": [
     {
-      "task": "Make the overnight command for one work that retries, by TDD, in Python's standard library alone, with its plugin.json, LICENSE, and CHANGELOG, and its unit tests under dev/overnight/tests with a stand-in for `claude`.",
+      "task": "Fill each `TODO:` of the overnight command by TDD, in Python's standard library alone, so that one work retries after the usage limit or any error as the README says.",
       "path": "plugins/overnight",
       "kind": "code",
       "refactor": "refactor-code",
-      "entry": "content-1"
-    },
-    {
-      "task": "List the overnight plugin in the marketplace and in the repository's README.",
-      "path": ".claude-plugin/marketplace.json",
-      "kind": "general"
+      "next": "refactorer",
+      "judged": 1
     }
   ],
   "decisions": [
@@ -69,6 +65,6 @@
     "A new plugin, overnight, with README, LICENSE, CHANGELOG, a marketplace entry, and a line in the repository's README.",
     "The user doesn't see the README once it's made.",
     "The `overnight` command sits in the plugin's bin/, which Claude Code puts on the PATH of its own shell, so the user starts a work from Claude Code (such as `! overnight ...`) with no setup; the command runs apart from the session, so closing Claude Code doesn't stop it. A plain terminal outside Claude Code doesn't get bin/ on its PATH.",
-    "The README's links to LICENSE and CHANGELOG and its install line hold once the code and the marketplace tasks are done; its order follows the readme template, and its top status says it's in development, so it takes no remedy after its first judged Round."
+    "The README's links to LICENSE and CHANGELOG and its install line hold once the first task puts them and the marketplace entry in place; its order follows the readme template, and its top status says it's in development, so it takes no remedy after its first judged Round."
   ]
 }

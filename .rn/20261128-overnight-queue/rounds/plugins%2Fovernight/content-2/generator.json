@@ -1,0 +1,19 @@
+{
+  "result": "made",
+  "files": [
+    "plugins/overnight/.claude-plugin/plugin.json",
+    "plugins/overnight/LICENSE",
+    "plugins/overnight/CHANGELOG.md",
+    "plugins/overnight/bin/overnight",
+    "plugins/overnight/scripts/overnight/__init__.py",
+    "plugins/overnight/scripts/overnight/__main__.py",
+    "plugins/overnight/scripts/overnight/command.py",
+    "dev/overnight/tests/conftest.py",
+    "dev/overnight/tests/double/claude_double.py",
+    "dev/overnight/tests/double/recorded/claude-2.1.332.jsonl",
+    "dev/overnight/tests/double/recorded/claude-manual.jsonl",
+    "dev/overnight/tests/unit/test_overnight_command.py",
+    ".claude-plugin/marketplace.json",
+    "README.md"
+  ]
+}

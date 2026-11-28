@@ -1,0 +1,5 @@
+#!/bin/sh
+# The `overnight` command, which Claude Code puts on the PATH of its own shell from the plugin's
+# bin/. It runs the code of ../scripts/overnight, whose `command` module says what it takes and
+# gives.
+exec python3 "$(dirname "$0")/../scripts/overnight" "$@"
