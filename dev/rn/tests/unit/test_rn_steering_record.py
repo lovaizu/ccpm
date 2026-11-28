@@ -1,7 +1,7 @@
 """The unit cases of steering/record.py, what each change makes of the work's steering: the
 orchestrator's first aim, a later one that keeps where each task is on its way and the stage, what
-the aim says comes next, each result moving a task on or ending it, and each mark of the stage, with
-each refusal."""
+the aim says comes next, each result moving a task on or ending it, a later task of the same
+deliverable left as it is, and each mark of the stage, with each refusal."""
 
 from __future__ import annotations
 
@@ -170,6 +170,19 @@ def test_a_task_that_ends_goes(fields: dict[str, Any], by_role: dict[str, Any]) 
     if fields.get("refactor", "") is None:
         del command(held)["refactor"]
     assert moved(held, results(**by_role))["tasks"] == [rn_files.TASKS[1]]
+
+
+def test_a_later_task_of_the_same_deliverable_waits_for_its_own_start() -> None:
+    """Given a steering whose command works in content-1, and a later task that fills the
+    command's parts, not yet started.
+    When the steering is moved on by the generator's result of content-1.
+    Then the first task takes its evaluator, and the later one stays as it was, as the result is
+    the first's."""
+    held = holding(entry="content-1")
+    later = {**rn_files.TASKS[0], "task": "Fill each TODO: of the command."}
+    held["tasks"].insert(1, later)
+    tasks = moved(held, results(generator=MADE))["tasks"]
+    assert (tasks[0]["next"], tasks[1]) == ("evaluator", later)
 
 
 def test_each_stage_is_marked() -> None:

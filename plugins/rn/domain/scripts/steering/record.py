@@ -104,7 +104,8 @@ def moved(steering: Steering, results: dict[str, dict[str, dict[str, Any]]]) -> 
     orchestrator's weighing; an evaluator's result, one more judged Round, then its weighing of
     what it found, else what follows a task made; a fixer's, what follows a task made; a
     refactorer's made, its end. What follows a task made is its refactorer, where the task gives
-    it a `refactor`, else its end. A task that ends goes. Each other task stays as it is.
+    it a `refactor`, else its end. A task that ends goes. Each other task stays as it is, a task
+    not yet started among them, as the results of its path are those of the task before it there.
     Changes: nothing.
     Refuses: nothing.
     """
@@ -112,7 +113,7 @@ def moved(steering: Steering, results: dict[str, dict[str, dict[str, Any]]]) -> 
     left = []
     for each in marked["tasks"]:
         role = each.get("next", "generator")
-        found = results.get(each["path"], {}).get(role)
+        found = results.get(each["path"], {}).get(role) if "entry" in each else None
         if found is None or not _ended(each, role, found):
             left.append(each)
     marked["tasks"] = left
