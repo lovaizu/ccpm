@@ -87,11 +87,18 @@ def test_judged_gives_the_goal_and_each_condition_without_its_practice():
 
 
 @pytest.mark.parametrize(
-    ("kind", "by"),
-    [("test-design", "refactor-code"), ("general", None), ("invoice", "refactor-doc")],
+    ("deliverable", "by"),
+    [
+        ({"kind": "test-design"}, "refactor-code"),
+        ({"kind": "general"}, None),
+        ({"kind": "general", "refactor": "refactor-code"}, "refactor-code"),
+        ({"kind": "invoice"}, "refactor-doc"),
+    ],
+    ids=["code", "general", "general-as-code", "other"],
 )
-def test_refactoring_of_a_kind(kind: str, by: str | None):
-    """Given a kind of code, general, or another kind, one that the work made among them
+def test_refactoring_of_a_deliverable(deliverable: dict[str, str], by: str | None):
+    """Given a deliverable of a kind of code, of general with no refactoring agreed or one agreed,
+    or of another kind, one that the work made among them
     When the kind it's refactored by is asked
-    Then it gives refactor-code, None, or refactor-doc"""
-    assert refactoring(kind) == by
+    Then it gives refactor-code, None, refactor-code, or refactor-doc"""
+    assert refactoring(deliverable) == by

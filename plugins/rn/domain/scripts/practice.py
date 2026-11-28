@@ -73,19 +73,20 @@ def judged(practice: Practice) -> dict[str, Any]:
     return goal
 
 
-def refactoring(kind: str) -> str | None:
-    """The kind of the best practice by which a deliverable of the kind is refactored.
+def refactoring(deliverable: dict[str, Any]) -> str | None:
+    """The kind of the best practice by which a deliverable is refactored.
 
-    Takes: a deliverable's kind.
-    Gives: `refactor-code` for `code`, `software-design`, `test-design`, and
-    `test-implementation`; None for `general`, as its form differs with each deliverable and no
-    refactor best practice fits every form; and `refactor-doc` for each other kind.
+    Takes: a deliverable, as the steering holds it.
+    Gives: for one of the `general` kind, the `refactor` that the user agreed to, or None where
+    none was, as its form differs with each deliverable; else `refactor-code` for `code`,
+    `software-design`, `test-design`, and `test-implementation`, and `refactor-doc` for each other
+    kind.
     Changes: nothing.
     Refuses: nothing.
     """
-    if kind == "general":
-        return None
-    return "refactor-code" if kind in _CODE else "refactor-doc"
+    if deliverable["kind"] == "general":
+        return deliverable.get("refactor")
+    return "refactor-code" if deliverable["kind"] in _CODE else "refactor-doc"
 
 
 def conditions(goal: dict[str, Any]) -> list[dict[str, Any]]:

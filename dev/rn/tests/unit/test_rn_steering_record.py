@@ -17,7 +17,7 @@ STEP = rn_files.WAY
 
 def result(**fields: Any) -> dict[str, Any]:
     """An aim of the walkthrough, with the fields given."""
-    return {"message": "the user picked printing", "ost": rn_files.ost(), **fields}
+    return {"ost": rn_files.ost(), **fields}
 
 
 def test_a_first_result_makes_the_steering_with_each_step_open() -> None:
@@ -246,12 +246,29 @@ def test_each_result_moves_its_deliverable_on(
 
 
 def test_a_kind_with_no_refactoring_ends_once_it_is_good() -> None:
-    """Given a steering whose general deliverable's evaluator found each condition good.
+    """Given a steering whose general deliverable, with no refactoring agreed, its evaluator found
+    each condition good.
     When the steering is moved on.
-    Then the deliverable is done, as no refactoring of its kind exists."""
+    Then the deliverable is done, as nothing refactors it."""
     held = holding(next="evaluator", entry="content-1")
     command(held)["kind"] = "general"
     assert command(moved(held, results(generator=MADE, evaluator=GOOD)))["status"] == "done"
+
+
+def test_a_general_deliverable_takes_the_refactoring_agreed_for_it() -> None:
+    """Given an aim whose command is of the general kind, to be refactored as code.
+    When it's taken in, and its evaluator finds each condition good.
+    Then the steering keeps the refactoring, and the command's refactorer is next."""
+    way = {
+        **STEP,
+        "deliverables": [
+            {"path": rn_files.COMMAND, "kind": "general", "refactor": "refactor-code"}
+        ],
+    }
+    held = taken_in(None, result(steps=[way]))
+    assert command(held)["refactor"] == "refactor-code"
+    command(held).update(next="evaluator", entry="content-1")
+    assert command(moved(held, results(generator=MADE, evaluator=GOOD)))["next"] == "refactorer"
 
 
 def test_the_final_check_is_marked_passed_once_each_step_is_done() -> None:

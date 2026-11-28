@@ -49,6 +49,9 @@
         "kind": {
          "$ref": "steering.schema.json#/properties/state/properties/steps/items/properties/deliverables/items/properties/kind"
         },
+        "refactor": {
+         "$ref": "steering.schema.json#/properties/state/properties/steps/items/properties/deliverables/items/properties/refactor"
+        },
         "next": {
          "description": "Where the weighing decides what the deliverable takes next: generator, to make it again on what was weighed, within LIMIT judged Rounds; anew, to make it again from its first Round, as the solution it was made on changed; fixer, to mend it; refactorer, to refactor it; done, to end it. Absent, it goes on as the steering holds it.",
          "enum": [

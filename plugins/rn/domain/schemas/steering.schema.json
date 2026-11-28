@@ -168,6 +168,13 @@
            "description": "The folder in rounds/<step>/<deliverable>/ of the Round or Fix that its next role works in, such as content-2, once `steering start` made it.",
            "type": "string",
            "pattern": "^(content|refactor|fix)-[1-9][0-9]*$"
+          },
+          "refactor": {
+           "description": "For a deliverable of the general kind, the refactor best practice that the user agreed it's refactored by, as its form differs with each deliverable; absent, it isn't refactored. Other kinds take theirs from their kind.",
+           "enum": [
+            "refactor-code",
+            "refactor-doc"
+           ]
           }
          }
         }

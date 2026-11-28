@@ -83,6 +83,8 @@ def _deliverable(told: dict[str, Any], had: dict[str, Any] | None) -> dict[str, 
     """The deliverable as the aim names it, keeping what the steering holds of it, and taking
     what the aim says it takes next."""
     kept: dict[str, Any] = {"path": told["path"], "kind": told["kind"], "status": "open"}
+    if "refactor" in told:
+        kept["refactor"] = told["refactor"]
     if had:
         kept.update({key: had[key] for key in ("status", *_WAY) if key in had})
     said = told.get("next")
@@ -170,7 +172,7 @@ def _on(each: dict[str, Any], role: str, found: dict[str, Any]) -> None:
 
 def _made(each: dict[str, Any]) -> None:
     """Takes a deliverable made on to its refactoring, where its kind has one, else to its end."""
-    if practice.refactoring(each["kind"]):
+    if practice.refactoring(each):
         each["next"] = "refactorer"
         each.pop("entry", None)
     else:

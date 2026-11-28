@@ -49,7 +49,7 @@ def started(
             raise Wrong(f"{path} has no Round to judge; start its generator first")
         folder = os.path.join(root, each["entry"])
         return steering, f"evaluator\t{folder}\t{_judges_by(work, plugin_root, each, folder)}\n"
-    by = practice.refactoring(each["kind"]) if role == "refactorer" else each["kind"]
+    by = practice.refactoring(each) if role == "refactorer" else each["kind"]
     found = _practice(work, plugin_root, by)
     if role == "fixer" and not words.strip():
         raise Wrong("the problem's words are empty; give them on stdin as they were said")
