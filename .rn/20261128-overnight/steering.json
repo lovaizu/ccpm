@@ -1,0 +1,68 @@
+{
+  "ost": {
+    "outcome": "A user who leaves AI work running at night finds it carried through by morning, as work stopped at the usage limit or by an error resumes on its own once it can, and the next work starts when one ends.",
+    "opportunities": [
+      {
+        "opportunity": "Once the usage limit lifts, the work resumes on its own.",
+        "children": [
+          {
+            "opportunity": "Not only at the usage limit: when an error happens, retry."
+          },
+          {
+            "opportunity": "Change how many times it retries."
+          }
+        ],
+        "solutions": [
+          {
+            "solution": "The user starts one work from Claude Code by `overnight`, with its folder, its prompt, and the tools it may use, and leaves; it runs apart from the session through `claude -p`, so closing Claude Code doesn't stop it, and on the usage limit or any error it is asked to go on in the same conversation after a wait of 5, 10, 20, then 60 minutes, up to 7 retries by default or as many as the user says, so that by morning the work is done, or recorded as failed, with its log.",
+            "target": true,
+            "assumptions": [
+              "A run succeeded exactly when `claude -p --output-format json` exits 0 and its result has `is_error` false; the usage limit and other errors show as anything else.",
+              "`claude -p --resume <session_id>` goes on from where the failed run stopped.",
+              "Asking again while the limit holds only fails again, and does no harm.",
+              "Waits of 5, 10, 20, then 60 minutes, 7 times, span the 5-hour limit, and resume within an hour of its lifting.",
+              "Unit tests with a stand-in for `claude` that answers as the real one does show that it works, so the user need not try it on a real night."
+            ]
+          }
+        ]
+      },
+      {
+        "opportunity": "When a work ends, the next work starts."
+      },
+      {
+        "opportunity": "Put any number of works in the queue."
+      },
+      {
+        "opportunity": "Start at a given time, or start right away."
+      },
+      {
+        "opportunity": "Say how many run at once; three by default."
+      }
+    ]
+  },
+  "tasks": [
+    {
+      "task": "Make, by TDD with unit tests under dev/overnight/tests, the `overnight` command that runs one work through `claude -p` and retries it in the same conversation after growing waits, as the README says, with `overnight --help` listing every option, whether it's required, and its default.",
+      "path": "plugins/overnight",
+      "kind": "code",
+      "refactor": "refactor-code"
+    }
+  ],
+  "decisions": [
+    "The work starts from issue #62 and takes from the closed pull request #105 its requirements alone; its code and tests are made anew.",
+    "The work makes every opportunity of the tree, one feature at a time in the tree's order: one work that retries, the next work's start, a queue of any number, a start time, and how many run at once.",
+    "Each feature is logic shown by unit tests, so once one's tests pass, the next opportunity's solution becomes the target without asking the user to try it.",
+    "A new plugin, overnight, built as simply as Claude Code's plugin documentation lets its kind be, with README, LICENSE, CHANGELOG, unit tests, a marketplace entry, and a line in the repository's README.",
+    "The code is Python with its standard library alone.",
+    "It retries on any error, not only the usage limit, in the same conversation by `--resume <session_id>`.",
+    "Waits between retries: 5, 10, 20 minutes, then 60 minutes each; 7 retries by default; the count can be changed; a work whose retries run out is recorded as failed, with its log.",
+    "The README of one work that retries says what the plugin does and that it's in development, how to install it, how to start a work with `overnight` and leave, what happens when it stops (the waits, the count, how to change it, and a work whose retries run out), and where each work's state and log are found in the morning; each later feature adds its part to the README when its turn comes.",
+    "The user doesn't see the README once it's made; the work goes on, and the user gets the whole once every feature is made.",
+    "The README is written anew in its own words from the requirements: no text of #105's README or its other files is copied, as the user chose to take from #105 its requirements alone.",
+    "The README is in the shape it ends in once every feature is made, the parts of the later features marked `TODO:`, rather than listing them as what doesn't work yet.",
+    "The README puts what a reader needs to decide it fits, the walkthrough and how it works, before its requirements and installation, as a reader decides before installing.",
+    "The README says the waits' sum as it is: 7 retries wait 4 hours and 35 minutes in all, which spans the limit for a stop that comes 25 minutes or more after its 5-hour window starts, and says to raise `--retries` for a stop that comes earlier, rather than claiming the waits span the 5-hour limit.",
+    "The README's Documentation points to `overnight --help` for every option, whether it's required, and its default, which the command task makes.",
+    "The README names one place for a work's state and log: the folder that the start prints, such as ~/.local/state/overnight/20261128-230012/, which holds state.json and the work's one log, apart from the folder the work runs in."
+  ]
+}
