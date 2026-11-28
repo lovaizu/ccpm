@@ -164,6 +164,7 @@ def test_what_the_aim_says_comes_next_is_taken_in(
     assert command(taken_in(held, told(next_))) == {
         "path": rn_files.COMMAND,
         "kind": "code",
+        "refactor": "refactor-code",
         **kept,
     }
 
@@ -245,17 +246,17 @@ def test_each_result_moves_its_deliverable_on(
     assert command(moved(held, results(**by_role))) == want
 
 
-def test_a_kind_with_no_refactoring_ends_once_it_is_good() -> None:
-    """Given a steering whose general deliverable, with no refactoring agreed, its evaluator found
-    each condition good.
+def test_a_deliverable_with_no_refactoring_ends_once_it_is_good() -> None:
+    """Given a steering whose deliverable has no refactoring, its evaluator found each condition
+    good.
     When the steering is moved on.
     Then the deliverable is done, as nothing refactors it."""
     held = holding(next="evaluator", entry="content-1")
-    command(held)["kind"] = "general"
+    del command(held)["refactor"]
     assert command(moved(held, results(generator=MADE, evaluator=GOOD)))["status"] == "done"
 
 
-def test_a_general_deliverable_takes_the_refactoring_agreed_for_it() -> None:
+def test_a_deliverable_takes_the_refactoring_that_the_aim_gives_it() -> None:
     """Given an aim whose command is of the general kind, to be refactored as code.
     When it's taken in, and its evaluator finds each condition good.
     Then the steering keeps the refactoring, and the command's refactorer is next."""

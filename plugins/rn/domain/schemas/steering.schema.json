@@ -170,7 +170,7 @@
            "pattern": "^(content|refactor|fix)-[1-9][0-9]*$"
           },
           "refactor": {
-           "description": "For a deliverable of the general kind, the refactor best practice that the user agreed it's refactored by, as its form differs with each deliverable; absent, it isn't refactored. Other kinds take theirs from their kind.",
+           "description": "The refactor best practice that the deliverable is refactored by once it's made, as the orchestrator chose it from the deliverable's form: refactor-code for code, refactor-doc for a document; absent, it isn't refactored.",
            "enum": [
             "refactor-code",
             "refactor-doc"

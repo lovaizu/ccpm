@@ -9,7 +9,6 @@ from __future__ import annotations
 import copy
 from typing import Any
 
-import practice
 from fault import Wrong
 
 # A steering, and the orchestrator's aim, as `json.load` gives them, each in its schema's form.
@@ -138,7 +137,7 @@ def moved(steering: Steering, results: dict[str, dict[str, dict[str, Any]]]) -> 
     the orchestrator's weighing; an evaluator's result, one more judged Round, then its weighing of
     what it found, else what follows a deliverable made; a fixer's, what follows a deliverable
     made; a refactorer's made, its end. What follows a deliverable made is its refactorer, where
-    its kind is refactored, else its end. Each other deliverable stays as it is.
+    the steering gives it a `refactor`, else its end. Each other deliverable stays as it is.
     Changes: nothing.
     Refuses: nothing.
     """
@@ -171,8 +170,9 @@ def _on(each: dict[str, Any], role: str, found: dict[str, Any]) -> None:
 
 
 def _made(each: dict[str, Any]) -> None:
-    """Takes a deliverable made on to its refactoring, where its kind has one, else to its end."""
-    if practice.refactoring(each):
+    """Takes a deliverable made on to its refactoring, where the steering gives it one, else to its
+    end."""
+    if "refactor" in each:
         each["next"] = "refactorer"
         each.pop("entry", None)
     else:

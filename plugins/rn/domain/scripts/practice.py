@@ -1,6 +1,6 @@
 """Decides where the best practice of each kind lies and what of it each role gets: rn's best
 practices, each read from its `best-practice.json`, the goal and conditions alone that an
-evaluator judges by, and the kind by which a deliverable is refactored."""
+evaluator judges by."""
 
 from __future__ import annotations
 
@@ -12,8 +12,6 @@ from typing import Any
 from fault import Wrong
 
 _FILE = "best-practice.json"
-# The kinds whose deliverables are code, refactored by refactor-code.
-_CODE = {"code", "software-design", "test-design", "test-implementation"}
 
 # A best practice as its best-practice.json holds it, in the form of
 # dev/rn/best-practice.schema.json.
@@ -71,22 +69,6 @@ def judged(practice: Practice) -> dict[str, Any]:
         # A condition's practice is its why and its items, which its form holds beside it.
         del condition["why"], condition["items"]
     return goal
-
-
-def refactoring(deliverable: dict[str, Any]) -> str | None:
-    """The kind of the best practice by which a deliverable is refactored.
-
-    Takes: a deliverable, as the steering holds it.
-    Gives: for one of the `general` kind, the `refactor` that the user agreed to, or None where
-    none was, as its form differs with each deliverable; else `refactor-code` for `code`,
-    `software-design`, `test-design`, and `test-implementation`, and `refactor-doc` for each other
-    kind.
-    Changes: nothing.
-    Refuses: nothing.
-    """
-    if deliverable["kind"] == "general":
-        return deliverable.get("refactor")
-    return "refactor-code" if deliverable["kind"] in _CODE else "refactor-doc"
 
 
 def conditions(goal: dict[str, Any]) -> list[dict[str, Any]]:

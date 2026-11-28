@@ -131,9 +131,9 @@ rn's rules for these steps:
   the steering's decisions, and what the repository holds, and show the deliverable's shape
   in the user's words, never the conditions, as they want to know what it does, not by what it's
   judged. Say where you read a point that's already settled, such as the repository's license.
-  For a deliverable of the general kind, propose too whether it's refactored as code, as a
-  document, or not at all, and give the agreed one in the aim as its `refactor`. Take their
-  agreement and each correction as decisions by `user`, by step 3, then run
+  Give each deliverable in the aim its `refactor`, chosen from its form, refactor-code for
+  code and refactor-doc for a document, or none, and mark it as assumed in the proposal only
+  where its form leaves it open. Take their agreement and each correction as decisions by `user`, by step 3, then run
   `steering start`.
 - For a deliverable whose next role is its fixer, give `steering start` the problem's words on
   stdin, word for word.

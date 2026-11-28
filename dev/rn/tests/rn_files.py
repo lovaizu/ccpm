@@ -42,7 +42,10 @@ GUIDE = "docs/guide.md"
 WAY = {
     "for": "O1",
     "settles": SETTLES,
-    "deliverables": [{"path": COMMAND, "kind": "code"}, {"path": GUIDE, "kind": "readme"}],
+    "deliverables": [
+        {"path": COMMAND, "kind": "code", "refactor": "refactor-code"},
+        {"path": GUIDE, "kind": "readme", "refactor": "refactor-doc"},
+    ],
 }
 
 
@@ -83,8 +86,16 @@ def step(status: str = "open", done: tuple[str, ...] = ()) -> dict[str, Any]:
         "for": "O1",
         "settles": SETTLES,
         "deliverables": [
-            {"path": path, "kind": kind, "status": "done" if path in done else "open"}
-            for path, kind in ((COMMAND, "code"), (GUIDE, "readme"))
+            {
+                "path": path,
+                "kind": kind,
+                "refactor": refactor,
+                "status": "done" if path in done else "open",
+            }
+            for path, kind, refactor in (
+                (COMMAND, "code", "refactor-code"),
+                (GUIDE, "readme", "refactor-doc"),
+            )
         ],
         "status": status,
     }

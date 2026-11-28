@@ -1,7 +1,6 @@
 """The unit cases of practice.py, where each kind's best practice lies and what of it each role
 gets: `kinds` of rn's best practices, and of a folder with none; `read` of a best practice, one
-missing, and one that isn't JSON; `judged` without any practice; and `refactoring` of a kind of
-code, of general, and of another kind.
+missing, and one that isn't JSON; and `judged` without any practice.
 dev/scripts/practices.py holds each of rn's best practices to its schema."""
 
 from __future__ import annotations
@@ -13,7 +12,7 @@ from typing import Any
 import pytest
 import rn_files
 from fault import Wrong
-from practice import judged, kinds, read, refactoring
+from practice import judged, kinds, read
 
 
 def rns_kinds() -> dict[str, str]:
@@ -84,21 +83,3 @@ def test_judged_gives_the_goal_and_each_condition_without_its_practice():
     given = judged(rn_files.practice("readme"))
     assert given == rn_files.judged_by("readme")
     assert "items" not in json.dumps(given) and '"why"' not in json.dumps(given)
-
-
-@pytest.mark.parametrize(
-    ("deliverable", "by"),
-    [
-        ({"kind": "test-design"}, "refactor-code"),
-        ({"kind": "general"}, None),
-        ({"kind": "general", "refactor": "refactor-code"}, "refactor-code"),
-        ({"kind": "invoice"}, "refactor-doc"),
-    ],
-    ids=["code", "general", "general-as-code", "other"],
-)
-def test_refactoring_of_a_deliverable(deliverable: dict[str, str], by: str | None):
-    """Given a deliverable of a kind of code, of general with no refactoring agreed or one agreed,
-    or of another kind, one that the work made among them
-    When the kind it's refactored by is asked
-    Then it gives refactor-code, None, refactor-code, or refactor-doc"""
-    assert refactoring(deliverable) == by
