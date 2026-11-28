@@ -69,9 +69,9 @@ Take the steps of what started you. Each says what holds once it's done and why;
      committed and pushed, with its draft pull request opened by `gh pr create --draft` naming each
      issue it closes or refers to, so that any conversation picks it up.
 - What's due, as `steering due <work>` prints it, until one waits on the user:
-  - `make <path> <kind> <next>`, a task to make: its next role has ended with its result, as
+  - `make <id> <kind> <next>`, a task to make: its next role has ended with its result, as
     making, judging, mending, and refactoring apart lets each meet the deliverable on its own.
-    `steering start <work> <path>` prints the role with all it's given, a fixer's problem given on
+    `steering start <work> <id>` prints the role with all it's given, a fixer's problem given on
     stdin word for word, or the result to weigh. A deliverable that the user chose to see is shown
     once its task goes, and what rests on it starts on their word, as they correct it before more
     rests on it.

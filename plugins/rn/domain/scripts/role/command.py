@@ -15,7 +15,7 @@ from fault import Answer
 from host import Host
 from place import WorkPlace, version
 from repository import trial, worktree
-from steering import record, rounds
+from steering import closed, record, rounds
 
 USAGE = "usage: role ended   (Claude Code's input of SubagentStop on stdin)\n"
 # The roles of rn that write a result, as Claude Code names a plugin's agent in `agent_type`.
@@ -34,8 +34,8 @@ def main(argv: Sequence[str], given: str, plugin_root: str, host: Host) -> Answe
       it, and each entry of a task that this role takes next with no result of the role yet,
       changing nothing, so that Claude Code keeps the role going with those words until each
       holds. Otherwise it moves each task on by its next role's result as `record.moved` does,
-      writing the steering where it changes, removes each of its trials' folders as
-      `trial.removed` does, and gives 0.
+      writing the steering where it changes and the closed tasks as `closed.added` does, removes
+      each of its trials' folders as `trial.removed` does, and gives 0.
     - 2 with the usage where the arguments are other than `ended`.
     """
     if list(argv) != ["ended"]:
@@ -66,7 +66,7 @@ def _missing(work: WorkPlace, role: str, schemas: str) -> list[str]:
     for each in held["tasks"] if held else []:
         if each.get("next", "generator") != role or "entry" not in each:
             continue
-        folder = os.path.join(rounds.folder_of(work, each["path"]), each["entry"])
+        folder = os.path.join(rounds.folder_of(work, each["id"]), each["entry"])
         name = rounds.RESULTS[role][0]
         if not os.path.isfile(os.path.join(folder, name)):
             found.append(f"{folder} holds no {name}; write it as your Output says")
@@ -74,12 +74,14 @@ def _missing(work: WorkPlace, role: str, schemas: str) -> list[str]:
 
 
 def _moved(work: WorkPlace, schemas: str) -> None:
-    """Moves each task on by its next role's result, writing the steering where it changes;
-    the work with no steering yet, before its first aim, has nothing to move."""
+    """Moves each task on by its next role's result, writing the steering where it changes, and
+    adding each task it completes to the closed tasks; the work with no steering yet, before its
+    first aim, has nothing to move."""
     held = _steering(work, schemas)
     if held is None:
         return
-    steering = record.moved(held, _results(work, held, schemas))
+    steering, completed = record.moved(held, _results(work, held, schemas))
+    closed.added(work, completed, schemas)
     if steering != held:
         with open(work.steering, "w", encoding="utf-8") as f:
             json.dump(steering, f, indent=2, ensure_ascii=False)
@@ -89,8 +91,8 @@ def _moved(work: WorkPlace, schemas: str) -> None:
 def _results(work: WorkPlace, steering: dict[str, Any], schemas: str) -> dict[str, Any]:
     """For each task with an entry, the results that its entry holds, by role."""
     return {
-        each["path"]: rounds.results(
-            os.path.join(rounds.folder_of(work, each["path"]), each["entry"]), schemas
+        each["id"]: rounds.results(
+            os.path.join(rounds.folder_of(work, each["id"]), each["entry"]), schemas
         )
         for each in steering["tasks"]
         if "entry" in each

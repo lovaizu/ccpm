@@ -14,22 +14,22 @@
    "$ref": "steering.schema.json#/properties/ost"
   },
   "tasks": {
-   "description": "What's left to do for the target solution, first to last.",
+   "description": "What's left to do for the target solution, in the order the tasks are worked. A task that the steering holds and the aim leaves out is canceled.",
    "type": "array",
    "items": {
     "type": "object",
     "required": [
      "task",
-     "path",
      "kind"
     ],
     "additionalProperties": false,
     "properties": {
+     "id": {
+      "description": "The task's id, as the steering holds it, for a task it holds; absent for a new task, which `steering aim` gives the next id.",
+      "$ref": "steering.schema.json#/definitions/task/properties/id"
+     },
      "task": {
       "$ref": "steering.schema.json#/definitions/task/properties/task"
-     },
-     "path": {
-      "$ref": "steering.schema.json#/definitions/task/properties/path"
      },
      "kind": {
       "$ref": "steering.schema.json#/definitions/task/properties/kind"
@@ -38,10 +38,9 @@
       "$ref": "steering.schema.json#/definitions/task/properties/refactor"
      },
      "next": {
-      "description": "Where the weighing decides what the task takes next: generator, to make it again on what was weighed, within LIMIT judged Rounds; anew, to make it again from its first Round, as the solution it was made on changed; fixer, to mend it; refactorer, to refactor it. Absent, it goes on as the steering holds it. A task that's done is left out of the aim.",
+      "description": "Where the weighing decides what the task takes next: generator, to make it again on what was weighed, within LIMIT evaluated Rounds; fixer, to mend it; refactorer, to refactor it. Absent, it goes on as the steering holds it. To make it again from its first Round, as the solution it was made on changed, leave it out and give a new task.",
       "enum": [
        "generator",
-       "anew",
        "fixer",
        "refactorer"
       ]

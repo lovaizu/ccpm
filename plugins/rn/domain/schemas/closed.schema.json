@@ -1,0 +1,56 @@
+{
+ "$schema": "http://json-schema.org/draft-07/schema#",
+ "title": "closed",
+ "description": "The tasks of one piece of work that are closed, at .rn/<work>/closed.json, in the order they closed, each as the steering last held it, with how it closed, so that each id in tasks/ names a task. rn's scripts alone write it.",
+ "type": "object",
+ "required": [
+  "tasks"
+ ],
+ "additionalProperties": false,
+ "properties": {
+  "tasks": {
+   "description": "Each closed task, in the order it closed.",
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "id",
+     "task",
+     "kind",
+     "closed"
+    ],
+    "additionalProperties": false,
+    "properties": {
+     "id": {
+      "$ref": "steering.schema.json#/definitions/task/properties/id"
+     },
+     "task": {
+      "$ref": "steering.schema.json#/definitions/task/properties/task"
+     },
+     "kind": {
+      "$ref": "steering.schema.json#/definitions/task/properties/kind"
+     },
+     "refactor": {
+      "$ref": "steering.schema.json#/definitions/task/properties/refactor"
+     },
+     "next": {
+      "$ref": "steering.schema.json#/definitions/task/properties/next"
+     },
+     "evaluated": {
+      "$ref": "steering.schema.json#/definitions/task/properties/evaluated"
+     },
+     "entry": {
+      "$ref": "steering.schema.json#/definitions/task/properties/entry"
+     },
+     "closed": {
+      "description": "How the task closed: completed, once its last role's result ended it; canceled, once the orchestrator's aim left it out.",
+      "enum": [
+       "completed",
+       "canceled"
+      ]
+     }
+    }
+   }
+  }
+ }
+}

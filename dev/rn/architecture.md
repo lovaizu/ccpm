@@ -120,10 +120,18 @@ Strategies:
 - Each remedy that a Round's judgment brings kept as a decision of the work. [P3.3]\
   Intent: the next Round and each later mend rest on what was weighed.
 - Each task's next role kept in the steering, said by the orchestrator where its weighing
-  decides it, and by the hook where nothing is to weigh, anew from the first Round where its solution
-  changed. [P5.2]\
+  decides it, and by the hook where nothing is to weigh, a new task where its solution changed.
+  [P5.2]\
   Intent: the steering alone says what comes next, and nothing outside it keeps a deliverable on a
   dropped solution.
+- Each task named by an id that the script gives in order and never gives again, its place in the
+  steering's list its order of work, and each task closed, completed or canceled, moved to its own
+  record. [P5.2]\
+  Intent: a task's words, its Rounds' folder, and its record name one task, as a deliverable that
+  spans many files, or one that two tasks make in turn, has no one path to name it by.
+- The version of rn that wrote the work kept in the steering, and a work of another version
+  brought into this rn's form before any step. [P5.2]\
+  Intent: the user updates rn between conversations, and the work goes on from where it stopped.
 - What the Rounds leave at the limit weighed by the orchestrator, mended by a fixer or left, the
   script refusing a Round past it. [P3.3]\
   Intent: the user is asked only what's theirs to decide.
@@ -448,7 +456,8 @@ dev/rn/                            what only rn's developers use
 <worktree>/.rn/                    what rn writes on the work's branch, in the work's worktree
 └── <yyyymmdd>-<slug>/             the folder of one piece of work
     ├── steering.json              the steering
-    └── rounds/<deliverable>/      each Round and each Fix of the deliverable, in the order made
+    ├── closed.json                each task closed, completed or canceled, in the order it closed
+    └── tasks/<id>/                each Round and each Fix of the task, in the order made
 ```
 
 ## Test strategy

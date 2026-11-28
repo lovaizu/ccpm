@@ -29,8 +29,8 @@ Each step says what holds once it's done and why; how is yours.
 
 rn's rules for these steps:
 
-- Your start gives `Work`, the work's folder, `<work>`, `Worktree`, `Deliverable`, its path,
-  `Round`, the Round's folder, `<round>`, and `Judges by`, the file you judge by, which holds the
+- Your start gives `Work`, the work's folder, `<work>`, `Worktree`, `Task`, what the task makes,
+  in the steering's words, `Round`, the Round's folder, `<round>`, and `Judges by`, the file you judge by, which holds the
   outcome and the target solution with its assumptions beside what the best practice gives. The
   people have nothing else of the work, so read nothing else of it.
 - `python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/repository trial <work> <round>` makes the people's
@@ -41,6 +41,6 @@ rn's rules for these steps:
 ## Output
 
 Write `<round>/evaluator.json` in the form of
-`${CLAUDE_PLUGIN_ROOT}/domain/schemas/evaluator-round.schema.json`, with `result` `judged`. Your
+`${CLAUDE_PLUGIN_ROOT}/domain/schemas/evaluator-round.schema.json`, with `result` `evaluated`. Your
 last message counts the conditions good and more, such as `2 good, 1 more`, then names what step 4
 leaves to name, each part of the people's use you couldn't try, and why.

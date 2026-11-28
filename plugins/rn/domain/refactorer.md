@@ -27,8 +27,8 @@ Each step says what holds once it's done and why; how is yours.
 
 rn's rules for these steps:
 
-- Your start gives `Worktree`, `Deliverable`, its path, `Steering`, `Kind`, `Round`, the Round's
-  folder, `<round>`, `Refactor best practice`, its folder, `<refactor best practice>`, and `Kind's
+- Your start gives `Worktree`, `Task`, what the task makes, in the steering's words, `Steering`,
+  `Kind`, `Round`, the Round's folder, `<round>`, `Refactor best practice`, its folder, `<refactor best practice>`, and `Kind's
   best practice`, its folder, `<kind's best practice>`. The steering takes the form of
   `${CLAUDE_PLUGIN_ROOT}/domain/schemas/steering.schema.json`. Leave the Rounds unread, as the
   deliverable as it stands is what you refactor.

@@ -41,7 +41,7 @@ def test_each_keyword_names_its_fault_by_where_it_lies() -> None:
     value["ost"]["opportunities"][0]["solutions"][0]["target"] = False
     value["tasks"][0]["next"] = "waiting"
     value["tasks"][0]["entry"] = "draft-1"
-    value["tasks"][1]["judged"] = "1"
+    value["tasks"][1]["evaluated"] = "1"
     assert faults(value, STEERING) == [
         "/decisions: is required",
         "/ost/outcome: takes at least 1 character",
@@ -49,8 +49,8 @@ def test_each_keyword_names_its_fault_by_where_it_lies() -> None:
         "/ost/opportunities/0/solutions/0/target: takes True",
         "/ost/extra: isn't a field of this form",
         "/tasks/0/next: takes one of generator, evaluator, weigh, fixer, refactorer",
-        "/tasks/0/entry: takes the form ^(content|refactor|fix)-[1-9][0-9]*$",
-        "/tasks/1/judged: takes integer",
+        "/tasks/0/entry: takes the form ^[0-9]{2,}-(content|refactor|fix)$",
+        "/tasks/1/evaluated: takes integer",
     ]
 
 
@@ -62,12 +62,12 @@ def test_a_value_of_the_wrong_type_at_the_top_is_named_by_a_slash() -> None:
 
 
 def test_a_bool_is_no_integer() -> None:
-    """Given true where the steering's schema takes a count of judged Rounds.
+    """Given true where the steering's schema takes a count of evaluated Rounds.
     When it's checked.
     Then it's named, as JSON holds a bool apart from a number."""
     held = rn_files.steering()
-    held["tasks"][0]["judged"] = True
-    assert faults(held, STEERING) == ["/tasks/0/judged: takes integer"]
+    held["tasks"][0]["evaluated"] = True
+    assert faults(held, STEERING) == ["/tasks/0/evaluated: takes integer"]
 
 
 def test_a_boolean_takes_a_bool(tmp_path: Any) -> None:

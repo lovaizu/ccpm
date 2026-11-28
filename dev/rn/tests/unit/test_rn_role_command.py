@@ -1,5 +1,6 @@
 """The unit cases of role/command.py, rn's hook once a role ends: an agent that isn't rn's left
-alone, a role's result moving its task on with nothing committed, a session outside git, each
+alone, a role's result moving its task on with nothing committed, a task that ends completed
+into the closed tasks, a session outside git, each
 result out of its schema keeping the role going, a role that ends with no result kept going, work
 in another worktree left alone, the work ended and the work of an earlier rn left alone, the
 trials' folders removed, the inspector left alone, and arguments of another form."""
@@ -60,15 +61,15 @@ def test_an_agent_that_isnt_rns_is_left_alone(made: WorkPlace) -> None:
     assert git(made.worktree, "rev-parse", "HEAD") == before
 
 
-def test_a_roles_result_moves_its_deliverable_on_in_the_steering(made: WorkPlace) -> None:
-    """Given a steering whose command works in content-1, and the generator's result made there.
+def test_a_roles_result_moves_its_task_on_in_the_steering(made: WorkPlace) -> None:
+    """Given a steering whose command works in 01-content, and the generator's result made there.
     When the generator ends.
     Then the steering has the command's evaluator next, not committed, as the orchestrator
-    commits."""
+    commits, and no task is closed."""
     value = rn_files.steering()
-    value["tasks"][0]["entry"] = "content-1"
+    value["tasks"][0]["entry"] = "01-content"
     rn_files.write_json(made.steering, value)
-    folder = os.path.join(made.rounds, "invoice%2F__main__.py", "content-1")
+    folder = os.path.join(made.tasks, rn_files.COMMAND_ID, "01-content")
     rn_files.write_json(
         os.path.join(folder, "generator.json"), {"result": "made", "files": [rn_files.COMMAND]}
     )
@@ -76,6 +77,32 @@ def test_a_roles_result_moves_its_deliverable_on_in_the_steering(made: WorkPlace
     with open(made.steering, encoding="utf-8") as f:
         assert json.load(f)["tasks"][0]["next"] == "evaluator"
     assert git(made.worktree, "log", "--format=%s") == "accounting\n"
+    assert not os.path.exists(made.closed)
+
+
+def test_a_task_that_ends_is_completed_into_the_closed_tasks(made: WorkPlace) -> None:
+    """Given a steering whose command, with no refactoring to take, waits on its evaluator in
+    01-content, and the evaluator's result with nothing more to mend there.
+    When the evaluator ends.
+    Then the steering holds the guide alone, and closed.json holds the command, completed."""
+    value = rn_files.steering()
+    del value["tasks"][0]["refactor"]
+    value["tasks"][0].update(next="evaluator", entry="01-content")
+    rn_files.write_json(made.steering, value)
+    folder = os.path.join(made.tasks, rn_files.COMMAND_ID, "01-content")
+    rn_files.write_json(
+        os.path.join(folder, "generator.json"), {"result": "made", "files": [rn_files.COMMAND]}
+    )
+    good = {"result": "evaluated", "good": [], "more": []}
+    rn_files.write_json(os.path.join(folder, "evaluator.json"), good)
+    assert ended(made, "rn:evaluator") == (0, "", "")
+    with open(made.steering, encoding="utf-8") as f:
+        assert json.load(f)["tasks"] == rn_files.tasks((rn_files.GUIDE_ID,))
+    with open(made.closed, encoding="utf-8") as f:
+        closed = json.load(f)["tasks"]
+    assert [(each["id"], each["closed"], each["evaluated"]) for each in closed] == [
+        (rn_files.COMMAND_ID, "completed", 1)
+    ]
 
 
 def test_nothing_is_committed_where_nothing_changed(made: WorkPlace) -> None:
@@ -121,7 +148,7 @@ def test_a_result_out_of_its_schema_keeps_the_role_going(
     """Given the work whose Round's result leaves its schema or isn't JSON.
     When the role ends.
     Then it gives 2 naming the place, so that the role goes on, and commits nothing."""
-    target = os.path.join(made.folder, "rounds", "a", "content-1", "generator.json")
+    target = os.path.join(made.tasks, "001", "01-content", "generator.json")
     os.makedirs(os.path.dirname(target), exist_ok=True)
     with open(target, "w", encoding="utf-8") as f:
         f.write(text)
@@ -135,14 +162,14 @@ def test_a_result_out_of_its_schema_keeps_the_role_going(
 def test_a_role_that_ends_with_no_result_keeps_going(
     made: WorkPlace, agent: str, code: int
 ) -> None:
-    """Given a steering whose command's generator works in content-1, which holds no result yet.
+    """Given a steering whose command's generator works in 01-content, which holds no result yet.
     When the generator ends, or another role.
     Then the generator's end gives 2 naming the result to write, so that it goes on, and the other
     role's gives 0, and the steering stays as it is."""
     value = rn_files.steering()
-    value["tasks"][0]["entry"] = "content-1"
+    value["tasks"][0]["entry"] = "01-content"
     rn_files.write_json(made.steering, value)
-    os.makedirs(os.path.join(made.rounds, "invoice%2F__main__.py", "content-1"))
+    os.makedirs(os.path.join(made.tasks, rn_files.COMMAND_ID, "01-content"))
     given, _, err = ended(made, agent)
     assert (given, "holds no generator.json" in err) == (code, code == 2)
     with open(made.steering, encoding="utf-8") as f:
@@ -158,7 +185,7 @@ def test_the_hook_leaves_work_in_another_worktree_alone(made: WorkPlace, tmp_pat
     other = WorkPlace(
         rn_files.worktree_of(top(made), str(tmp_path / "rules"), "rules"), "20261127-invoice-rules"
     )
-    write_files(other.folder, {"rounds/a/content-1/generator.json": "{"})
+    write_files(other.folder, {"tasks/001/01-content/generator.json": "{"})
     assert ended(made, "rn:generator") == (0, "", "")
 
 
@@ -169,12 +196,12 @@ def test_the_hook_leaves_the_work_ended_and_an_earlier_rns_alone(made: WorkPlace
     Then it gives 0, leaving both unchecked and their steering as it was."""
     rn_files.write_json(made.steering, rn_files.steering())
     done = WorkPlace(made.worktree, "20261125-print")
-    rn_files.write_json(done.steering, rn_files.steering(paths=(), stage="inspected"))
+    rn_files.write_json(done.steering, rn_files.steering(ids=(), stage="inspected"))
     earlier = WorkPlace(made.worktree, "20261124-receipts")
     old = {"ost": {"target": "O1"}, "state": {"steps": []}}
     rn_files.write_json(earlier.steering, old)
     for each in (done, earlier):
-        write_files(each.folder, {"rounds/a/content-1/generator.json": "{"})
+        write_files(each.folder, {"tasks/001/01-content/generator.json": "{"})
     assert ended(made, "rn:generator") == (0, "", "")
     with open(earlier.steering, encoding="utf-8") as f:
         assert json.load(f) == old
@@ -186,7 +213,7 @@ def test_the_trials_of_the_work_are_removed_once_its_role_ends(made: WorkPlace, 
     Then the trial's folder is gone."""
     rn_files.committed_steering(made.worktree, made.name, rn_files.steering())
     trials = os.path.join(temp, f"rn-trial-{made.name}")
-    write_files(os.path.join(trials, "invoice-content-1"), {"README.md": "# Accounting\n"})
+    write_files(os.path.join(trials, "001-01-content"), {"README.md": "# Accounting\n"})
     assert ended(made, "rn:evaluator") == (0, "", "")
     assert not os.path.exists(trials)
 

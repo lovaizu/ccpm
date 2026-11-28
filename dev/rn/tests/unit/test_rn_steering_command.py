@@ -1,9 +1,10 @@
 """The unit cases of steering/command.py, steering's command line as the orchestrator runs it: each
-aim taken in, each mark of the stage, each written to the steering alone, what's due read, each
-start of a task's next role with what it's given, and each refusal: a steering missing or out of its
-schema, an aim that isn't JSON, leaves its schema, or that the steering refuses, a mark that the
-steering refuses, a hand-over or an end with a TODO left, a start that can't be, and arguments of
-another form."""
+aim taken in, a task it leaves out canceled into closed.json, each mark of the stage, each written
+to the steering alone, what's due read, each start of a task's next role by its id with what it's
+given, the records of another version of rn brought into this one, and each refusal: a steering
+missing or out of its schema, an aim that isn't JSON, leaves its schema, or that the steering
+refuses, a mark that the steering refuses, a hand-over or an end with a TODO left, a start that
+can't be, records of another version out of this rn's form, and arguments of another form."""
 
 from __future__ import annotations
 
@@ -11,7 +12,6 @@ import json
 import os
 from collections.abc import Sequence
 from typing import Any
-from urllib.parse import quote
 
 import pytest
 import rn_files
@@ -58,25 +58,42 @@ def held(work: WorkPlace) -> Any:
 def test_the_first_aim_makes_the_steering_and_commits_nothing(made: WorkPlace) -> None:
     """Given the work with no steering, and the walkthrough's aim.
     When it's given to `steering aim`.
-    Then the steering holds it, not committed, as the orchestrator commits, and the command is
-    due to make."""
+    Then the steering holds it, each task with its id, not committed, as the orchestrator
+    commits, the command is due to make by its id, and no task is closed."""
     before = git(made.worktree, "rev-parse", "HEAD")
     assert call(made, "aim", words=json.dumps(rn_files.aim())) == (
         0,
-        f"make\t{rn_files.COMMAND}\tcode\tgenerator\n",
+        f"make\t{rn_files.COMMAND_ID}\tcode\tgenerator\n",
         "",
     )
     assert git(made.worktree, "rev-parse", "HEAD") == before
-    assert held(made) == rn_files.steering()
+    assert (held(made), os.path.exists(made.closed)) == (rn_files.steering(), False)
 
 
 def test_a_later_aim_keeps_the_stage(made: WorkPlace) -> None:
     """Given a steering in the user's hands with no task left, and an aim with a task to mend.
     When it's given to `steering aim`.
-    Then the steering holds the task, and keeps the stage, so the try waits once it's mended."""
-    steering(made, rn_files.steering(paths=(), stage="trying"))
+    Then the steering holds the task with the first id, and keeps the stage, so the try waits once
+    it's mended."""
+    steering(made, rn_files.steering(ids=(), stage="trying"))
     code, _, _ = call(made, "aim", words=json.dumps(rn_files.aim(rn_files.TASKS[:1])))
-    assert (code, held(made)) == (0, rn_files.steering((rn_files.COMMAND,), stage="trying"))
+    assert (code, held(made)) == (0, rn_files.steering((rn_files.COMMAND_ID,), stage="trying"))
+
+
+def test_a_task_the_aim_leaves_out_is_canceled_into_the_closed_tasks(made: WorkPlace) -> None:
+    """Given a steering holding the command and the guide, and closed.json holding a task 003.
+    When an aim that keeps the guide alone and adds a task is given to `steering aim`.
+    Then the steering holds the guide and the new task 004, and closed.json holds 003, then the
+    command, canceled."""
+    steering(made, rn_files.steering())
+    earlier = {**rn_files.tasks()[1], "id": "003", "closed": "completed"}
+    rn_files.write_json(made.closed, {"tasks": [earlier]})
+    aim = rn_files.aim([*rn_files.tasks((rn_files.GUIDE_ID,)), {"task": "Print.", "kind": "code"}])
+    code, _, _ = call(made, "aim", words=json.dumps(aim))
+    assert [each["id"] for each in held(made)["tasks"]] == [rn_files.GUIDE_ID, "004"]
+    with open(made.closed, encoding="utf-8") as f:
+        closed = json.load(f)["tasks"]
+    assert (code, closed) == (0, [earlier, {**rn_files.tasks()[0], "closed": "canceled"}])
 
 
 @pytest.mark.parametrize(
@@ -84,18 +101,19 @@ def test_a_later_aim_keeps_the_stage(made: WorkPlace) -> None:
     [
         ("{", "the aim isn't JSON"),
         (json.dumps({}), "aim.schema.json: /ost: is required"),
-        (json.dumps(rn_files.aim([{**rn_files.TASKS[0], "next": "generator"}])), "has had its 2"),
+        (json.dumps(rn_files.aim([{**rn_files.tasks()[0], "next": "generator"}])), "has had its 2"),
+        (json.dumps(rn_files.aim([{**rn_files.TASKS[0], "id": "009"}])), "no task left has the id"),
     ],
-    ids=["not-json", "schema", "refused"],
+    ids=["not-json", "schema", "refused", "no-id"],
 )
 def test_an_aim_that_can_not_be_taken_in_is_refused_and_changes_nothing(
     made: WorkPlace, words: str, says: str
 ) -> None:
-    """Given a steering whose command has had its judged Rounds, and an aim that isn't JSON, leaves
-    its schema, or makes the command again.
+    """Given a steering whose command has had its evaluated Rounds, and an aim that isn't JSON,
+    leaves its schema, makes the command again, or names an id that no task left has.
     When it's given to `steering aim`.
     Then it gives 1 saying why, and changes nothing."""
-    at(made, next="weigh", entry="content-2", judged=2)
+    at(made, next="weigh", entry="02-content", evaluated=2)
     code, _, err = call(made, "aim", words=words)
     assert (code, says in err, unchanged(made)) == (1, True, True)
 
@@ -108,7 +126,7 @@ def test_each_mark_is_written_and_gives_whats_due(made: WorkPlace, stage: str, l
     """Given a steering with no task left.
     When the work is marked trying, or inspected.
     Then the steering holds it, and the user's try, or the work's end, is due."""
-    steering(made, rn_files.steering(paths=()))
+    steering(made, rn_files.steering(ids=()))
     assert call(made, "mark", stage) == (0, line, "")
     assert held(made)["stage"] == stage
 
@@ -120,7 +138,7 @@ def test_a_hand_over_or_an_end_with_a_todo_left_is_refused(made: WorkPlace, stag
     Then it gives 1 naming the TODO's place, and changes nothing, as what it marks is still to
     make."""
     write_files(made.worktree, {rn_files.GUIDE: "# Guide\n\nTODO: the rules.\n"})
-    steering(made, rn_files.steering(paths=()))
+    steering(made, rn_files.steering(ids=()))
     code, _, err = call(made, "mark", stage)
     assert (code, f"{rn_files.GUIDE}:3: TODO" in err, unchanged(made)) == (1, True, True)
 
@@ -139,7 +157,7 @@ def test_whats_due_is_read_from_the_steering(made: WorkPlace) -> None:
     When `steering due` runs.
     Then the command is due to make."""
     steering(made, rn_files.steering())
-    assert call(made, "due") == (0, f"make\t{rn_files.COMMAND}\tcode\tgenerator\n", "")
+    assert call(made, "due") == (0, f"make\t{rn_files.COMMAND_ID}\tcode\tgenerator\n", "")
 
 
 def test_a_steering_out_of_its_schema_is_refused(made: WorkPlace) -> None:
@@ -169,9 +187,9 @@ def test_arguments_of_another_form_give_the_usage(argv: Sequence[str]) -> None:
     assert main(argv, "/", rn_files.RN, str, run) == (2, "", USAGE)
 
 
-def rounds_of(work: WorkPlace, path: str = rn_files.COMMAND) -> str:
-    """The folder of the deliverable's Rounds and Fixes."""
-    return os.path.join(work.rounds, quote(path, safe=""))
+def rounds_of(work: WorkPlace) -> str:
+    """The folder of the command's task's Rounds and Fixes."""
+    return os.path.join(work.tasks, rn_files.COMMAND_ID)
 
 
 def at(work: WorkPlace, **fields: Any) -> None:
@@ -191,22 +209,22 @@ def practice_of(kind: str) -> str:
 
 def given(made: WorkPlace, role: str, *things: tuple[str, str]) -> str:
     """What starting the command's role gives: its name, then each thing it's given."""
-    lines = [("Worktree", made.worktree), ("Deliverable", rn_files.COMMAND), *things]
+    lines = [("Worktree", made.worktree), ("Task", rn_files.TASKS[0]["task"]), *things]
     return role + "\n" + "".join(f"{name}: {value}\n" for name, value in lines)
 
 
 def kept(made: WorkPlace, place: str, folder: str) -> list[tuple[str, str]]:
-    """What each role but the evaluator is given beside the worktree and the deliverable."""
+    """What each role but the evaluator is given beside the worktree and the task."""
     return [("Steering", made.steering), ("Kind", "code"), (place, folder)]
 
 
 def test_a_round_of_content_starts_in_a_new_folder_and_again_in_the_same(made: WorkPlace) -> None:
     """Given the walkthrough's steering, its command not started.
     When its next role is started, twice, as a stop left the first with no result.
-    Then each gives its generator, content-1, and the code best practice, and the steering holds
-    content-1 as its entry."""
+    Then each gives its generator, 01-content, and the code best practice, and the steering holds
+    01-content as its entry."""
     at(made)
-    folder = os.path.join(rounds_of(made), "content-1")
+    folder = os.path.join(rounds_of(made), "01-content")
     want = (
         0,
         given(
@@ -214,36 +232,37 @@ def test_a_round_of_content_starts_in_a_new_folder_and_again_in_the_same(made: W
         ),
         "",
     )
-    assert (call(made, "start", rn_files.COMMAND), call(made, "start", rn_files.COMMAND)) == (
+    assert (call(made, "start", rn_files.COMMAND_ID), call(made, "start", rn_files.COMMAND_ID)) == (
         want,
         want,
     )
-    assert (os.path.isdir(folder), command_of(made)["entry"]) == (True, "content-1")
+    assert (os.path.isdir(folder), command_of(made)["entry"]) == (True, "01-content")
 
 
 def test_a_round_made_again_starts_past_the_last(made: WorkPlace) -> None:
-    """Given a command whose content-1 and fix-2 are made, and that the orchestrator has made again.
+    """Given a command whose 01-content and 02-fix are made, and that the orchestrator has made
+    again.
     When its next role is started.
-    Then it's content-3."""
-    at(made, next="generator", judged=1)
-    rn_files.write_json(os.path.join(rounds_of(made), "content-1", "generator.json"), MADE)
-    os.makedirs(os.path.join(rounds_of(made), "fix-2"))
-    code, out, _ = call(made, "start", rn_files.COMMAND)
-    assert (code, f"Round: {os.path.join(rounds_of(made), 'content-3')}" in out) == (0, True)
+    Then it's 03-content."""
+    at(made, next="generator", evaluated=1)
+    rn_files.write_json(os.path.join(rounds_of(made), "01-content", "generator.json"), MADE)
+    os.makedirs(os.path.join(rounds_of(made), "02-fix"))
+    code, out, _ = call(made, "start", rn_files.COMMAND_ID)
+    assert (code, f"Round: {os.path.join(rounds_of(made), '03-content')}" in out) == (0, True)
 
 
 def test_the_evaluator_judges_its_round_by_the_conditions_alone(made: WorkPlace) -> None:
-    """Given a command whose content-1 is made, its evaluator next.
+    """Given a command whose 01-content is made, its evaluator next.
     When its next role is started.
-    Then it gives the evaluator, the work, content-1, and judges-by.json there, holding the
+    Then it gives the evaluator, the work, 01-content, and judges-by.json there, holding the
     conditions, the outcome, and the target solution with its assumptions."""
-    at(made, next="evaluator", entry="content-1")
-    folder = os.path.join(rounds_of(made), "content-1")
+    at(made, next="evaluator", entry="01-content")
+    folder = os.path.join(rounds_of(made), "01-content")
     os.makedirs(folder)
     judges = os.path.join(folder, "judges-by.json")
     want = given(made, "evaluator", ("Round", folder), ("Judges by", judges))
     want = want.replace("evaluator\n", f"evaluator\nWork: {made.folder}\n", 1)
-    assert call(made, "start", rn_files.COMMAND) == (0, want, "")
+    assert call(made, "start", rn_files.COMMAND_ID) == (0, want, "")
     solution = rn_files.ost()["opportunities"][0]["solutions"][0]
     with open(judges, encoding="utf-8") as f:
         assert json.load(f) == {
@@ -266,16 +285,16 @@ def test_the_evaluator_judges_its_round_by_the_conditions_alone(made: WorkPlace)
 def test_a_weighing_takes_the_result_to_weigh(
     made: WorkPlace, results: Sequence[str], weighed: str
 ) -> None:
-    """Given a command waiting on the orchestrator's weighing of content-1, which holds an
+    """Given a command waiting on the orchestrator's weighing of 01-content, which holds an
     evaluator's findings, or a generator's or a fixer's point alone.
     When its next role is started.
     Then it gives the weighing, with the result to weigh, and changes nothing."""
-    at(made, next="weigh", entry="content-1")
-    folder = os.path.join(rounds_of(made), "content-1")
+    at(made, next="weigh", entry="01-content")
+    folder = os.path.join(rounds_of(made), "01-content")
     for role in results:
         rn_files.write_json(os.path.join(folder, f"{role}.json"), {"result": "x"})
     before = held(made)
-    assert call(made, "start", rn_files.COMMAND) == (
+    assert call(made, "start", rn_files.COMMAND_ID) == (
         0,
         f"weigh\t{os.path.join(folder, weighed + '.json')}\n",
         "",
@@ -284,13 +303,13 @@ def test_a_weighing_takes_the_result_to_weigh(
 
 
 def test_a_fix_starts_with_the_problem_in_its_words(made: WorkPlace) -> None:
-    """Given a command that the orchestrator keeps to mend, its content-1 made.
+    """Given a command that the orchestrator keeps to mend, its 01-content made.
     When its next role is started with the problem's words on stdin.
-    Then it gives the fixer, fix-2, and the code best practice, with problem.md holding them."""
+    Then it gives the fixer, 02-fix, and the code best practice, with problem.md holding them."""
     at(made, next="fixer")
-    os.makedirs(os.path.join(rounds_of(made), "content-1"))
-    folder = os.path.join(rounds_of(made), "fix-2")
-    assert call(made, "start", rn_files.COMMAND, words="The total is off.") == (
+    os.makedirs(os.path.join(rounds_of(made), "01-content"))
+    folder = os.path.join(rounds_of(made), "02-fix")
+    assert call(made, "start", rn_files.COMMAND_ID, words="The total is off.") == (
         0,
         given(made, "fixer", *kept(made, "Fix", folder), ("Best practice", practice_of("code"))),
         "",
@@ -302,11 +321,11 @@ def test_a_fix_starts_with_the_problem_in_its_words(made: WorkPlace) -> None:
 def test_a_refactoring_takes_its_kinds_refactor_best_practice(made: WorkPlace) -> None:
     """Given a command whose Rounds are good, its refactorer next.
     When its next role is started.
-    Then it gives the refactorer, refactor-1, refactor-code, and the code best practice, whose
+    Then it gives the refactorer, 01-refactor, refactor-code, and the code best practice, whose
     template's form the refactoring keeps."""
     at(made, next="refactorer")
-    folder = os.path.join(rounds_of(made), "refactor-1")
-    assert call(made, "start", rn_files.COMMAND) == (
+    folder = os.path.join(rounds_of(made), "01-refactor")
+    assert call(made, "start", rn_files.COMMAND_ID) == (
         0,
         given(
             made,
@@ -320,26 +339,26 @@ def test_a_refactoring_takes_its_kinds_refactor_best_practice(made: WorkPlace) -
 
 
 @pytest.mark.parametrize(
-    ("fields", "path", "words", "says"),
+    ("fields", "task", "words", "says"),
     [
-        ({}, "x.md", "", "no task has the path"),
-        ({"next": "fixer"}, rn_files.COMMAND, " ", "the problem's words are empty"),
-        ({"kind": "poster"}, rn_files.COMMAND, "", "no best practice of the kind 'poster'"),
-        ({"next": "evaluator"}, rn_files.COMMAND, "", "no Round to judge"),
-        ({"next": "weigh", "entry": "content-1"}, rn_files.COMMAND, "", "no result to weigh"),
+        ({}, "009", "", "no task has the id"),
+        ({"next": "fixer"}, rn_files.COMMAND_ID, " ", "the problem's words are empty"),
+        ({"kind": "poster"}, rn_files.COMMAND_ID, "", "no best practice of the kind 'poster'"),
+        ({"next": "evaluator"}, rn_files.COMMAND_ID, "", "no Round to evaluate"),
+        ({"next": "weigh", "entry": "01-content"}, rn_files.COMMAND_ID, "", "no result to weigh"),
     ],
     ids=["unnamed", "no-words", "no-practice", "no-round", "nothing-to-weigh"],
 )
 def test_a_start_that_can_not_be_is_refused(
-    made: WorkPlace, fields: dict[str, Any], path: str, words: str, says: str
+    made: WorkPlace, fields: dict[str, Any], task: str, words: str, says: str
 ) -> None:
-    """Given a command that no task names, mended with no words, of a kind rn has no best
+    """Given an id that no task has, mended with no words, of a kind rn has no best
     practice of, with its evaluator next and no Round made, or waiting on a weighing of a Round
     that holds no result.
     When its next role is started.
     Then it gives 1 saying why."""
     at(made, **fields)
-    code, _, err = call(made, "start", path, words=words)
+    code, _, err = call(made, "start", task, words=words)
     assert (code, says in err) == (1, True)
 
 
@@ -352,7 +371,7 @@ def test_a_steering_of_another_version_in_this_rns_form_is_marked_with_this_one(
     value = rn_files.steering()
     del value["rn"]
     steering(made, value)
-    assert call(made, "due") == (0, f"make\t{rn_files.COMMAND}\tcode\tgenerator\n", "")
+    assert call(made, "due") == (0, f"make\t{rn_files.COMMAND_ID}\tcode\tgenerator\n", "")
     assert held(made) == rn_files.steering()
 
 
@@ -362,7 +381,7 @@ def test_records_of_another_version_out_of_this_rns_form_are_named(made: WorkPla
     Then it gives 1 naming the version and each record to bring into this rn's form, and
     changes nothing."""
     steering(made, {**rn_files.steering(), "rn": "0.0.1"})
-    folder = os.path.join(made.rounds, quote(rn_files.COMMAND, safe=""), "fix-1")
+    folder = os.path.join(rounds_of(made), "01-fix")
     rn_files.write_json(os.path.join(folder, "fixer.json"), {"result": "fixed", "files": []})
     git(made.worktree, "add", "-A")
     git(made.worktree, "commit", "-q", "-m", "fix")
@@ -380,3 +399,15 @@ def test_a_steering_of_another_version_that_is_not_json_is_refused(made: WorkPla
         f.write("{")
     code, _, err = call(made, "due")
     assert (code, "steering.json: isn't JSON" in err) == (1, True)
+
+
+def test_closed_tasks_of_another_version_out_of_this_rns_form_are_named(made: WorkPlace) -> None:
+    """Given a steering of another version, and closed.json whose task has no id.
+    When `steering due` runs.
+    Then it gives 1 naming closed.json, and changes nothing."""
+    steering(made, {**rn_files.steering(), "rn": "0.0.1"})
+    rn_files.write_json(made.closed, {"tasks": [{**rn_files.TASKS[0], "closed": "completed"}]})
+    git(made.worktree, "add", "-A")
+    git(made.worktree, "commit", "-q", "-m", "closed")
+    code, _, err = call(made, "due")
+    assert (code, "closed.json" in err, unchanged(made)) == (1, True, True)

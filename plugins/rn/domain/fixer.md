@@ -24,8 +24,8 @@ Each step says what holds once it's done and why; how is yours.
 
 rn's rules for these steps:
 
-- Your start gives `Worktree`, `Deliverable`, its path, `Steering`, `Kind`, `Fix`, the Fix's
-  folder, `<fix>`, and `Best practice`, the best practice's folder, `<best practice>`.
+- Your start gives `Worktree`, `Task`, what the task makes, in the steering's words, `Steering`,
+  `Kind`, `Fix`, the Fix's folder, `<fix>`, and `Best practice`, the best practice's folder, `<best practice>`.
   `<fix>/problem.md` holds the problem in the words that raised it. The steering takes the form of
   `${CLAUDE_PLUGIN_ROOT}/domain/schemas/steering.schema.json`.
   Leave the Rounds unread, as your mend rests on the problem and the decisions alone.

@@ -41,24 +41,24 @@ def made(tmp_path: Any) -> WorkPlace:
 
 
 def round_of(work: WorkPlace) -> str:
-    return os.path.join(work.rounds, "invoice%2F__main__.py", "content-1")
+    return os.path.join(work.tasks, rn_files.COMMAND_ID, "01-content")
 
 
 def test_the_folder_lies_in_the_temporary_folder_by_its_round(made: WorkPlace, temp: str) -> None:
     """Given a Round of the command.
     When its folder is asked.
     Then it lies in the system's temporary folder, named by the work and the Round."""
-    expected = os.path.join(temp, f"rn-trial-{NAME}", "invoice%2F__main__.py-content-1") + os.sep
+    expected = os.path.join(temp, f"rn-trial-{NAME}", f"{rn_files.COMMAND_ID}-01-content") + os.sep
     assert folder(made, round_of(made)) == expected
 
 
 @pytest.mark.parametrize("where", ["", "../steering.json"])
-def test_a_folder_outside_the_rounds_of_the_work_is_refused(made: WorkPlace, where: str) -> None:
-    """Given the Rounds' folder itself, or a path out of it.
+def test_a_folder_outside_the_tasks_of_the_work_is_refused(made: WorkPlace, where: str) -> None:
+    """Given the tasks' folder itself, or a path out of it.
     When its trial folder is asked.
     Then Wrong is raised, naming it."""
     with pytest.raises(Wrong, match="isn't a Round's folder"):
-        folder(made, os.path.join(made.rounds, where))
+        folder(made, os.path.join(made.tasks, where))
 
 
 def test_the_starting_state_holds_the_worktree_as_it_stands_without_rns_folder(

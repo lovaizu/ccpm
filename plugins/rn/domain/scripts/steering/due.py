@@ -16,7 +16,7 @@ def due(steering: Steering) -> list[str]:
 
     Takes: the steering, in its schema's form.
     Gives: `weigh` where no solution of the tree is the target; else
-    `make\\t<path>\\t<kind>\\t<next>` for the first task, `<next>` the role it takes next, as the
+    `make\\t<id>\\t<kind>\\t<next>` for the first task, `<next>` the role it takes next, as the
     steering's schema names it; else `hand-over\\t<solution>` before the hand-over,
     `trying\\t<solution>` while it's in the user's hands, `inspect` once they say it's enough, and
     `ended` once the inspection passed, `<solution>` the target's words.
@@ -28,6 +28,6 @@ def due(steering: Steering) -> list[str]:
         return ["weigh"]
     if steering["tasks"]:
         each = steering["tasks"][0]
-        return [f"make\t{each['path']}\t{each['kind']}\t{each.get('next', 'generator')}"]
+        return [f"make\t{each['id']}\t{each['kind']}\t{each.get('next', 'generator')}"]
     after = _AFTER[steering.get("stage")]
     return [f"{after}\t{aimed}" if after in ("hand-over", "trying") else after]

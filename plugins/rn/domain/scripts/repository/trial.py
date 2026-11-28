@@ -20,13 +20,13 @@ def folder(work: WorkPlace, round_: str) -> str:
 
     Takes: the work, and the Round's folder, absolute.
     Gives: the absolute path `<tempfile.gettempdir()>/rn-trial-<work's name>/<Round's folder's
-    path within the work's Rounds, each `/` as `-`>/`, the same for each call.
+    path within the work's tasks, each `/` as `-`>/`, the same for each call.
     Changes: nothing.
-    Refuses: Wrong where the folder doesn't lie within the work's Rounds, naming it.
+    Refuses: Wrong where the folder doesn't lie within the work's tasks, naming it.
     """
-    within = os.path.relpath(os.path.normpath(round_), work.rounds)
+    within = os.path.relpath(os.path.normpath(round_), work.tasks)
     if within == os.curdir or within.startswith(os.pardir):
-        raise Wrong(f"{round_}: isn't a Round's folder within {work.rounds}")
+        raise Wrong(f"{round_}: isn't a Round's folder within {work.tasks}")
     within = within.replace(os.sep, "-")
     return os.path.join(_trials(work), within) + os.sep
 

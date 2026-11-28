@@ -55,7 +55,7 @@ def test_trial_prints_the_folder_its_module_makes(repo: str, host: Any, temp: st
     When `trial` runs on it.
     Then it gives 0 with the trial's folder."""
     work_folder = started(repo, host)
-    round_ = os.path.join(work_folder, "rounds", "1", "invoice", "content-1")
+    round_ = os.path.join(work_folder, "tasks", "001", "01-content")
     trial = main(["trial", work_folder, round_], repo, rn_files.RN, host)
     assert trial[0] == 0 and trial[1].startswith(os.path.join(temp, "rn-trial-"))
 

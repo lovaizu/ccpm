@@ -35,21 +35,24 @@ COMMAND = "invoice/__main__.py"
 GUIDE = "docs/guide.md"
 DECISION = "Talk in Japanese, and write in English."
 
-# The walkthrough's tasks as the orchestrator's aim gives them: the command, then the guide.
+# The walkthrough's tasks as the orchestrator's first aim gives them, with no id yet: the command,
+# then the guide.
 TASKS = [
     {
         "task": "Print one invoice from a statement file.",
-        "path": COMMAND,
         "kind": "code",
         "refactor": "refactor-code",
     },
     {
         "task": "Tell the accountants how to print one.",
-        "path": GUIDE,
         "kind": "readme",
         "refactor": "refactor-doc",
     },
 ]
+# The ids that `steering aim` gives the command's task and the guide's, in that order.
+COMMAND_ID = "001"
+GUIDE_ID = "002"
+IDS = (COMMAND_ID, GUIDE_ID)
 
 
 def schema(name: str = "steering") -> dict[str, Any]:
@@ -82,13 +85,16 @@ def aim(tasks: list[dict[str, Any]] | None = None, **fields: Any) -> dict[str, A
     }
 
 
-def steering(
-    paths: tuple[str, ...] = (COMMAND, GUIDE), stage: str | None = None, **fields: Any
-) -> dict[str, Any]:
+def tasks(ids: tuple[str, ...] = IDS) -> list[dict[str, Any]]:
+    """The walkthrough's tasks of the ids given, each with its id, as the steering holds them."""
+    return [{"id": key, **each} for key, each in zip(IDS, TASKS) if key in ids]
+
+
+def steering(ids: tuple[str, ...] = IDS, stage: str | None = None, **fields: Any) -> dict[str, Any]:
     """A steering in its schema's form, written by this rn: the walkthrough's tree, with its fields
-    as given, its tasks left at the paths given, none started, and the stage given, absent where
+    as given, its tasks left of the ids given, none started, and the stage given, absent where
     none is."""
-    held = aim([each for each in TASKS if each["path"] in paths], **fields)
+    held = aim(tasks(ids), **fields)
     return {**held, "rn": VERSION, **({"stage": stage} if stage else {})}
 
 

@@ -14,11 +14,11 @@ from host import Host
 from place import WorkPlace, of_folder, version
 from repository import todo
 
-from steering import due, record, rounds, start
+from steering import closed, due, record, rounds, start
 
 USAGE = """\
 usage: steering aim <work>   (the aim on stdin)
-       steering start <work> <path>   (a Fix's problem in words on stdin)
+       steering start <work> <id>   (a Fix's problem in words on stdin)
        steering mark <work> trying|enough|inspected
        steering due <work>
 """
@@ -33,9 +33,9 @@ def main(
     the orchestrator commits and pushes the work at each end of a purpose.
 
     - `aim <work>`: takes the aim on stdin, in the form of `aim.schema.json`, into the steering
-      as `record.taken_in` makes it, the steering made where the work has none yet, and gives 0
-      printing what's due.
-    - `start <work> <path>`: starts the task's next role as `start.started` does, writing the
+      as `record.taken_in` makes it, the steering made where the work has none yet, adds each
+      task it cancels to the closed tasks as `closed.added` does, and gives 0 printing what's due.
+    - `start <work> <id>`: starts the task's next role as `start.started` does, writing the
       steering where it changes, and gives 0 printing the line that gives the role.
     - `mark <work> <stage>`: marks the stage that the work reached as `record.marked` does, and
       gives 0 printing what's due. The hand-over, `trying`, and the end, `inspected`, take no TODO
@@ -93,6 +93,10 @@ def _aligned(work: WorkPlace, plugin_root: str) -> Answer:
     marked = {**held, "rn": now}
     found = form.faults(marked, os.path.join(schemas, "steering.schema.json"))
     found = [f"{work.steering}: {each}" for each in found] + rounds.faults(work, schemas)
+    try:
+        closed.held(work, schemas)
+    except Wrong as why:
+        found.append(str(why))
     if found:
         raise Wrong(
             f"the work's records were written by rn {held.get('rn', 'before 0.13.0')}, and this"
@@ -113,8 +117,9 @@ def _aim(work: WorkPlace, plugin_root: str, stdin: Callable[[], str]) -> Answer:
     if found:
         raise Wrong("the aim leaves its schema, aim.schema.json: " + "; ".join(found))
     held = _steering(work, schemas) if os.path.isfile(work.steering) else None
-    steering = {**record.taken_in(held, aim), "rn": version(plugin_root)}
-    _written(work, steering)
+    steering, canceled = record.taken_in(held, aim, closed.held(work, schemas))
+    _written(work, {**steering, "rn": version(plugin_root)})
+    closed.added(work, canceled, schemas)
     return 0, _lines(due.due(steering)), ""
 
 
@@ -128,19 +133,19 @@ def _mark(work: WorkPlace, stage: str, plugin_root: str, host: Host) -> Answer:
     return 0, _lines(due.due(steering)), ""
 
 
-def _start(work: WorkPlace, path: str, plugin_root: str, stdin: Callable[[], str]) -> Answer:
+def _start(work: WorkPlace, task: str, plugin_root: str, stdin: Callable[[], str]) -> Answer:
     schemas = os.path.join(plugin_root, "domain", "schemas")
     held = _steering(work, schemas)
-    words = stdin() if _next(held, path) == "fixer" else ""
-    marked, line = start.started(work, held, path, words, plugin_root)
+    words = stdin() if _next(held, task) == "fixer" else ""
+    marked, line = start.started(work, held, task, words, plugin_root)
     if marked != held:
         _written(work, marked)
     return 0, line, ""
 
 
-def _next(steering: dict[str, Any], path: str) -> str:
+def _next(steering: dict[str, Any], task: str) -> str:
     for each in steering["tasks"]:
-        if each["path"] == path:
+        if each["id"] == task:
             return str(each.get("next", "generator"))
     return ""
 

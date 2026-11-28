@@ -23,36 +23,36 @@ _WEIGHED = ("evaluator", "refactorer", "fixer", "generator")
 
 
 def started(
-    work: WorkPlace, steering: Steering, path: str, words: str, plugin_root: str
+    work: WorkPlace, steering: Steering, task: str, words: str, plugin_root: str
 ) -> tuple[Steering, str]:
     """The steering with the task's next role started, and what gives the role.
 
-    Takes: the work, its steering, the task's path as the steering names it, the problem's
-    words for a Fix, and rn's folder.
+    Takes: the work, its steering, the task's id as the steering names it, the problem's words
+    for a Fix, and rn's folder.
     Gives: the steering as it is, and for a weighing, `weigh\\t<result>`, the evaluator's result
     of its entry where it holds one, else the refactorer's, the fixer's, or the generator's point;
     else the role's name on a line, then a line `<name>: <value>` for each thing the role is given:
-    the worktree and the deliverable's path; for its evaluator, the work's folder, its Round, and
+    the worktree and the task's words; for its evaluator, the work's folder, its Round, and
     `judges-by.json` written there with what `practice.judged` gives and the outcome, the target
     solution, and its assumptions, word for word, as it meets only what the people would; for each
-    other role, the steering with its entry, the steering's path, the deliverable's kind, the folder
-    made one past the deliverable's last entry, or its entry where a stop left the role there with
+    other role, the steering with its entry, the steering's path, the task's kind, the folder
+    made one past the task's last entry, or its entry where a stop left the role there with
     no result, a Fix's with `problem.md` holding the words, and the best practice of its kind, or
     for its refactorer, that of its refactoring and that of its kind, as a refactoring keeps the
     form that its kind's template gives.
     Changes: makes the folder, and writes judges-by.json or problem.md in it.
-    Refuses: Wrong where no task has the path, where its evaluator has no Round to
+    Refuses: Wrong where no task has the id, where its evaluator has no Round to
     judge, where a Fix's words are empty, or where rn has no best practice of the kind.
     """
-    each = _task(steering, path)
-    root = rounds.folder_of(work, path)
+    each = _task(steering, task)
+    root = rounds.folder_of(work, task)
     role = each.get("next", "generator")
     if role == "weigh":
         return steering, f"weigh\t{_weighed(os.path.join(root, each['entry']))}\n"
-    given = [("Worktree", work.worktree), ("Deliverable", path)]
+    given = [("Worktree", work.worktree), ("Task", each["task"])]
     if role == "evaluator":
         if "entry" not in each:
-            raise Wrong(f"{path} has no Round to judge; start its generator first")
+            raise Wrong(f"task {task} has no Round to evaluate; start its generator first")
         folder = os.path.join(root, each["entry"])
         judges = _judges_by(work, plugin_root, steering, each, folder)
         return steering, _given(
@@ -71,7 +71,7 @@ def started(
         with open(os.path.join(folder, "problem.md"), "w", encoding="utf-8") as f:
             f.write(words if words.endswith("\n") else words + "\n")
     marked = json.loads(json.dumps(steering))
-    _task(marked, path)["entry"] = os.path.basename(folder)
+    _task(marked, task)["entry"] = os.path.basename(folder)
     place = "Fix" if role == "fixer" else "Round"
     kept = [("Steering", work.steering), ("Kind", each["kind"]), (place, folder), *practices]
     return marked, _given(role, [*given, *kept])
@@ -81,11 +81,11 @@ def _given(role: str, things: list[tuple[str, str]]) -> str:
     return role + "\n" + "".join(f"{name}: {value}\n" for name, value in things)
 
 
-def _task(steering: Steering, path: str) -> dict[str, Any]:
+def _task(steering: Steering, task: str) -> dict[str, Any]:
     for each in steering["tasks"]:
-        if each["path"] == path:
+        if each["id"] == task:
             return each
-    raise Wrong(f"no task has the path {path!r}; give it as `steering due` names it")
+    raise Wrong(f"no task has the id {task!r}; give it as `steering due` names it")
 
 
 def _weighed(folder: str) -> str:
@@ -101,10 +101,10 @@ def _entry(root: str, role: str, each: dict[str, Any], schemas: str) -> str:
     as rn's hook moves the task on once one is there, else one past the last, made."""
     stage = _STAGE[role]
     entry = each.get("entry", "")
-    if entry.startswith(f"{stage}-"):
+    if entry.endswith(f"-{stage}"):
         return os.path.join(root, entry)
     made = rounds.entries(root, schemas)
-    folder = os.path.join(root, f"{stage}-{made[-1].number + 1 if made else 1}")
+    folder = os.path.join(root, rounds.named(made[-1].number + 1 if made else 1, stage))
     os.makedirs(folder, exist_ok=True)
     return folder
 

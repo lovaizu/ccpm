@@ -32,10 +32,11 @@ Each step says what holds once it's done and why; how is yours.
 
 rn's rules for these steps:
 
-- Your start gives `Worktree`, `Deliverable`, its path, `Steering`, `Kind`, `Round`, the Round's
-  folder, `<round>`, and `Best practice`, the best practice's folder, `<best practice>`. The
-  steering takes the form of `${CLAUDE_PLUGIN_ROOT}/domain/schemas/steering.schema.json`. Leave
-  the other Rounds unread but the last of this deliverable, as they're other deliverables' or past.
+- Your start gives `Worktree`, `Task`, what the task makes, in the steering's words, `Steering`,
+  `Kind`, `Round`, the Round's folder, `<round>`, and `Best practice`, the best practice's folder,
+  `<best practice>`. The steering takes the form of
+  `${CLAUDE_PLUGIN_ROOT}/domain/schemas/steering.schema.json`. Leave the other Rounds unread but
+  the last of this task, beside `<round>`, as they're other tasks' or past.
 - Change the deliverable whole, with what its kind takes along wherever the repository keeps it,
   such as code's unit tests, and write `<round>/generator.json`. Leave each other file as it stands,
   as another deliverable is another task's to change where its people see it, and each record of the

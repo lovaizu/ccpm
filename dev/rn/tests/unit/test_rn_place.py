@@ -37,10 +37,11 @@ def test_each_path_of_the_work_follows_from_its_name() -> None:
     Then each lies where the architecture's Directory structure names it."""
     work = WorkPlace("/home/ada/invoices", NAME)
     folder = f"/home/ada/invoices/.rn/{NAME}"
-    assert (work.folder, work.steering, work.rounds) == (
+    assert (work.folder, work.steering, work.closed, work.tasks) == (
         folder,
         f"{folder}/steering.json",
-        f"{folder}/rounds",
+        f"{folder}/closed.json",
+        f"{folder}/tasks",
     )
 
 
@@ -55,7 +56,7 @@ def test_the_work_is_found_from_its_folder_by_a_path_from_the_folder_given(tmp_p
 
 @pytest.mark.parametrize(
     "folder",
-    ["/home/ada/accounting/x", "/home/ada/.rn/BAD NAME", f"/w/.rn/{NAME}/rounds"],
+    ["/home/ada/accounting/x", "/home/ada/.rn/BAD NAME", f"/w/.rn/{NAME}/tasks"],
 )
 def test_a_path_of_another_form_is_refused(folder: str) -> None:
     """Given a path outside the work's folder, a folder not named as rn's work, or a folder inside

@@ -1,6 +1,6 @@
 """Decides where the work lies and what it's called: its name from the day and a slug of what it's
-for, the worktree it's made in, its folder there, and the paths of its steering and its
-Rounds and Fixes in that folder, and the version of rn that writes them."""
+for, the worktree it's made in, its folder there, and the paths of its steering, its closed
+tasks, and its tasks' Rounds and Fixes in that folder, and the version of rn that writes them."""
 
 from __future__ import annotations
 
@@ -38,9 +38,14 @@ class WorkPlace:
         return os.path.join(self.folder, "steering.json")
 
     @property
-    def rounds(self) -> str:
-        """The folder of the work's Rounds and Fixes, `<folder>/rounds/`."""
-        return os.path.join(self.folder, "rounds")
+    def closed(self) -> str:
+        """The work's closed tasks, `<folder>/closed.json`."""
+        return os.path.join(self.folder, "closed.json")
+
+    @property
+    def tasks(self) -> str:
+        """The folder of the work's tasks, each holding its Rounds and Fixes, `<folder>/tasks/`."""
+        return os.path.join(self.folder, "tasks")
 
 
 def version(plugin_root: str) -> str:

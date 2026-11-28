@@ -1,9 +1,8 @@
-"""Decides where each Round and each Fix of a deliverable lies in the work's folder and what it
-holds: `rounds/<deliverable>/<stage>-<n>/`, the deliverable's path percent-encoded whole, so that
-no two paths share a folder, `<stage>`
-`content` or `refactor` for a Round and `fix` for a Fix, and
-`<n>` its number among the deliverable's Rounds and Fixes, from 1 in the order made; each holding
-the role's result, and a Fix its problem in `problem.md`."""
+"""Decides where each Round and each Fix of a task lies in the work's folder and what it holds:
+`tasks/<id>/<nn>-<stage>/`, `<id>` the task's, `<nn>` its number among the task's Rounds and Fixes,
+two digits from 01 in the order made, first so that they list in that order, and `<stage>`
+`content` or `refactor` for a Round and `fix` for a Fix; each holding the role's result, and a Fix
+its problem in `problem.md`."""
 
 from __future__ import annotations
 
@@ -11,7 +10,6 @@ import glob
 import os
 import re
 from typing import Any, NamedTuple
-from urllib.parse import quote
 
 import form
 from fault import Wrong
@@ -28,11 +26,11 @@ RESULTS = {
     "refactorer": ("refactorer.json", "generator-round.schema.json"),
     "fixer": ("fixer.json", "generator-round.schema.json"),
 }
-_NAMED = re.compile(rf"({CONTENT}|{REFACTOR}|{FIX})-([1-9][0-9]*)")
+_NAMED = re.compile(rf"([0-9]{{2,}})-({CONTENT}|{REFACTOR}|{FIX})")
 
 
 class Entry(NamedTuple):
-    """One Round or Fix of a deliverable: its stage, its number, its folder, and each role's
+    """One Round or Fix of a task: its stage, its number, its folder, and each role's
     result that it holds, by the role."""
 
     stage: str
@@ -41,16 +39,21 @@ class Entry(NamedTuple):
     results: dict[str, dict[str, Any]]
 
 
-def folder_of(work: WorkPlace, deliverable: str) -> str:
-    """The folder of the deliverable's Rounds and Fixes."""
-    return os.path.join(work.rounds, quote(deliverable, safe=""))
+def folder_of(work: WorkPlace, task: str) -> str:
+    """The folder of the Rounds and Fixes of the task of the id."""
+    return os.path.join(work.tasks, task)
+
+
+def named(number: int, stage: str) -> str:
+    """The name of the Round or Fix of the number and stage, as `entries` reads it."""
+    return f"{number:02d}-{stage}"
 
 
 def faults(work: WorkPlace, schemas: str) -> list[str]:
     """Each result of the work that leaves its schema, in words, as `entries` names it; none
     where each holds."""
     found = []
-    for root in sorted(glob.glob(os.path.join(work.rounds, "*"))):
+    for root in sorted(glob.glob(os.path.join(work.tasks, "*"))):
         try:
             entries(root, schemas)
         except Wrong as why:
@@ -59,17 +62,17 @@ def faults(work: WorkPlace, schemas: str) -> list[str]:
 
 
 def entries(root: str, schemas: str) -> list[Entry]:
-    """Each Round and Fix of the deliverable, in the order made.
+    """Each Round and Fix of the task, in the order made.
 
-    Takes: the folder of the deliverable's Rounds and Fixes, as `folder_of` gives it,
-    and the folder of rn's schemas.
+    Takes: the folder of the task's Rounds and Fixes, as `folder_of` gives it, and the folder of
+    rn's schemas.
     Gives: each, read from its folder, each result checked against its schema; none where the
-    deliverable has none yet.
+    task has none yet.
     Changes: nothing.
     Refuses: Wrong where a result leaves its form, as `form.held` names it.
     """
     names = os.listdir(root) if os.path.isdir(root) else []
-    found = sorted((int(m[2]), m[1], name) for name in names if (m := _NAMED.fullmatch(name)))
+    found = sorted((int(m[1]), m[2], name) for name in names if (m := _NAMED.fullmatch(name)))
     return [
         _read(os.path.join(root, name), stage, number, schemas) for number, stage, name in found
     ]
