@@ -115,7 +115,7 @@ MADE = {"result": "made", "files": [rn_files.COMMAND]}
 POINT = {"result": "point", "point": "Which printer?"}
 GOOD = {"result": "judged", "good": [], "more": []}
 MORE = {"result": "judged", "good": [], "more": [{"condition": "N1", "good_when": "x"}]}
-FIXED = {"result": "fixed", "files": []}
+FIXED = {"result": "made", "files": []}
 
 
 @pytest.mark.parametrize(
@@ -135,9 +135,10 @@ FIXED = {"result": "fixed", "files": []}
         ),
         ({"next": "fixer"}, {"fixer": FIXED}, {"next": "refactorer", "entry": None}),
         ({"next": "refactorer"}, {"refactorer": POINT}, {"next": "weigh"}),
+        ({"next": "fixer"}, {"fixer": POINT}, {"next": "weigh"}),
         ({"next": "evaluator"}, {"generator": MADE}, {}),
     ],
-    ids=["made", "point", "more", "good", "fixed", "refactor-point", "no-result"],
+    ids=["made", "point", "more", "good", "fixed", "refactor-point", "fix-point", "no-result"],
 )
 def test_each_result_moves_its_task_on(
     fields: dict[str, Any], by_role: dict[str, Any], kept: dict[str, Any]

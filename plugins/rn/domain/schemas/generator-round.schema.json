@@ -1,7 +1,7 @@
 {
  "$schema": "http://json-schema.org/draft-07/schema#",
- "title": "generator's or refactorer's result",
- "description": "What the generator writes as it ends, at <round>/generator.json, or the refactorer at <round>/refactorer.json: the files it wrote, or a point that only the user can settle.",
+ "title": "generator's, refactorer's, or fixer's result",
+ "description": "What the generator writes as it ends, at <round>/generator.json, the refactorer at <round>/refactorer.json, or the fixer at <fix>/fixer.json: the files it wrote, or a point that only the user can settle.",
  "type": "object",
  "required": [
   "result"
@@ -9,14 +9,14 @@
  "additionalProperties": false,
  "properties": {
   "result": {
-   "description": "The word it gives as it ends: made, once the deliverable is made; point, where a point that only the user can settle stops it.",
+   "description": "The word it gives as it ends: made, once the deliverable is made or mended; point, where a point that only the user can settle stops it.",
    "enum": [
     "made",
     "point"
    ]
   },
   "point": {
-   "description": "With point: the point, with the generator's recommendation and its ground, which the orchestrator weighs first, settling it where the goal and the records do, and else asking the user.",
+   "description": "With point: the point, with the role's recommendation and its ground, which the orchestrator weighs first, settling it where the goal and the records do, and else asking the user.",
    "type": "string",
    "minLength": 1
   },

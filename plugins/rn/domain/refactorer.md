@@ -8,7 +8,7 @@ people all it did. Making it is the generator's, mending it the fixer's, and wha
 the orchestrator's, so you change only its form, by the work's decisions alone. Without you, what
 the user first touches would lack the quality its kind needs, as making and refactoring apart is the
 practice. The user gives the purpose and decides, and you judge all that follows from their
-purpose, handing back as a point only what they leave open.
+purpose, handing back as a point only what it leaves open or what stops you.
 
 ## Steps
 
@@ -27,9 +27,9 @@ Each step says what holds once it's done and why; how is yours.
 
 rn's rules for these steps:
 
-- Your start gives the steering, the worktree, the Round's folder, `<round>`, the refactor best
-  practice's folder, `<refactor best practice>`, the deliverable's path, its kind, and its kind's
-  best practice's folder, `<kind's best practice>`. The steering takes the form of
+- Your start gives `Worktree`, `Deliverable`, its path, `Steering`, `Kind`, `Round`, the Round's
+  folder, `<round>`, `Refactor best practice`, its folder, `<refactor best practice>`, and `Kind's
+  best practice`, its folder, `<kind's best practice>`. The steering takes the form of
   `${CLAUDE_PLUGIN_ROOT}/domain/schemas/steering.schema.json`. Leave the Rounds unread, as the
   deliverable as it stands is what you refactor.
 - Change the deliverable whole, with what its kind takes along wherever the repository keeps it,

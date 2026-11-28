@@ -51,11 +51,18 @@ def taken_in(steering: Steering | None, aim: dict[str, Any]) -> Steering:
 
 def target(opportunities: list[dict[str, Any]]) -> str | None:
     """The words of the solution that the work aims at, found anywhere in the tree, else None."""
+    found = aimed(opportunities)
+    return None if found is None else str(found["solution"])
+
+
+def aimed(opportunities: list[dict[str, Any]]) -> dict[str, Any] | None:
+    """The solution that the work aims at, with its assumptions, found anywhere in the tree, else
+    None."""
     for each in opportunities:
         for solution in each.get("solutions", []):
             if solution.get("target"):
-                return str(solution["solution"])
-        found = target(each.get("children", []))
+                return solution
+        found = aimed(each.get("children", []))
         if found is not None:
             return found
     return None
@@ -100,9 +107,9 @@ def moved(steering: Steering, results: dict[str, dict[str, dict[str, Any]]]) -> 
 
     Takes: the steering, and for each task's path, the results that its entry holds, by role.
     Gives: a new steering in which each task whose next role's result is there takes what follows
-    it: a generator's made, its evaluator; a point, a generator's or a refactorer's, the
-    orchestrator's weighing; an evaluator's result, one more judged Round, then its weighing of
-    what it found, else what follows a task made; a fixer's, what follows a task made; a
+    it: a generator's made, its evaluator; a point, a generator's, a fixer's, or a refactorer's,
+    the orchestrator's weighing; an evaluator's result, one more judged Round, then its weighing of
+    what it found, else what follows a task made; a fixer's made, what follows a task made; a
     refactorer's made, its end. What follows a task made is its refactorer, where the task gives
     it a `refactor`, else its end. A task that ends goes. Each other task stays as it is, a task
     not yet started among them, as the results of its path are those of the task before it there.

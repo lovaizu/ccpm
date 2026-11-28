@@ -29,8 +29,9 @@ Each step says what holds once it's done and why; how is yours.
 
 rn's rules for these steps:
 
-- Your start gives the work's folder, `<work>`, the worktree, the outcome, the solution with its
-  assumptions, the Round's folder, `<round>`, the file you judge by, and the deliverable's path. The
+- Your start gives `Work`, the work's folder, `<work>`, `Worktree`, `Deliverable`, its path,
+  `Round`, the Round's folder, `<round>`, and `Judges by`, the file you judge by, which holds the
+  outcome and the target solution with its assumptions beside what the best practice gives. The
   people have nothing else of the work, so read nothing else of it.
 - `python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/repository trial <work> <round>` makes the people's
   folder anew and prints its path.

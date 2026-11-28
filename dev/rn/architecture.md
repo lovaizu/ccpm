@@ -302,7 +302,7 @@ sequenceDiagram
         G->>G: makes it by every necessary condition of its kind's best practice, by the work's decisions [P3.1]
         G-->>O: ends, with the Round written (Round) [P5.2]
         H->>S: checks the result against its schema, and moves the task on to its evaluator (Round, Steering) [P5.3]
-        O->>E: starts one with the deliverable and what it judges by (Round, Best practice) [P3.2]
+        O->>E: starts one with the deliverable and what it judges by, the outcome and the target solution among it (Round, Best practice) [P3.2]
         E->>S: makes a folder of the people's starting state, a clone of the worktree as it stands [P3.2]
         E->>E: tries it there as its people would, and names for each condition what's good or what would make it good [P3.2]
         E-->>O: ends, with the Round judged (Round) [P5.2]
@@ -316,7 +316,7 @@ sequenceDiagram
         O->>S: starts the Fix, with the problem in the words that raised it (Fix) [P6.1]
         O->>F: starts one with the Fix, the deliverable, its best practice, and the work's decisions (Fix) [P5.1]
         F->>F: confirms that what's there holds, mends the least, and confirms again the same way [P3.4]
-        F-->>O: ends, fixed (Fix) [P5.2]
+        F-->>O: ends, mended, or with a point for the orchestrator to weigh (Fix) [P5.2]
       end
     end
     O->>R: starts one with the refactor best practice of its kind (Best practice) [P3.1]
@@ -338,7 +338,7 @@ sequenceDiagram
       opt a mend now [P1.3]
         O->>S: starts the Fix, with the problem in the user's words (Fix) [P6.1]
         O->>F: starts one with the Fix (Fix) [P5.1]
-        F-->>O: ends, fixed (Fix) [P5.2]
+        F-->>O: ends, mended, or with a point for the orchestrator to weigh (Fix) [P5.2]
         O->>R: starts one, as the mend ends in a refactoring of the whole (Best practice) [P3.1]
         R-->>O: ends (Round) [P5.2]
       end
@@ -346,7 +346,7 @@ sequenceDiagram
       O->>S: marks the work enough (Steering) [P5.2]
     end
   end
-  O->>I: starts one with the work's folder and the worktree [P3.2]
+  O->>I: starts one with the worktree [P3.2]
   I-->>O: ends, with each finding [P5.2]
   opt a finding [P3.2]
     O->>O: takes it as a problem with the deliverable whose file it is, weighed and mended as /rn:gm's [P1.3]

@@ -11,9 +11,7 @@ hear the user and read what was made, so their meaning passes through no one's s
 gives the purpose and decides as one who uses what's made, though they seldom say at first all
 they're after. Judge all that follows from their purpose yourself, how the work is made included,
 and ask them only what it leaves open, as they want the work done without being asked what their
-purpose already says. rn's steps and scripts serve that purpose. Where one stands in its way, follow
-the purpose: mend your input as a script's message says, and tell the user where a script or a check
-itself is wrong, as each has its own writer, so that no detour of rn's insides reaches the user.
+purpose already says. rn's steps and scripts serve that purpose.
 
 ## What you hold to
 
@@ -61,17 +59,23 @@ Take the steps of what started you. Each says what holds once it's done and why;
      subagent, so that your context holds the talk.
   2. The user agrees to what the work aims at from proposals they correct, as they know what they're
      after when they see it: the goal, with each of their words it rests on; what they'll get and
-     how, with what must hold for it, an existing tool first where one does it; and what changes,
-     each file by its path. Mark each point you assumed, so that they correct it.
+     how, with what must hold for it and how they'd check it, an existing tool first where one
+     does it; what changes, each file by its path; and which deliverables they'd see once made.
+     Mark each point you assumed, so that they correct it.
   3. The aim they agreed to is the work's: `repository new <slug>` makes the work, and
      `steering aim <work>` takes the aim on stdin, in the form of
      `<rn's folder>/domain/schemas/aim.schema.json`, each decision of the talk a line. It's
      committed and pushed, with its draft pull request opened by `gh pr create --draft` naming each
      issue it closes or refers to, so that any conversation picks it up.
 - What's due, as `steering due <work>` prints it, until one waits on the user:
-  - `make <path> <kind> <next>`, a task to make: `steering start <work> <path>` prints the role to
-    start, a fixer's problem given on stdin word for word, or the result to weigh.
-  - `weigh`: the fact that changed, weighed as below.
+  - `make <path> <kind> <next>`, a task to make: its next role has ended with its result, as
+    making, judging, mending, and refactoring apart lets each meet the deliverable on its own.
+    `steering start <work> <path>` prints the role with all it's given, a fixer's problem given on
+    stdin word for word, or the result to weigh. A deliverable that the user chose to see is shown
+    once its task goes, and what rests on it starts on their word, as they correct it before more
+    rests on it.
+  - `weigh`, no solution of the tree the target: the user agrees to the one the work aims at
+    next, as what it aims at is theirs, and `steering aim` takes it with its tasks.
   - `hand-over`, the target made: the user can judge whether each assumption of the target holds, in
     the way they chose to check it, as the assumptions are theirs to judge and not how rn made it.
     `steering mark <work> trying` records it.
@@ -83,15 +87,14 @@ Take the steps of what started you. Each says what holds once it's done and why;
     and `steering mark <work> inspected` records it once nothing is left to mend.
   - `ended`: each opportunity not made has the user's word, made now or kept in an issue opened by
     `gh issue create` with the pull request's URL in its body, where their words don't already give
-    it. One made now goes to `steering aim` as the target, with its tasks. Then the merge is the
-    user's to propose.
+    it. One made now goes to `steering aim` as the target, with its tasks. Then propose the merge,
+    which stays the user's.
 - A fact to weigh, which is a role's result, or a problem with what was made, such as the user's
   words by `/rn:gm`, or an inspector's finding: what was made meets the user's purpose with the least
   remedy that the vital few keeps, so that the deliverable doesn't grow. Give it to `steering aim`
   as a decision, with what its task takes next. Where an assumption fails, a new solution with why
   is theirs to agree to, as what the work aims at is theirs, and each deliverable made on the old one
-  is made anew. A deliverable
-  the user chose to see is shown once its task goes, and what rests on it starts on their word.
+  is made anew.
 - A question that the user asks or wonders aloud: they have the answer at once with why, from the
   steering, the deliverables, the Rounds, and a search where those don't hold it, and nothing has
   changed, as a question isn't a correction.
@@ -111,15 +114,13 @@ rn's rules for these steps:
   `python3 <rn's folder>/domain/scripts/<script>` from the worktree, rn's folder being the one that
   holds this file's `domain/`, written out in full; with no arguments, it prints its usage. Exit 1
   means it did nothing and says how to mend that. Exit 2 means a rerun does no more, so tell the
-  user what stopped it.
+  user what stopped it. Where a script or a check is itself wrong, tell the user, as each has its
+  own writer.
 - Commit and push the work yourself at the end of each purpose, such as a task done or a stop, each
   commit and the pull request in the shape of the repository's recent ones, so that each commit says
   one thing done and nothing rn makes lies only on the user's computer.
-- Start each role in the background, so that the user can talk and stop while it works, with only
-  what its task needs: the paths that `steering start` prints, the steering, and the worktree, the
-  folder that holds the work's `.rn/`. Give the evaluator the outcome, and the target solution with
-  its assumptions, word for word, in place of the steering, as it meets only what the people would,
-  and the inspector the work's folder and the worktree alone.
+- Start each role with only what its task needs, as `steering start` prints it after the role's
+  name, and the inspector with the worktree alone.
 
 ## Output
 

@@ -1,7 +1,8 @@
 # Evaluating with a best practice
 
 What you judge by holds a best practice's goal, its critical success factors, and its necessary
-conditions, without the way that makes each. You judge what the people get, not how it was made.
+conditions, without the way that makes each, and the work's outcome, its target solution, and the
+solution's assumptions, which say what the deliverable is for in the work. You judge what the people get, not how it was made.
 Each part is there for one purpose. Use each for that purpose, in full.
 
 ## `goal`

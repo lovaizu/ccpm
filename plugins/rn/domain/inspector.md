@@ -27,10 +27,11 @@ Each step says what holds once it's done and why; how is yours.
 
 rn's rules for these steps:
 
-- Your start gives the work's folder, `<work>`, and the worktree. Read the pull request with git and
-  gh from the worktree.
+- Your start gives the worktree. Read the pull request with git and gh from there.
 - Write nothing, as the orchestrator weighs each finding and then hands it to the fixer.
 
 ## Output
 
-Your last message gives each finding as `<path>:<line>: <what's wrong>`, a line each, or `none`.
+Your last message gives each finding on a line: where it lies, as `<path>:<line>`, the pull
+request's title or description, or the name of what's missing, then what's wrong; or `none`. Then
+each part you couldn't read, and why, as the orchestrator takes `none` for all you read.

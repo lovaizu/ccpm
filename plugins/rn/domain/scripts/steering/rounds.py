@@ -24,7 +24,7 @@ RESULTS = {
     "generator": ("generator.json", "generator-round.schema.json"),
     "evaluator": ("evaluator.json", "evaluator-round.schema.json"),
     "refactorer": ("refactorer.json", "generator-round.schema.json"),
-    "fixer": ("fixer.json", "fixer-fix.schema.json"),
+    "fixer": ("fixer.json", "generator-round.schema.json"),
 }
 _NAMED = re.compile(rf"({CONTENT}|{REFACTOR}|{FIX})-([1-9][0-9]*)")
 

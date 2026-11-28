@@ -22,6 +22,8 @@
 
 ### Fixed
 
+- Where a mend can't be made as asked, such as a problem that lies in another part, rn's fixer says so for rn to weigh, in place of ending as if it mended it.
+- rn's review of its pull request names each finding where it lies, a line, the title or description, or what's missing, and says what it couldn't read.
 - A role's end moves on only the work of its own worktree, so work in another worktree never stops it or gets committed half written.
 - A role's end moves on only the work with something left to do, so a work ended, or one an earlier rn left in the repository, never stops it.
 - rn removes the folders it tries a deliverable in once the try is over, and on a cancel.

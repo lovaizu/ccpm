@@ -189,6 +189,17 @@ def practice_of(kind: str) -> str:
     return os.path.join(rn_files.PRACTICES, kind)
 
 
+def given(made: WorkPlace, role: str, *things: tuple[str, str]) -> str:
+    """What starting the command's role gives: its name, then each thing it's given."""
+    lines = [("Worktree", made.worktree), ("Deliverable", rn_files.COMMAND), *things]
+    return role + "\n" + "".join(f"{name}: {value}\n" for name, value in lines)
+
+
+def kept(made: WorkPlace, place: str, folder: str) -> list[tuple[str, str]]:
+    """What each role but the evaluator is given beside the worktree and the deliverable."""
+    return [("Steering", made.steering), ("Kind", "code"), (place, folder)]
+
+
 def test_a_round_of_content_starts_in_a_new_folder_and_again_in_the_same(made: WorkPlace) -> None:
     """Given the walkthrough's steering, its command not started.
     When its next role is started, twice, as a stop left the first with no result.
@@ -196,7 +207,13 @@ def test_a_round_of_content_starts_in_a_new_folder_and_again_in_the_same(made: W
     content-1 as its entry."""
     at(made)
     folder = os.path.join(rounds_of(made), "content-1")
-    want = (0, f"generator\t{folder}\t{practice_of('code')}\n", "")
+    want = (
+        0,
+        given(
+            made, "generator", *kept(made, "Round", folder), ("Best practice", practice_of("code"))
+        ),
+        "",
+    )
     assert (call(made, "start", rn_files.COMMAND), call(made, "start", rn_files.COMMAND)) == (
         want,
         want,
@@ -212,32 +229,45 @@ def test_a_round_made_again_starts_past_the_last(made: WorkPlace) -> None:
     rn_files.write_json(os.path.join(rounds_of(made), "content-1", "generator.json"), MADE)
     os.makedirs(os.path.join(rounds_of(made), "fix-2"))
     code, out, _ = call(made, "start", rn_files.COMMAND)
-    assert (code, out.split("\t")[1]) == (0, os.path.join(rounds_of(made), "content-3"))
+    assert (code, f"Round: {os.path.join(rounds_of(made), 'content-3')}" in out) == (0, True)
 
 
 def test_the_evaluator_judges_its_round_by_the_conditions_alone(made: WorkPlace) -> None:
     """Given a command whose content-1 is made, its evaluator next.
     When its next role is started.
-    Then it gives the evaluator, content-1, and judges-by.json there, holding the conditions."""
+    Then it gives the evaluator, the work, content-1, and judges-by.json there, holding the
+    conditions, the outcome, and the target solution with its assumptions."""
     at(made, next="evaluator", entry="content-1")
     folder = os.path.join(rounds_of(made), "content-1")
     os.makedirs(folder)
     judges = os.path.join(folder, "judges-by.json")
-    assert call(made, "start", rn_files.COMMAND) == (0, f"evaluator\t{folder}\t{judges}\n", "")
+    want = given(made, "evaluator", ("Round", folder), ("Judges by", judges))
+    want = want.replace("evaluator\n", f"evaluator\nWork: {made.folder}\n", 1)
+    assert call(made, "start", rn_files.COMMAND) == (0, want, "")
+    solution = rn_files.ost()["opportunities"][0]["solutions"][0]
     with open(judges, encoding="utf-8") as f:
-        assert json.load(f) == rn_files.judged_by("code")
+        assert json.load(f) == {
+            **rn_files.judged_by("code"),
+            "outcome": rn_files.OUTCOME,
+            "solution": rn_files.SOLUTION,
+            "assumptions": solution["assumptions"],
+        }
 
 
 @pytest.mark.parametrize(
     ("results", "weighed"),
-    [(("generator", "evaluator"), "evaluator"), (("generator",), "generator")],
-    ids=["findings", "point"],
+    [
+        (("generator", "evaluator"), "evaluator"),
+        (("generator",), "generator"),
+        (("fixer",), "fixer"),
+    ],
+    ids=["findings", "point", "fix-point"],
 )
 def test_a_weighing_takes_the_result_to_weigh(
     made: WorkPlace, results: Sequence[str], weighed: str
 ) -> None:
     """Given a command waiting on the orchestrator's weighing of content-1, which holds an
-    evaluator's findings, or a generator's point alone.
+    evaluator's findings, or a generator's or a fixer's point alone.
     When its next role is started.
     Then it gives the weighing, with the result to weigh, and changes nothing."""
     at(made, next="weigh", entry="content-1")
@@ -262,7 +292,7 @@ def test_a_fix_starts_with_the_problem_in_its_words(made: WorkPlace) -> None:
     folder = os.path.join(rounds_of(made), "fix-2")
     assert call(made, "start", rn_files.COMMAND, words="The total is off.") == (
         0,
-        f"fixer\t{folder}\t{practice_of('code')}\n",
+        given(made, "fixer", *kept(made, "Fix", folder), ("Best practice", practice_of("code"))),
         "",
     )
     with open(os.path.join(folder, "problem.md"), encoding="utf-8") as f:
@@ -278,7 +308,13 @@ def test_a_refactoring_takes_its_kinds_refactor_best_practice(made: WorkPlace) -
     folder = os.path.join(rounds_of(made), "refactor-1")
     assert call(made, "start", rn_files.COMMAND) == (
         0,
-        f"refactorer\t{folder}\t{practice_of('refactor-code')}\t{practice_of('code')}\n",
+        given(
+            made,
+            "refactorer",
+            *kept(made, "Round", folder),
+            ("Refactor best practice", practice_of("refactor-code")),
+            ("Kind's best practice", practice_of("code")),
+        ),
         "",
     )
 
