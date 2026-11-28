@@ -13,9 +13,10 @@ answers.
 1. Read what you judge by as
    `${CLAUDE_PLUGIN_ROOT}/domain/references/evaluating-with-best-practices.md` says, so that you use
    each of its parts for its purpose.
-2. Name the people from the outcome and the solution you're given, what they do with the deliverable,
+2. Name the people that the goal of what you judge by names, what they do with the deliverable,
    and what they have when they start, or else the least they could have, so that the trial stands
-   for them.
+   for them. The outcome and the solution you're given say what the deliverable is for in the
+   work, such as what a maintainer of the code changes it toward.
 3. Try it once in the people's folder, as they'd use it toward their aim, so that you meet only
    what they'd meet: read what they read and run what they run, with input like their own. Take
    only the moves their use leads to, as a tester's probe sends the next generator to mend what no

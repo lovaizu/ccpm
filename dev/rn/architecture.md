@@ -138,8 +138,7 @@ Strategies:
   Leads the work to the need the user agreed to, as the user's one contact, and keeps what the
   work aims at to the vital few, with every need named kept for the user to decide.
 - references (document)\
-  Hold the one measure by which rn tells the vital few from the trivial many, and how a maker and
-  an evaluator use a best practice.
+  Hold how a maker and an evaluator use a best practice.
 - generator (prompt)\
   Makes a deliverable with which its people reach their aim, by its kind's best practice.
 - evaluator (prompt)\
@@ -166,8 +165,11 @@ Strategies:
   the steering. [P4.1, P5.2]\
   Intent: the one who heard the user and can answer why decides, so the user's meaning isn't
   passed through another's summary, and the steering keeps one writer.
-- One reference of the measure, which the orchestrator reads. [P4.1]\
-  Intent: what the work aims at is weighed by one measure, which changes in one place.
+- The measure of the vital few, the opportunity solution tree, and the tasks planned back from the
+  target written in the orchestrator's prompt, as what it holds to, in place of a best practice of
+  its own. [P4.1]\
+  Intent: the one role that weighs what the work aims at holds the practices it weighs by, and
+  judges each case that its steps don't name by them.
 - The outcome kept as the user agreed to it: what they're after behind their words, as the
   orchestrator read it from them. [P2.5]\
   Intent: the work aims at what the user is after, which their first words seldom say in full.
@@ -433,7 +435,7 @@ plugins/rn/                        what Claude Code installs for the user
     ├── fixer.md                   what the fixer does
     ├── refactorer.md              what the refactorer does
     ├── inspector.md               what the inspector does
-    ├── references/                the measure of the vital few, and how a maker and an evaluator use a best practice
+    ├── references/                how a maker and an evaluator use a best practice
     ├── schemas/                   the form of the steering and of each role's result
     ├── best-practices/            rn's best practice of each kind
     └── scripts/                   each step with one right result, as a role runs it
