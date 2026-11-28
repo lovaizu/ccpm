@@ -42,14 +42,6 @@
   },
   "tasks": [
     {
-      "task": "Put the overnight plugin in place in the shape it ends in once every feature is made, with its README, LICENSE, CHANGELOG, manifest, `bin/overnight`, its entry in the marketplace, and its line in the repository's README, each part a later task makes marked `TODO:`, naming what goes there, such as the queue, the next work's start, a start time, and how many run at once; and write the README's parts for one work that resumes on its own after the usage limit or an error.",
-      "path": "plugins/overnight/README.md",
-      "kind": "readme",
-      "refactor": "refactor-doc",
-      "judged": 2,
-      "next": "refactorer"
-    },
-    {
       "task": "Make, by TDD with unit tests under dev/overnight/tests, the `overnight` command that runs one work through `claude -p` and retries it in the same conversation after growing waits, as the README says, with `overnight --help` listing every option, whether it's required, and its default.",
       "path": "plugins/overnight",
       "kind": "code",

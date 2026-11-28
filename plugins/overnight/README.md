@@ -7,8 +7,8 @@ error stops it.
 <!-- TODO: the queue and the next work's start: the first sentence says that overnight runs the
 works you give it one after another, starting the next work when one ends. -->
 
-In development, at 0.1.0: what overnight does may still change, and no work has yet run through a
-real night on this version.
+overnight is in development, at version 0.1.0. What it does may still change, and no work has yet
+run through a real night on this version.
 
 overnight is for you when you hand Claude Code work that runs for hours and leave it running at
 night. With it, you find the work done by morning, or recorded as failed with its log, without
@@ -20,12 +20,12 @@ gave overnight carried through by morning, not only the first. -->
 ## Non-goals
 
 - overnight doesn't resume a conversation that you have open in Claude Code: it runs work that it
-  starts itself. Give the work to overnight in place of your conversation. In the morning,
-  `claude --resume <session_id>`, with the `session_id` from the work's `state.json`, opens the
-  work's conversation.
+  starts itself. Give the work to overnight in place of your conversation. In the morning, run
+  `claude --resume <session_id>` to open the work's conversation, with the `session_id` from the
+  work's `state.json`, which the [Walkthrough](#walkthrough) shows.
 - overnight doesn't run from a terminal outside Claude Code: Claude Code puts the command on the
-  `PATH` of its own shell only. Start it from Claude Code, as `! overnight ...`.
-- overnight doesn't keep your computer awake: before you leave, set the computer not to sleep while
+  `PATH` of its own shell only. Start it from Claude Code's bash mode, as `! overnight ...`.
+- overnight doesn't keep your computer awake. Before you leave, set the computer not to sleep while
   it's plugged in, such as by **Prevent automatic sleeping on power adapter when the display is
   off** in the Battery settings of a Mac laptop.
 
@@ -51,8 +51,8 @@ overnight: state and log in /home/you/.local/state/overnight/20261128-230012/
 
 You close Claude Code and leave.
 
-In the morning, the work's log shows where the limit stopped it, and that it went on and ended
-done:
+In the morning, the work's log shows where the limit stopped the work, and that the work went on
+and ended as done:
 
 ```console
 $ cat ~/.local/state/overnight/20261128-230012/log
@@ -80,8 +80,7 @@ $ git -C ~/work/shop log --oneline -1
 3f9c2a1 Move the tests in tests/unittest_old to pytest
 ```
 
-You typed one command. The work went on from where the limit stopped it, 17 minutes after the
-limit lifted.
+The work went on from where the limit stopped it, 17 minutes after the limit lifted.
 
 <!-- TODO: the queue, the next work's start, a start time, and how many run at once: the
 walkthrough puts the night's works in the queue with a start time, three of them run at once, and
@@ -91,8 +90,9 @@ each next work starts when one ends, so the morning's log shows each work done. 
 
 <!-- TODO: the `overnight` command of bin/overnight works as this section says. -->
 
-overnight runs your work in Claude Code without you, and each time a run stops short, it waits and
-asks Claude to go on in the same conversation, until the work is done or the retries run out.
+overnight runs your work in Claude Code without you, and each time a run stops short, overnight
+waits and asks Claude to go on in the same conversation, until the work is done or the retries run
+out.
 
 <!-- TODO: the queue and the next work's start: the one way says too that once a work ends,
 overnight starts the next work in its queue. -->
@@ -133,9 +133,9 @@ the window's start, raise the count with `--retries <count>`: `--retries 8` wait
 minutes in all, which outlasts the limit after any stop.
 
 Once the retries run out, overnight records the work as failed, with `"status": "failed"` in
-`state.json`. In the morning, open the folder that the start printed, such as
-`~/.local/state/overnight/20261128-230012/`, not the folder that the work ran in: it holds
-`state.json` and the work's one `log`, which shows where each run stopped.
+`state.json`. In the morning, open the folder that overnight printed when the work started, such
+as `~/.local/state/overnight/20261128-230012/`, not the folder that the work ran in. The printed
+folder holds `state.json` and the work's one `log`, which shows where each run stopped.
 
 ### "Does it stop at night to ask your permission?"
 
