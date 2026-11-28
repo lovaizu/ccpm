@@ -14,7 +14,7 @@
         ],
         "solutions": [
           {
-            "solution": "The user starts one work from a terminal, with its folder, its prompt, and the tools it may use, and leaves; it runs headless through `claude -p`, and on the usage limit or any error it is asked to go on in the same session after a wait of 5, 10, 20, then 60 minutes, up to 7 retries by default or as many as the user says, so that by morning the work is done, or recorded as failed, with its log.",
+            "solution": "The user starts one work from Claude Code, with its folder, its prompt, and the tools it may use, and leaves; it runs headless through `claude -p`, and on the usage limit or any error it is asked to go on in the same session after a wait of 5, 10, 20, then 60 minutes, up to 7 retries by default or as many as the user says, so that by morning the work is done, or recorded as failed, with its log.",
             "target": true,
             "assumptions": [
               "A run succeeded exactly when `claude -p --output-format json` exits 0 and its result has `is_error` false; the usage limit and other errors show as anything else.",
@@ -42,16 +42,11 @@
   },
   "tasks": [
     {
-      "task": "Write the overnight plugin's README for the one work that resumes on its own: what it does for its users, how to install it, start a work, and read the result in the morning.",
-      "path": "plugins/overnight/README.md",
-      "kind": "readme",
-      "refactor": "refactor-doc"
-    },
-    {
       "task": "Make the overnight command for one work that retries, by TDD, in Python's standard library alone, with its plugin.json, LICENSE, and CHANGELOG, and its unit tests under dev/overnight/tests with a stand-in for `claude`.",
       "path": "plugins/overnight",
       "kind": "code",
-      "refactor": "refactor-code"
+      "refactor": "refactor-code",
+      "entry": "content-1"
     },
     {
       "task": "List the overnight plugin in the marketplace and in the repository's README.",
@@ -61,7 +56,7 @@
   ],
   "decisions": [
     "The user gives the purpose and intent; how the work goes on is the orchestrator's to decide.",
-    "The work runs from outside Claude Code: a command run in a terminal starts `claude -p` and retries it, as Claude Code's own continue at the usage limit is unstable; no keys are sent into an interactive session.",
+    "The work runs from outside Claude Code: a command starts `claude -p` and retries it, as Claude Code's own continue at the usage limit is unstable; no keys are sent into an interactive session.",
     "It retries on any error, not only the usage limit.",
     "Success is exit code 0 with `is_error` false in the JSON result; anything else is retried, as an exit code alone has shown 0 on a rate limit (anthropics/claude-code#79500).",
     "A retry goes on in the same session by `--resume <session_id>`.",
@@ -72,6 +67,8 @@
     "Later, once the queue comes: it holds any number of works, the next starts when one ends, works start at a given time or right away, 3 run at once by default and the number can be changed, a work whose retries run out lets the queue move on, and the queue lives in a file so that a stopped command picks up where it was.",
     "Python, standard library alone, with unit tests; the user doesn't try it, as the tests show it works.",
     "A new plugin, overnight, with README, LICENSE, CHANGELOG, a marketplace entry, and a line in the repository's README.",
-    "The user doesn't see the README once it's made."
+    "The user doesn't see the README once it's made.",
+    "The `overnight` command sits in the plugin's bin/, which Claude Code puts on the PATH of its own shell, so the user starts a work from Claude Code (such as `! overnight ...`) with no setup; the command runs apart from the session, so closing Claude Code doesn't stop it. A plain terminal outside Claude Code doesn't get bin/ on its PATH.",
+    "The README's links to LICENSE and CHANGELOG and its install line hold once the code and the marketplace tasks are done; its order follows the readme template, and its top status says it's in development, so it takes no remedy after its first judged Round."
   ]
 }

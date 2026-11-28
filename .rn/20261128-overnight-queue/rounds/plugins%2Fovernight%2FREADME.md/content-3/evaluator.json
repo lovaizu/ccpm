@@ -1,0 +1,70 @@
+{
+ "result": "judged",
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "overnight is a Claude Code plugin with a command that runs one piece of work in Claude Code while",
+    "you're away, and has it go on by itself after the usage limit or an error stops it.",
+    "overnight is for you when you hand Claude Code work that runs for hours, and leave it running at",
+    "night. With it, you find the work done by morning, or recorded as failed with its log, without",
+    "getting up to type \"continue\" once the limit lifts."
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "- overnight doesn't resume a conversation that you have open in Claude Code: it runs a work that",
+    "- overnight doesn't run from a terminal outside Claude Code: Claude Code puts the command on the",
+    "- overnight doesn't keep your computer awake: before you leave, set the computer not to sleep while",
+    "In development, at 0.1.0: overnight carries one work at a time. It doesn't yet keep a queue of",
+    "works, start the next work when one ends, or start a work at a given time."
+   ]
+  },
+  {
+   "condition": "N7",
+   "lines": [
+    "overnight runs your work in Claude Code without you, and each time a run stops short, it waits and",
+    "asks Claude to go on in the same conversation, until the work is done or the retries run out."
+   ]
+  },
+  {
+   "condition": "N8",
+   "lines": [
+    "### \"Can I close Claude Code once the work starts?\"",
+    "### \"At the limit, my work waits until I'm back to type 'continue'.\"",
+    "### \"Does it start the work over after a stop?\"",
+    "### \"Claude Code can exit with 0 at the limit. How does it know a run stopped short?\"",
+    "### \"Does asking again and again while the limit holds do harm?\"",
+    "### \"What if the limit lifts late, or an error keeps coming?\"",
+    "### \"Will it stop at night to ask my permission?\""
+   ]
+  }
+ ],
+ "more": [
+  {
+   "condition": "N3",
+   "good_when": "A reader learns at the top, before they install, that no real night has yet carried a work through with this version, so they decide whether to trust a night's work to it knowing that; today they learn it only in the Walkthrough, after the install steps."
+  },
+  {
+   "condition": "N4",
+   "good_when": "A reader who follows the MIT link reaches the license's full text; from the README's folder, the link leads to a file that isn't there."
+  },
+  {
+   "condition": "N5",
+   "good_when": "A reader sees what a night with overnight gives them, and why they can trust it, before they're asked to set it up, so they install only once they've decided it fits; today Requirements and Installation come before the Walkthrough and How it works, and the note that no real night records the run comes after the install."
+  },
+  {
+   "condition": "N6",
+   "good_when": "A reader sees a night that actually happened with this version: the command, the log of its stops and retries, and the done work in the morning; today the README says the run shown is the one overnight is built toward, and no night run of this version records it."
+  },
+  {
+   "condition": "N9",
+   "good_when": "A reader with nothing set up runs the two install commands, then sees `overnight 0.1.0` from `! overnight --version`; today `claude plugin install overnight@ccpm` fails with `Plugin \"overnight\" not found in marketplace \"ccpm\"`."
+  },
+  {
+   "condition": "N10",
+   "good_when": "A reader who follows the Changelog link reaches the list of changes in each version, and a reader who wants every option of the command, beyond the three the README shows, knows where to find them; today the Changelog link leads to a file that isn't there, and nothing points to the full set of options."
+  }
+ ]
+}
