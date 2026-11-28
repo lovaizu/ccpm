@@ -1,0 +1,63 @@
+{
+ "what": "Maintainers, people or AI agents, change what the code does and know that every behavior its specification asks for still holds, as the code holds only those behaviors, and whoever runs the code can fix a wrong input from outside.",
+ "critical_success_factors": [
+  {
+   "id": "C1",
+   "what": "The maintainer finds the one place where a change belongs.",
+   "necessary_conditions": [
+    {
+     "id": "N1",
+     "about": "Module opening",
+     "what": "Does each module say, where the maintainer first meets it, the one thing it alone decides?"
+    },
+    {
+     "id": "N2",
+     "about": "Interface",
+     "what": "Does each name that a module offers state everything a caller needs to call it without reading its body?"
+    },
+    {
+     "id": "N3",
+     "about": "Interface, Body",
+     "what": "Does each behavior of the code trace to a case of its specification, which is what was agreed for the part?"
+    }
+   ]
+  },
+  {
+   "id": "C2",
+   "what": "The tests show whether every behavior still holds.",
+   "necessary_conditions": [
+    {
+     "id": "N4",
+     "about": "Manifest, Tests",
+     "what": "Do the tests pass in any order and on every run, on a fresh machine set up from the code's setup alone?"
+    },
+    {
+     "id": "N5",
+     "about": "Tests",
+     "what": "Does each case of the specification, its edges and refusals included, have one test whose name says the case?"
+    },
+    {
+     "id": "N6",
+     "about": "Interface, Tests",
+     "what": "Do the tests call the code only as its callers do, through its interfaces?"
+    },
+    {
+     "id": "N7",
+     "about": "Body, Tests",
+     "what": "Does each test assert the whole result of its case, with coverage leaving no line that no case calls for, and no two tests on the same branch for the same case?"
+    }
+   ]
+  },
+  {
+   "id": "C3",
+   "what": "Whoever runs the code can fix a wrong input from outside.",
+   "necessary_conditions": [
+    {
+     "id": "N8",
+     "about": "Body",
+     "what": "Does the code refuse a wrong input from outside before it acts, with a message from which whoever ran it can fix the input?"
+    }
+   ]
+  }
+ ]
+}

@@ -23,6 +23,8 @@ from overnight.work import Work, carry, put, status
 
 PROMPT = "Move the tests to pytest"
 CLAUDE = ["claude", "-p", "--output-format", "json", "--allowed-tools", "Read,Edit"]
+# The words of a retry in the session where the rate limit stopped the work.
+RESUME = [*CLAUDE, "--resume", session_of(RATE_LIMIT)]
 STOPPED = "API Error: Rate limit reached"
 NOT_FOUND = "No conversation found with session ID: 11111111-1111-1111-1111-111111111111"
 REFUSAL = (
@@ -106,8 +108,7 @@ def test_a_stopped_run_is_retried_in_its_session_after_5_minutes(tmp_path):
     Then it waits 5 minutes, asks `claude` to continue in the first run's session, and records the
     work done after 2 runs"""
     host, clock, folder = _carried(tmp_path, 7, RATE_LIMIT, RESUMED)
-    resume = [*CLAUDE, "--resume", session_of(RATE_LIMIT)]
-    assert host.calls == [(CLAUDE, str(tmp_path), PROMPT), (resume, str(tmp_path), "continue")]
+    assert host.calls == [(CLAUDE, str(tmp_path), PROMPT), (RESUME, str(tmp_path), "continue")]
     assert clock.waits == [300]
     assert _log(folder) == [
         "23:15 run 1 started",
@@ -174,8 +175,7 @@ def test_a_work_stopped_while_it_waits_goes_on_in_its_session_when_carried_again
         carry(folder, Host(RATE_LIMIT), clock.now, stop)
     host = Host(RESUMED)
     carry(folder, host, clock.now, clock.sleep)
-    resume = [*CLAUDE, "--resume", session_of(RATE_LIMIT)]
-    assert (host.calls, clock.waits) == ([(resume, str(tmp_path), "continue")], [])
+    assert (host.calls, clock.waits) == ([(RESUME, str(tmp_path), "continue")], [])
     assert _log(folder) == [
         "23:15 run 1 started",
         f"23:15 run 1 stopped: {STOPPED}. Retry 1 of 7 at 23:20.",
@@ -213,11 +213,10 @@ def test_a_retry_after_a_resume_that_finds_no_conversation_resumes_the_same_sess
     Then the second retry asks `claude` to continue in the first run's session again, as the
     resume that found none named no other"""
     host, _, folder = _carried(tmp_path, 7, RATE_LIMIT, NO_CONVERSATION, RESUMED)
-    resume = [*CLAUDE, "--resume", session_of(RATE_LIMIT)]
     assert host.calls == [
         (CLAUDE, str(tmp_path), PROMPT),
-        (resume, str(tmp_path), "continue"),
-        (resume, str(tmp_path), "continue"),
+        (RESUME, str(tmp_path), "continue"),
+        (RESUME, str(tmp_path), "continue"),
     ]
     assert _log(folder) == [
         "23:15 run 1 started",

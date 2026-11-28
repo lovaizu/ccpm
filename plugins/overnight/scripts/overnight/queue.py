@@ -86,8 +86,9 @@ def run(
 
     Takes: the folder of the works, which exists, the host that runs `claude`, the clock, and the
     sleep, as `work.carry` takes them.
-    Changes: carries the works, and returns once none is pending. Where another runner runs, it
-    returns at once and carries nothing.
+    Changes: carries the works, and returns once none is pending. A work whose carry raises an
+    error that its folders cause, such as one whose `dir` is gone, is failed, as `work.fail` says,
+    and the next is carried. Where another runner runs, it returns at once and carries nothing.
     """
     # The lock is freed before the last look, so a work added as the runner ends is either seen by
     # that look or added after the lock is free, for the runner that its add starts.
@@ -99,5 +100,12 @@ def run(
                 return
             folders = pending(top)
             while folders:
-                work.carry(folders[0], host, now, sleep)
+                # The errors that a work's own folders cause, such as a `dir` that is gone or a
+                # file of the work that isn't JSON, fail that work alone and leave the rest of the
+                # night to the next. Any other error stops the runner, and leaves the work running
+                # for the runner started again.
+                try:
+                    work.carry(folders[0], host, now, sleep)
+                except (OSError, ValueError) as error:
+                    work.fail(folders[0], now(), error)
                 folders = pending(top)

@@ -60,14 +60,7 @@
       }
     ]
   },
-  "tasks": [
-    {
-      "task": "Show by a unit test that ten works added run in the order added, each once, as the queue sets no limit.",
-      "path": "plugins/overnight",
-      "kind": "code",
-      "refactor": "refactor-code"
-    }
-  ],
+  "tasks": [],
   "decisions": [
     "The user gives the purpose and intent; how the work goes on is the orchestrator's to decide.",
     "The work runs from outside Claude Code: a command starts `claude -p` and retries it, as Claude Code's own continue at the usage limit is unstable; no keys are sent into an interactive session.",
@@ -92,6 +85,11 @@
     "The README's top status says that no real night has carried a work through this version yet.",
     "`overnight` with no work given starts the runner on the works still waiting, and a work running when the runner stopped goes on in its session as a retry; any `overnight` that adds a work starts the runner too where none runs.",
     "A test shows that a work added just as the runner ends still runs.",
-    "What the Rounds leave is mended without asking, as the user mended it before and leaves the steps to the orchestrator: a test shows that adding a work with no runner running starts the works still waiting, and the command's test of a waiting work checks its exit code and stderr too. The test of a work added as the runner ends keeps wrapping queue.pending, as only a race between processes reaches that moment otherwise, and a race gives no same result each run."
+    "What the Rounds leave is mended without asking, as the user mended it before and leaves the steps to the orchestrator: a test shows that adding a work with no runner running starts the works still waiting, and the command's test of a waiting work checks its exit code and stderr too. The test of a work added as the runner ends keeps wrapping queue.pending, as only a race between processes reaches that moment otherwise, and a race gives no same result each run.",
+    "No test leaves a runner running once it ends.",
+    "The test of ten works takes the place of the test of two that walks the same case.",
+    "A work that fails to start or crashes the runner, such as one whose folder is gone, is recorded as failed with why in its log, and the queue moves on to the next.",
+    "The command's test of --retries 0 stays beside the work's test of 0 retries, as one shows the command accepts 0 and the other what the work does with it.",
+    "The code's unit tests under dev/overnight/tests are part of the overnight deliverable, as the decisions put them there."
   ]
 }

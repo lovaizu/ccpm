@@ -1,0 +1,71 @@
+{
+  "result": "judged",
+  "good": [
+    {
+      "condition": "N1",
+      "lines": [
+        "\"\"\"Decides the queue: where the works wait, in what order, and that one runner at a time carries",
+        "\"\"\"Decides the course of one work: its runs of `claude`, the waits between them, when the work is",
+        "\"\"\"Decides how overnight runs `claude`, the one program outside it that it runs, and how it reads",
+        "\"\"\"Decides what the `overnight` command takes from the user and what it gives back.\"\"\"",
+        "\"\"\"The code of the `overnight` command: `command` for what it takes and gives, `queue` for the"
+      ]
+    },
+    {
+      "condition": "N2",
+      "lines": [
+        "Takes: the folder of the works, which `add` makes where it doesn't exist, the work, the clock",
+        "Gives: `<top>/<yyyymmdd-hhmmss>`, named by the time of the add, so that the names sort in the",
+        "Changes: carries the works, and returns once none is pending. Where another runner runs, it",
+        "\"\"\"The folders of the works in the folder of the works that haven't ended, the one running and",
+        "Refuses: with exit code 2 and the reason on stderr, before it adds or starts anything: a word"
+      ]
+    },
+    {
+      "condition": "N3",
+      "lines": [
+        "folders = [os.path.join(top, name) for name in sorted(os.listdir(top))]",
+        "return [each for each in folders if work.status(each) in (\"waiting\", \"running\")]",
+        "while folders:",
+        "work.carry(folders[0], host, now, sleep)",
+        "fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)"
+      ]
+    },
+    {
+      "condition": "N5",
+      "lines": [
+        "def test_the_runner_carries_ten_works_each_once_in_the_order_they_were_added(tmp_path):",
+        "def test_a_work_whose_retries_run_out_lets_the_next_work_run(tmp_path):",
+        "def test_a_runner_started_again_goes_on_with_the_work_that_was_running(tmp_path):",
+        "def test_a_runner_started_again_runs_no_work_that_ended(tmp_path):",
+        "def test_a_work_added_in_the_same_second_as_another_takes_the_next_second(tmp_path):",
+        "def test_a_second_runner_runs_nothing_while_one_runs(tmp_path):",
+        "def test_overnight_with_no_work_given_and_none_pending_says_so(tmp_path):",
+        "def test_a_dir_that_isnt_a_folder_is_refused(tmp_path):"
+      ]
+    },
+    {
+      "condition": "N8",
+      "lines": [
+        "parser.error(f\"--dir {args.dir}: no such folder\")",
+        "parser.error(\"the prompt is empty: give the work's prompt as the last word, in quotes\")",
+        "raise argparse.ArgumentTypeError(f\"must be a whole number from 0, not {text!r}\")",
+        "\"claude isn't on the PATH: run overnight from Claude Code, as `! overnight ...`\""
+      ]
+    }
+  ],
+  "more": [
+    {
+      "condition": "N4",
+      "good_when": "A maintainer who runs the tests finds no runner of overnight still going on the machine once they end. Now each run of the tests leaves one behind for hours, from test_a_work_added_while_another_runs_waits_in_the_queue_after_it: the blog's add starts a second runner, which takes the queue once the case stops the first, retries the shop's work against a double with no run left (its log shows `IndexError: list index out of range. Retry 2 of 7`), and waits through all 7 retries. After 8 runs of the tests, `pgrep -af scripts/runner` showed 8 such runners."
+    },
+    {
+      "condition": "N6",
+      "good_when": "A maintainer who changes how `queue.run` looks for the pending works, with its behavior kept, sees every queue test still pass. Now test_a_work_added_just_as_the_runner_ends_still_runs replaces `queue.pending` inside the module by monkeypatch, so the case holds only while `run` calls it by that module name. A change to that call fails the case at `added[0]`, though a work added as the runner ends still runs."
+    },
+    {
+      "condition": "N7",
+      "good_when": "A fault in how the runner carries the works in order fails one test, which names that case. Now test_the_runner_carries_the_works_one_after_another_in_the_order_they_were_added, with two works, and test_the_runner_carries_ten_works_each_once_in_the_order_they_were_added, with ten, run the same branches of `queue.run` for the same case and fail together."
+    }
+  ]
+}

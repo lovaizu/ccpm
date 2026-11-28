@@ -12,16 +12,20 @@ import sys
 import time
 from typing import Callable
 
+import pytest
 from double.claude_double import DONE, RATE_LIMIT, RESUMED, asked, put_on_path, session_of
 
 # The top of the repository, four folders above this file's: unit/, tests/, overnight/, and dev/.
 TOP = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
 PLUGIN = os.path.join(TOP, "plugins", "overnight")
 COMMAND = os.path.join(PLUGIN, "bin", "overnight")
+RUNNER = os.path.join(PLUGIN, "scripts", "runner")
 
 # The python3 that runs the tests, which bin/overnight runs too.
 PYTHON = os.path.dirname(sys.executable)
 PROMPT = "Say ok"
+# The words of a run of `claude` for a work that may use Read, before any `--resume`.
+CLAUDE = ["claude", "-p", "--output-format", "json", "--allowed-tools", "Read"]
 # How long a case waits for the work that the command started apart to reach what it checks.
 PATIENCE = 30
 
@@ -50,9 +54,14 @@ def _double(tmp_path, *events: str) -> tuple[dict[str, str], str]:
     return {**env, "PATH": PYTHON + os.pathsep + env["PATH"]}, str(folder)
 
 
+def _top(tmp_path):
+    """The folder of the works in the test's home, where the command keeps them."""
+    return tmp_path / ".local" / "state" / "overnight"
+
+
 def _works(tmp_path) -> list[str]:
     """The folders of the works under the home's .local/state/overnight/, or [] where it's none."""
-    top = tmp_path / ".local" / "state" / "overnight"
+    top = _top(tmp_path)
     if not top.exists():
         return []
     return sorted(str(top / name) for name in os.listdir(top) if (top / name).is_dir())
@@ -74,9 +83,47 @@ def _gone(pid: int) -> bool:
     return shown.stdout.strip()[:1] in ("", "Z")
 
 
+def _runners(tmp_path) -> list[int]:
+    """The process ids of the runners of the works under the home's .local/state/overnight/ that
+    haven't ended, each the leader of its own session."""
+    top = _top(tmp_path)
+    shown = subprocess.run(
+        ["ps", "-ax", "-ww", "-o", "pid=,stat=,args="], capture_output=True, text=True, check=True
+    )
+    rows = [line.split(None, 2) for line in shown.stdout.splitlines()]
+    return [
+        int(pid) for pid, stat, args in rows if args.endswith(f"{RUNNER} {top}") and stat[0] != "Z"
+    ]
+
+
+def _stop(tmp_path, double: str) -> None:
+    """Stops the runner that ran `claude` first, as a restart of the computer stops it, once each
+    other runner that an add started has found it running and ended, so that none of them takes
+    the queue on."""
+    runner = asked(double)[0]["sid"]
+    _until(lambda: _runners(tmp_path) == [runner])
+    os.killpg(runner, signal.SIGTERM)
+    _until(lambda: _gone(runner))
+
+
+@pytest.fixture(autouse=True)
+def _no_runner_left(tmp_path):
+    """Stops each runner that the case left, such as where it failed before its work ended, so that
+    none goes on retrying once the case ends."""
+    yield
+    for runner in _runners(tmp_path):
+        os.killpg(runner, signal.SIGTERM)
+    _until(lambda: not _runners(tmp_path))
+
+
 def _read(path: str) -> str:
     with open(path, encoding="utf-8") as f:
         return f.read()
+
+
+def _status(folder: str) -> str:
+    """The status that the work's state.json in the folder holds."""
+    return json.loads(_read(os.path.join(folder, "state.json")))["status"]
 
 
 def _ended(folder: str, double: str, runner: int = 0) -> None:
@@ -126,7 +173,7 @@ def test_a_work_starts_apart_from_the_session_and_ends_done(tmp_path):
     [call] = asked(double)
     assert call["sid"] != os.getsid(0)
     assert (call["argv"], call["cwd"], call["stdin"]) == (
-        ["claude", "-p", "--output-format", "json", "--allowed-tools", "Read"],
+        CLAUDE,
         str(shop),
         PROMPT,
     )
@@ -150,7 +197,7 @@ def _first_retry(tmp_path, *words: str) -> str:
     [folder] = _works(tmp_path)
     log = os.path.join(folder, "log")
     _until(lambda: os.path.exists(log) and "Retry" in _read(log))
-    os.killpg(asked(double)[0]["sid"], signal.SIGTERM)
+    _stop(tmp_path, double)
     return _read(log)
 
 
@@ -211,23 +258,19 @@ def _two_works(
     log = os.path.join(first, "log")
     _until(lambda: os.path.exists(log) and "Retry" in _read(log))
     if stopped:
-        runner = asked(double)[0]["sid"]
-        os.killpg(runner, signal.SIGTERM)
-        _until(lambda: _gone(runner))
+        _stop(tmp_path, double)
     ran = _overnight(tmp_path, env, "--dir", str(blog), "--allowed-tools", "Read", PROMPT)
     return env, double, _works(tmp_path), ran
 
 
-# The calls of `claude` as the shop's work goes on in its session before the blog's work runs.
-_RESUME = ["claude", "-p", "--output-format", "json", "--allowed-tools", "Read", "--resume"]
-
-
 def _shop_then_blog(tmp_path) -> list[tuple[list[str], str, str]]:
+    """The calls of `claude` as the shop's work goes on in its session before the blog's work
+    runs."""
     shop, blog = str(tmp_path / "shop"), str(tmp_path / "blog")
     return [
-        (_RESUME[:-1], shop, PROMPT),
-        ([*_RESUME, session_of(RATE_LIMIT)], shop, "continue"),
-        (_RESUME[:-1], blog, PROMPT),
+        (CLAUDE, shop, PROMPT),
+        ([*CLAUDE, "--resume", session_of(RATE_LIMIT)], shop, "continue"),
+        (CLAUDE, blog, PROMPT),
     ]
 
 
@@ -241,7 +284,7 @@ def test_a_work_added_while_another_runs_waits_in_the_queue_after_it(tmp_path):
     Then it exits 0, saying that the blog's work waits in the queue after 1 work, and names its
     state folder, with nothing on stderr"""
     _, double, [_, second], ran = _two_works(tmp_path)
-    os.killpg(asked(double)[0]["sid"], signal.SIGTERM)
+    _stop(tmp_path, double)
     work, blog = os.path.basename(second), tmp_path / "blog"
     assert (ran.returncode, ran.stdout, ran.stderr) == (
         0,
@@ -263,8 +306,7 @@ def test_a_work_added_while_no_runner_runs_starts_the_works_pending(tmp_path):
     assert ran.stdout.startswith(f"overnight: work {os.path.basename(second)} waits in the queue")
     _ended(second, double, 1)
     assert _calls(double) == _shop_then_blog(tmp_path)
-    assert json.loads(_read(os.path.join(first, "state.json")))["status"] == "done"
-    assert json.loads(_read(os.path.join(second, "state.json")))["status"] == "done"
+    assert (_status(first), _status(second)) == ("done", "done")
 
 
 def test_overnight_with_no_work_given_goes_on_with_the_works_pending(tmp_path):
@@ -273,9 +315,7 @@ def test_overnight_with_no_work_given_goes_on_with_the_works_pending(tmp_path):
     Then it says that the queue goes on with 2 works, and the shop's work goes on in its session
     before the blog's work runs, each recorded done"""
     env, double, [first, second], _ = _two_works(tmp_path, RESUMED, DONE)
-    runner = asked(double)[0]["sid"]
-    os.killpg(runner, signal.SIGTERM)
-    _until(lambda: _gone(runner))
+    _stop(tmp_path, double)
     ran = _overnight(tmp_path, env)
     assert (ran.returncode, ran.stdout, ran.stderr) == (
         0,
@@ -284,8 +324,7 @@ def test_overnight_with_no_work_given_goes_on_with_the_works_pending(tmp_path):
     )
     _ended(second, double, 1)
     assert _calls(double) == _shop_then_blog(tmp_path)
-    assert json.loads(_read(os.path.join(first, "state.json")))["status"] == "done"
-    assert json.loads(_read(os.path.join(second, "state.json")))["status"] == "done"
+    assert (_status(first), _status(second)) == ("done", "done")
 
 
 def test_overnight_with_no_work_given_and_none_pending_says_so(tmp_path):

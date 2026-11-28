@@ -1,0 +1,1 @@
+One work can stop the whole night: a work whose --dir was removed before its turn makes the runner crash with FileNotFoundError, which goes only into runner.log; the work stays running with only 'run 1 started' in its log, nothing after it runs, and running overnight again stops on the same work. The README says one failed work doesn't stop the rest of the night.

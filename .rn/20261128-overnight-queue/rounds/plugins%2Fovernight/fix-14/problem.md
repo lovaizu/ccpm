@@ -1,0 +1,1 @@
+No test shows that a work whose --dir is gone is recorded as failed with why in its log while the queue moves on to the next, so the repository's check fails on coverage at 99%: queue.py:110 and work.py:109-112 aren't reached. The unit tests under dev/overnight/tests are part of this deliverable.

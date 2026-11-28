@@ -5,13 +5,16 @@ run in the test's own process with a double of `claude` and a clock that each wa
 from __future__ import annotations
 
 import os
+from collections.abc import Sequence
 
 import pytest
 from double.claude_double import DONE, RATE_LIMIT, RESUMED, Host, session_of
 from double.clock import Clock
-from overnight import queue, work
+from overnight import claude, queue, work
 
 CLAUDE = ["claude", "-p", "--output-format", "json", "--allowed-tools", "Read"]
+# The words of the retry of the shop's work, in the session where the rate limit stopped it.
+RESUME = [*CLAUDE, "--resume", session_of(RATE_LIMIT)]
 SHOP = "Move the tests to pytest"
 BLOG = "Fix the broken links"
 
@@ -77,18 +80,20 @@ def test_the_works_pending_are_in_the_order_they_were_added(tmp_path):
     assert queue.pending(top) == [first, second]
 
 
-def test_the_runner_carries_the_works_one_after_another_in_the_order_they_were_added(tmp_path):
-    """Given the shop's work added, then the blog's, and `claude`, whose runs are done
+def test_the_runner_carries_ten_works_each_once_in_the_order_they_were_added(tmp_path):
+    """Given ten works added for the shop, a minute apart, and `claude`, whose runs are done
     When the runner runs
-    Then it runs the shop's work, then the blog's, records each done, and leaves none pending"""
-    top, shop, blog = _dirs(tmp_path)
+    Then it runs each of the ten once, in the order they were added, records each done, and leaves
+    none pending, as the queue sets no limit"""
+    top, shop, _ = _dirs(tmp_path)
     clock = Clock()
-    first = _add(top, clock, shop, SHOP)
-    second = _add(top, clock, blog, BLOG)
-    host = Host(DONE, DONE)
+    prompts = [f"Do step {step} of the move to pytest" for step in range(1, 11)]
+    folders = [_add(top, clock, shop, prompt) for prompt in prompts]
+    host = Host(*[DONE] * 10)
     queue.run(top, host, clock.now, clock.sleep)
-    assert host.calls == [(CLAUDE, shop, SHOP), (CLAUDE, blog, BLOG)]
-    assert (work.status(first), work.status(second), queue.pending(top)) == ("done", "done", [])
+    assert host.calls == [(CLAUDE, shop, prompt) for prompt in prompts]
+    assert [work.status(folder) for folder in folders] == ["done"] * 10
+    assert queue.pending(top) == []
 
 
 def test_a_work_whose_retries_run_out_lets_the_next_work_run(tmp_path):
@@ -103,6 +108,35 @@ def test_a_work_whose_retries_run_out_lets_the_next_work_run(tmp_path):
     queue.run(top, host, clock.now, clock.sleep)
     assert host.calls == [(CLAUDE, shop, SHOP), (CLAUDE, blog, BLOG)]
     assert (work.status(first), work.status(second)) == ("failed", "done")
+
+
+def test_a_work_whose_folder_is_gone_is_failed_with_why_and_lets_the_next_work_run(tmp_path):
+    """Given the shop's work, whose folder is gone by the time it runs, then the blog's work
+    When the runner runs
+    Then it records the shop's work failed after 0 runs, with why in its log, and runs the blog's
+    work after it"""
+    top, shop, blog = _dirs(tmp_path)
+    clock = Clock()
+    first = _add(top, clock, shop, SHOP)
+    second = _add(top, clock, blog, BLOG)
+    os.rmdir(shop)
+    double = Host(DONE)
+
+    # The real run of `claude` raises as it fails to enter a folder that is gone, before `claude`
+    # starts, and the double runs the blog's work.
+    def host(argv: Sequence[str], cwd: str, stdin: str) -> claude.Ran:
+        return (claude.run if cwd == shop else double)(argv, cwd, stdin)
+
+    queue.run(top, host, clock.now, clock.sleep)
+    assert double.calls == [(CLAUDE, blog, BLOG)]
+    assert (work.status(first), work.status(second)) == ("failed", "done")
+    with open(os.path.join(first, work.LOG), encoding="utf-8") as f:
+        assert f.read() == (
+            "23:17 run 1 started\n"
+            f"23:17 stopped: FileNotFoundError: [Errno 2] No such file or directory: '{shop}'."
+            " No retries.\n"
+            f"work {os.path.basename(first)} failed after 0 runs\n"
+        )
 
 
 def test_a_work_that_runs_is_pending_with_those_that_wait(tmp_path):
@@ -138,8 +172,7 @@ def test_a_work_added_while_the_runner_runs_joins_the_queue(tmp_path):
 
     host = Host(RATE_LIMIT, RESUMED, DONE)
     queue.run(top, host, clock.now, sleep)
-    resume = [*CLAUDE, "--resume", session_of(RATE_LIMIT)]
-    assert host.calls == [(CLAUDE, shop, SHOP), (resume, shop, "continue"), (CLAUDE, blog, BLOG)]
+    assert host.calls == [(CLAUDE, shop, SHOP), (RESUME, shop, "continue"), (CLAUDE, blog, BLOG)]
     assert work.status(added[0]) == "done"
 
 
@@ -187,8 +220,7 @@ def test_a_second_runner_runs_nothing_while_one_runs(tmp_path):
 
     first = Host(RATE_LIMIT, RESUMED, DONE)
     queue.run(top, first, clock.now, sleep)
-    resume = [*CLAUDE, "--resume", session_of(RATE_LIMIT)]
-    assert first.calls == [(CLAUDE, shop, SHOP), (resume, shop, "continue"), (CLAUDE, blog, BLOG)]
+    assert first.calls == [(CLAUDE, shop, SHOP), (RESUME, shop, "continue"), (CLAUDE, blog, BLOG)]
     assert second.calls == []
 
 
@@ -205,8 +237,7 @@ def test_a_runner_started_again_goes_on_with_the_work_that_was_running(tmp_path)
         queue.run(top, Host(RATE_LIMIT), clock.now, _stop)
     host = Host(RESUMED, DONE)
     queue.run(top, host, clock.now, clock.sleep)
-    resume = [*CLAUDE, "--resume", session_of(RATE_LIMIT)]
-    assert host.calls == [(resume, shop, "continue"), (CLAUDE, blog, BLOG)]
+    assert host.calls == [(RESUME, shop, "continue"), (CLAUDE, blog, BLOG)]
     assert (work.status(first), work.status(second)) == ("done", "done")
 
 

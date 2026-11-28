@@ -97,6 +97,21 @@ def carry(
         sleep(wait * 60)
 
 
+def fail(folder: str, at: datetime.datetime, error: Exception) -> None:
+    """Records the work in the folder as failed, where an error that its carry raised stopped it,
+    such as a `dir` that is gone, as no retry would go on from there.
+
+    Takes: the folder of a work that `put` put there, the local time, and the error.
+    Changes: appends to the folder's `log` `<hh:mm> stopped: <error>. No retries.` and
+    `work <id> failed after <n> runs`, with `<n>` the runs that ended, and writes `state.json` with
+    `status` `failed`, the rest as it stood.
+    """
+    state = _read(os.path.join(folder, STATE))
+    _log(folder, f"{at:%H:%M} stopped: {type(error).__name__}: {error}. No retries.")
+    _log_end(folder, "failed", state["runs"])
+    _write(os.path.join(folder, STATE), {**state, "status": "failed"})
+
+
 def _status(done: bool, last: bool) -> str:
     if done:
         return "done"
@@ -110,8 +125,12 @@ def _stopped(read: claude.Read) -> str:
 def _ended(folder: str, at: datetime.datetime, run: int, read: claude.Read, status: str) -> None:
     what = "done" if read.done else f"{_stopped(read)} No retries left."
     _log_run(folder, at, run, what)
-    runs = "1 run" if run == 1 else f"{run} runs"
-    _log(folder, f"work {os.path.basename(folder)} {status} after {runs}")
+    _log_end(folder, status, run)
+
+
+def _log_end(folder: str, status: str, runs: int) -> None:
+    ran = "1 run" if runs == 1 else f"{runs} runs"
+    _log(folder, f"work {os.path.basename(folder)} {status} after {ran}")
 
 
 def _log_run(folder: str, at: datetime.datetime, run: int, what: str) -> None:
