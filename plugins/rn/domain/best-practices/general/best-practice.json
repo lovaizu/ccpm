@@ -3,7 +3,6 @@
   "what": "The people that a deliverable is made for use it toward their aim, where no best practice of its kind exists, as it holds what their aim needs and nothing more.",
   "critical_success_factors": [
    {
-    "id": "C1",
     "what": "The people get from the deliverable what their aim needs, and nothing more.",
     "necessary_conditions": [
      {
@@ -12,14 +11,8 @@
       "what": "Does the deliverable give each of its people what they need for their aim, as agreed?",
       "why": "A deliverable with no best practice of its kind behind it has no form that says what its people need, so it serves them only where whoever makes it names its people and what each does with it, and makes it for that.",
       "items": [
-       {
-        "at": "decide",
-        "text": "Read to its end each decision agreed for the deliverable and what the repository already holds that bears on it, and name each person or program that meets the deliverable and what they do with it, such as a person who installs two plugins from one pull request, or the tool that loads a manifest."
-       },
-       {
-        "at": "decide",
-        "text": "For each, write what they need from the deliverable to do that, in their terms. Where the agreed decisions leave one open, end with `point`, naming the one you'd take."
-       }
+       "Read to its end each decision agreed for the deliverable and what the repository already holds that bears on it, and name each person or program that meets the deliverable and what they do with it, such as a person who installs two plugins from one pull request, or the tool that loads a manifest.",
+       "For each, write what they need from the deliverable to do that, in their terms. Where the agreed decisions leave one open, end with `point`, naming the one you'd take."
       ]
      },
      {
@@ -28,16 +21,12 @@
       "what": "Does each part of the deliverable give its people something they need for their aim?",
       "why": "A part that its people don't need slows the deliverable's making and their reading, and each later change must carry it.",
       "items": [
-       {
-        "at": "make",
-        "text": "For each part of the deliverable, such as a section, a key, or a step, name the need of N1 that it carries, and remove each part that carries none."
-       }
+       "For each part of the deliverable, such as a section, a key, or a step, name the need of N1 that it carries, and remove each part that carries none."
       ]
      }
     ]
    },
    {
-    "id": "C2",
     "what": "The people can tell that the deliverable is right.",
     "necessary_conditions": [
      {
@@ -46,20 +35,13 @@
       "what": "Does the deliverable pass the check agreed for it, run as its people meet it?",
       "why": "Its people get what they're after only where a concrete check, written before it's made, shows it: acceptance test-driven development writes the acceptance test before the work, and Gojko Adzic's [Specification by Example](https://gojko.net/books/specification-by-example/) states it as the key examples its people would check.",
       "items": [
-       {
-        "at": "decide",
-        "text": "Take the check agreed for the deliverable: the command to run or the record to read that shows it right, such as `claude plugin validate` on each plugin's folder. Where none is agreed and its people's use gives none, end with `point`, naming the one you'd take, since a check that shows nothing, such as `it works`, holds the deliverable to nothing."
-       },
-       {
-        "at": "make",
-        "text": "Run the command or read the record as the deliverable's people meet it, such as in a fresh checkout, and mend the deliverable until it passes."
-       }
+       "Take the check agreed for the deliverable: the command to run or the record to read that shows it right, such as `claude plugin validate` on each plugin's folder. Where none is agreed and its people's use gives none, end with `point`, naming the one you'd take, since a check that shows nothing, such as `it works`, holds the deliverable to nothing.",
+       "Run the command or read the record as the deliverable's people meet it, such as in a fresh checkout, and mend the deliverable until it passes."
       ]
      }
     ]
    },
    {
-    "id": "C3",
     "what": "The deliverable fits where it lies.",
     "necessary_conditions": [
      {
@@ -68,14 +50,8 @@
       "what": "Is the deliverable in the form that the program or the person who reads it takes?",
       "why": "A deliverable that its reader can't take in fails them whatever it holds, and one that differs from the others of its sort in the repository leaves its people to learn a second form.",
       "items": [
-       {
-        "at": "decide",
-        "text": "Take the format that the program or the person who reads it takes, such as the JSON that a tool loads or the Markdown that a person reads, and, where the repository holds others of its sort, their form, such as the keys and their order in the other manifests."
-       },
-       {
-        "at": "make",
-        "text": "Write the deliverable in that form, and where the program that reads it has its own check of the form, such as a schema or a parser, run it."
-       }
+       "Take the format that the program or the person who reads it takes, such as the JSON that a tool loads or the Markdown that a person reads, and, where the repository holds others of its sort, their form, such as the keys and their order in the other manifests.",
+       "Write the deliverable in that form, and where the program that reads it has its own check of the form, such as a schema or a parser, run it."
       ]
      },
      {
@@ -84,10 +60,7 @@
       "what": "Does the deliverable say what the repository already holds, wherever it carries it?",
       "why": "A deliverable that says otherwise than what the repository already holds leaves its people to find which one is right.",
       "items": [
-       {
-        "at": "make",
-        "text": "For each place where the deliverable carries what the repository already holds, such as a walkthrough that it repeats, compare the two where they meet, and change the deliverable where they differ, since what the repository holds decides, unless an agreed decision changes it."
-       }
+       "For each place where the deliverable carries what the repository already holds, such as a walkthrough that it repeats, compare the two where they meet, and change the deliverable where they differ, since what the repository holds decides, unless an agreed decision changes it."
       ]
      }
     ]

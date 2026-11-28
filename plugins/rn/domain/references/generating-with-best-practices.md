@@ -27,10 +27,9 @@ in what the deliverable says or does, not in how you made it.
   there, as that is where they look for it.
 - `why` says what the condition gives the people, and the practitioners' way that the items come
   from. Decide from it each case that no item names.
-- `items` are that way's decisions and steps, in order. Take each `decide` item before you write,
-  so that the deliverable rests on choices made, and each `make` item as you write and once it's
-  written, as that is where it checks what you wrote. An item that opens with `Where <case>` holds
-  only in that case.
+- `items` are that way's decisions, then its steps and checks, in the order you take them, so that
+  the deliverable rests on choices made before you write. An item that opens with `Where <case>`
+  holds only in that case.
 
 ## `template`
 

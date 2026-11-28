@@ -109,7 +109,6 @@ def judged_by(kind: str) -> dict[str, Any]:
         "what": goal["what"],
         "critical_success_factors": [
             {
-                "id": factor["id"],
                 "what": factor["what"],
                 "necessary_conditions": [
                     {"id": each["id"], "about": each["about"], "what": each["what"]}
