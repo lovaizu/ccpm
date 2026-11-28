@@ -117,8 +117,8 @@
      {
       "id": "N5",
       "about": "Role, Steps",
-      "what": "Does each step lead toward the job that the role names, with the question the AI thinks through there from the facts at hand, and the last step reaching a result that a check shows done?",
-      "why": "An AI that knows what each step's result is for, and thinks there from the facts in front of it, chooses how to reach it, puts its effort where the people gain most, and follows the purpose where a step doesn't fit the case. The AI stops when its work looks done, so the last step gives a check that separates done from looking done, as Claude Code's [best practices](https://code.claude.com/docs/en/best-practices#give-claude-a-check-to-run) give the AI something to run that comes back pass or fail.",
+      "what": "Does each step give its purpose, what holds once it ends and for whom, and its intent, why that's needed, leaving to the AI how to reach it, and does the last step reach a result that a check shows done?",
+      "why": "An AI that knows what each step makes hold and why chooses how to reach it, puts its effort where the people gain most, and follows the purpose in a case that the step doesn't fit, as Anthropic's [prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices#add-context-to-improve-performance) say the AI generalizes from the reason. A step written as actions, or as the questions to think through, gives the AI the writer's way instead of the purpose, so it takes that way where the case calls for another. The AI stops when its work looks done, so the last step gives a check that separates done from looking done, as Claude Code's [best practices](https://code.claude.com/docs/en/best-practices#give-claude-a-check-to-run) give the AI something to run that comes back pass or fail.",
       "items": [
        {
         "at": "decide",
@@ -126,7 +126,7 @@
        },
        {
         "at": "decide",
-        "text": "Give each step the result it leaves, what that result is for, and the question the AI thinks through there from the facts at hand, such as `Read what the round shows, and ask which of it brings the people closer. Take that into the steering.`"
+        "text": "Give each step its purpose, what holds once it ends and for whom, and its intent, why that's needed, such as `The user can judge whether the target's assumptions hold, in the way they chose to check them, as the assumptions are theirs to judge, not how rn made it.` Leave out the actions that reach it and the questions to think through, as the AI chooses them from the purpose."
        },
        {
         "at": "decide",
@@ -146,11 +146,15 @@
        },
        {
         "at": "make",
-        "text": "Where some runs take steps that others don't, such as each event's own, write them as the [conditional workflow pattern](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices#conditional-workflow-pattern) does: one step that names each kind of run and gives each its own steps, and the steps that every run takes once, after it. Where one run's own steps grow long, put them in a file of their own, and have that step name the file to read, as the same guide says."
+        "text": "Where some runs take steps that others don't, such as each event's own, write them as the [conditional workflow pattern](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices#conditional-workflow-pattern) does: one step that names each kind of run and gives each its own steps, and the steps that every run takes once, after it. Write each kind's steps by their purpose and intent as every other step, and name each kind by what holds in it, such as `the target made`, as a kind named by the action it takes leads the AI to take it. Where one run's own steps grow long, put them in a file of their own, and have that step name the file to read, as the same guide says."
        },
        {
         "at": "make",
         "text": "Check that a later step or the role uses each step's result, and cut a step whose result nothing uses."
+       },
+       {
+        "at": "make",
+        "text": "Think of a case that no step names, such as the user deciding not to try what's made, read only the steps' purposes and intents, and check that they lead where the writer would go. Where they don't, fix the purpose or the intent, not a rule for the case."
        }
       ]
      },
