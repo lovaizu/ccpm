@@ -15,7 +15,6 @@
         "solutions": [
           {
             "solution": "The user starts one work from Claude Code, with its folder, its prompt, and the tools it may use, and leaves; it runs headless through `claude -p`, and on the usage limit or any error it is asked to go on in the same session after a wait of 5, 10, 20, then 60 minutes, up to 7 retries by default or as many as the user says, so that by morning the work is done, or recorded as failed, with its log.",
-            "target": true,
             "assumptions": [
               "A run succeeded exactly when `claude -p --output-format json` exits 0 and its result has `is_error` false; the usage limit and other errors show as anything else.",
               "`claude -p --resume <session_id>` goes on from where the failed run stopped.",
@@ -27,7 +26,19 @@
         ]
       },
       {
-        "opportunity": "When all of it is done, start the next work."
+        "opportunity": "When all of it is done, start the next work.",
+        "solutions": [
+          {
+            "solution": "The user adds each work from Claude Code by `overnight` with its folder, its prompt, and the tools it may use, as now, and the works wait in a queue that lives in a file; one runner in the background runs them one after another, each retrying as now, and starts the next once one ends, done or failed, so that by morning each work is done or recorded as failed, with its log.",
+            "target": true,
+            "assumptions": [
+              "A work whose retries run out lets the queue move on, so one failure doesn't stop the night.",
+              "A work added while the runner runs joins the queue, and no second runner starts.",
+              "A runner started again after a stop picks up from the queue file, and runs no work twice.",
+              "Unit tests with a stand-in for `claude` show that it works, so the user need not try it on a real night."
+            ]
+          }
+        ]
       },
       {
         "opportunity": "Put any number of works in the queue."
@@ -40,7 +51,20 @@
       }
     ]
   },
-  "tasks": [],
+  "tasks": [
+    {
+      "task": "Add to the README that works added wait in a queue and the next starts when one ends, done or failed, with its top status and its walkthrough saying so.",
+      "path": "plugins/overnight/README.md",
+      "kind": "readme",
+      "refactor": "refactor-doc"
+    },
+    {
+      "task": "Make the queue by TDD, in Python's standard library alone: works added wait in a file, one runner runs them one after another and starts the next when one ends, done or failed, and a runner started again picks up where it was.",
+      "path": "plugins/overnight",
+      "kind": "code",
+      "refactor": "refactor-code"
+    }
+  ],
   "decisions": [
     "The user gives the purpose and intent; how the work goes on is the orchestrator's to decide.",
     "The work runs from outside Claude Code: a command starts `claude -p` and retries it, as Claude Code's own continue at the usage limit is unstable; no keys are sent into an interactive session.",
@@ -60,7 +84,7 @@
     "The English check's settings don't change; what it finds is mended in the text.",
     "A retry with no conversation to go on in, as no earlier run named one, gives the prompt again, as nothing was done yet; a resume that names no conversation leaves the one it resumed for the next retry. The README's \"No\" to starting over stays true, so neither takes a remedy.",
     "The tests check the retry after a resume that finds no conversation, test each case once, and check that each retry resumes the conversation with continue.",
-    "The user had both points that the Rounds left mended: no test compares minutes read from the real clock, and the command's test takes --retries 0 as the least it accepts."
-  ],
-  "stage": "enough"
+    "The user had both points that the Rounds left mended: no test compares minutes read from the real clock, and the command's test takes --retries 0 as the least it accepts.",
+    "The user doesn't try any part: once a part's tests pass, the next opportunity's solution becomes the target without asking, in the order the tree holds them, and the pull request is inspected once all are made."
+  ]
 }
