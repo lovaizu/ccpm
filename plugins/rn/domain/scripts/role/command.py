@@ -29,12 +29,13 @@ def main(argv: Sequence[str], given: str, plugin_root: str, host: Host) -> Answe
 
     - For an agent that isn't one of rn's roles that write a result, as `agent_type` names it,
       `rn:<role>` or `<role>`: 0, doing nothing.
-    - For one of those roles, for each piece of work in the worktree that the input's `cwd` lies
-      in, the one rn runs in, as `worktree.works` gives them: 2 with each result that leaves its
-      schema, a Round's or a Fix's, a line each as `form.held` names it, changing nothing, so that
-      Claude Code keeps the role going with those words until each holds. Otherwise it moves each
-      task on by its next role's result as `record.moved` does, writing the steering where
-      it changes, removes each of its trials' folders as `trial.removed` does, and gives 0.
+    - For one of those roles, for each piece of work with something left to do in the worktree
+      that the input's `cwd` lies in, the one rn runs in, as `worktree.left` gives them: 2 with
+      each result that leaves its schema, a Round's or a Fix's, a line each as `form.held` names
+      it, changing nothing, so that Claude Code keeps the role going with those words until each
+      holds. Otherwise it moves each task on by its next role's result as `record.moved` does,
+      writing the steering where it changes, removes each of its trials' folders as
+      `trial.removed` does, and gives 0.
     - 2 with the usage where the arguments are other than `ended`.
     """
     if list(argv) != ["ended"]:
@@ -44,7 +45,7 @@ def main(argv: Sequence[str], given: str, plugin_root: str, host: Host) -> Answe
     if role not in _ROLES:
         return 0, "", ""
     schemas = os.path.join(plugin_root, "domain", "schemas")
-    works = worktree.works(str(hook["cwd"]), host)
+    works = worktree.left(str(hook["cwd"]), host, os.path.join(schemas, "steering.schema.json"))
     faults = [fault for work in works for fault in _faults(work, schemas)]
     if faults:
         return 2, "", "".join(f"role: {each}\n" for each in faults)

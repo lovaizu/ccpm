@@ -1,7 +1,8 @@
 """The unit cases of role/command.py, rn's hook once a role ends: an agent that isn't rn's left
 alone, a role's result moving its task on with nothing committed, a session outside git, each
-result out of its schema keeping the role going, work in another worktree left alone, the trials'
-folders removed, the inspector left alone, and arguments of another form."""
+result out of its schema keeping the role going, work in another worktree left alone, the work
+ended and the work of an earlier rn left alone, the trials' folders removed, the inspector left
+alone, and arguments of another form."""
 
 from __future__ import annotations
 
@@ -141,6 +142,24 @@ def test_the_hook_leaves_work_in_another_worktree_alone(made: WorkPlace, tmp_pat
     )
     write_files(other.folder, {"rounds/a/content-1/generator.json": "{"})
     assert ended(made, "rn:generator") == (0, "", "")
+
+
+def test_the_hook_leaves_the_work_ended_and_an_earlier_rns_alone(made: WorkPlace) -> None:
+    """Given the work with its steering, and in the same `.rn/` a piece of work ended and one of an
+    earlier rn, whose steering is in another form, each with a result out of its schema.
+    When the generator ends.
+    Then it gives 0, leaving both unchecked and their steering as it was."""
+    rn_files.write_json(made.steering, rn_files.steering())
+    done = WorkPlace(made.worktree, "20261125-print")
+    rn_files.write_json(done.steering, rn_files.steering(paths=(), stage="inspected"))
+    earlier = WorkPlace(made.worktree, "20261124-receipts")
+    old = {"ost": {"target": "O1"}, "state": {"steps": []}}
+    rn_files.write_json(earlier.steering, old)
+    for each in (done, earlier):
+        write_files(each.folder, {"rounds/a/content-1/generator.json": "{"})
+    assert ended(made, "rn:generator") == (0, "", "")
+    with open(earlier.steering, encoding="utf-8") as f:
+        assert json.load(f) == old
 
 
 def test_the_trials_of_the_work_are_removed_once_its_role_ends(made: WorkPlace, temp: str) -> None:

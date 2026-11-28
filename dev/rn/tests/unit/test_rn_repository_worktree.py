@@ -1,8 +1,8 @@
 """The unit cases of repository/worktree.py: `top`, the worktree a folder lies in, and none;
 `new`, which makes the work's folder at the worktree's top, and work of the name already there;
 and `works` with `left`, the work in the worktree newest first, the work ended left out, the work
-with no steering yet kept, a folder of another name passed over, none in a folder outside git, and
-a steering that isn't JSON."""
+of an earlier rn whose steering is in another form left out, the work with no steering yet kept, a
+folder of another name passed over, none in a folder outside git, and a steering that isn't JSON."""
 
 from __future__ import annotations
 
@@ -18,6 +18,7 @@ from repo_files import write_files
 from repository.worktree import left, new, top, works
 
 NAME = "20261126-invoice-from-statement"
+SCHEMA = os.path.join(rn_files.SCHEMAS, "steering.schema.json")
 OTHER = "20261127-invoice-rules"
 
 
@@ -62,19 +63,21 @@ def test_work_of_a_name_already_taken_is_refused(worktree: str) -> None:
 
 
 def test_the_work_of_the_worktree_is_found_newest_first(worktree: str) -> None:
-    """Given a piece of work, a later one with no steering yet, an ended one, and a folder of
-    another name in `.rn/`.
+    """Given a piece of work, a later one with no steering yet, an ended one, one of an earlier rn
+    whose steering is in another form, and a folder of another name in `.rn/`.
     When each piece of work, and each with something left to do, is asked.
-    Then the later comes first, the ended one is left out of what's left, and the other folder is
-    passed over."""
+    Then the later comes first, the ended one and the earlier rn's are left out of what's left, and
+    the other folder is passed over."""
     first = new(WorkPlace(worktree, NAME))
     rn_files.write_json(first.steering, rn_files.steering())
     later = new(WorkPlace(worktree, OTHER))
     ended = new(WorkPlace(worktree, "20261125-print"))
     rn_files.write_json(ended.steering, rn_files.steering(paths=(), stage="inspected"))
+    earlier = new(WorkPlace(worktree, "20261124-receipts"))
+    rn_files.write_json(earlier.steering, {"ost": {"target": "O1"}, "state": {"steps": []}})
     write_files(os.path.join(worktree, ".rn", "notes"), {"a.md": "a\n"})
-    assert works(worktree, run) == [later, first, ended]
-    assert left(worktree, run) == [later, first]
+    assert works(worktree, run) == [later, first, ended, earlier]
+    assert left(worktree, run, SCHEMA) == [later, first]
 
 
 def test_a_worktree_with_no_work_holds_none(worktree: str, tmp_path: Any) -> None:
@@ -92,4 +95,4 @@ def test_a_steering_that_is_not_json_is_refused(worktree: str) -> None:
     made = new(WorkPlace(worktree, NAME))
     write_files(made.folder, {"steering.json": "{"})
     with pytest.raises(Wrong, match="steering.json: isn't JSON"):
-        left(worktree, run)
+        left(worktree, run, SCHEMA)

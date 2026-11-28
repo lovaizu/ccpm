@@ -49,7 +49,12 @@ def _new(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
 
 
 def _works(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
-    return 0, "".join(f"{each.folder}\n" for each in worktree.left(cwd, host)), ""
+    found = worktree.left(cwd, host, _schema(plugin_root))
+    return 0, "".join(f"{each.folder}\n" for each in found), ""
+
+
+def _schema(plugin_root: str) -> str:
+    return os.path.join(plugin_root, "domain", "schemas", "steering.schema.json")
 
 
 def _trial(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
