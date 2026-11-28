@@ -45,7 +45,8 @@
       "task": "Make, by TDD with unit tests under dev/overnight/tests, the `overnight` command that runs one work through `claude -p` and retries it in the same conversation after growing waits, as the README says, with `--dir` defaulting to the folder it's started in, `--allowed-tools` required, and `overnight --help` listing every option, whether it's required, and its default.",
       "path": "plugins/overnight",
       "kind": "code",
-      "refactor": "refactor-code"
+      "refactor": "refactor-code",
+      "entry": "content-1"
     }
   ],
   "decisions": [
