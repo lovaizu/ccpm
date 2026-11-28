@@ -29,22 +29,6 @@ gave overnight carried through by morning, not only the first. -->
   it's plugged in, such as by **Prevent automatic sleeping on power adapter when the display is
   off** in the Battery settings of a Mac laptop.
 
-## Requirements
-
-- macOS or Linux: `uname` shows it.
-- Python 3.9 or later, run as `python3`: `python3 --version` shows it.
-- Claude Code, logged in: `claude auth status` shows `"loggedIn": true`.
-
-## Installation
-
-```console
-claude plugin marketplace add lovaizu/ccpm
-claude plugin install overnight@ccpm
-```
-
-<!-- TODO: the `overnight` command of bin/overnight answers `--version` as this line says. -->
-In Claude Code, `! overnight --version` shows `overnight 0.1.0`.
-
 ## Walkthrough
 
 <!-- TODO: the `overnight` command of bin/overnight runs this walkthrough as it's written. -->
@@ -122,8 +106,8 @@ returns at once, so the work goes on after you close Claude Code.
 
 overnight types it for you. It runs the work with `claude -p`, Claude Code's non-interactive
 mode. When a run stops, overnight waits, then asks Claude again to go on. The waits before the
-retries are 5, 10, and 20 minutes, then 60 minutes each. The waits span the 5-hour limit, so the
-work goes on within an hour after the limit lifts.
+retries are 5, 10, and 20 minutes, then 60 minutes each, so the work goes on within an hour after
+the limit lifts, as long as it lifts before the retries run out.
 
 ### "Does it start the work over after a stop?"
 
@@ -142,10 +126,15 @@ few.
 
 ### "What if the limit lifts late, or an error keeps coming?"
 
-After 7 retries, which wait 4 hours and 35 minutes in all, overnight records the work as failed,
-with `"status": "failed"` in `state.json`. The work's folder keeps `state.json` beside the log of
-each run, so you see in the morning where it stopped. `--retries <count>` sets another count, such
-as `--retries 10`.
+overnight retries 7 times by default, and those retries wait 4 hours and 35 minutes in all. The
+limit lifts 5 hours after its window starts, so the 7 retries outlast it when the stop comes 25
+minutes or more after the window starts. Where a work may use up the limit within 25 minutes of
+the window's start, raise the count with `--retries <count>`: `--retries 8` waits 5 hours and 35
+minutes in all, which outlasts the limit after any stop.
+
+Once the retries run out, overnight records the work as failed, with `"status": "failed"` in
+`state.json`. The work's folder keeps `state.json` beside the log of each run, so you see in the
+morning where it stopped.
 
 ### "Does it stop at night to ask your permission?"
 
@@ -164,8 +153,27 @@ work starts at the time you give, or right away. -->
 <!-- TODO: how many run at once: a doubt such as "Do several works at once use up the limit
 sooner?", and how overnight runs three at once by default, or as many as you give. -->
 
+## Requirements
+
+- macOS or Linux: `uname` shows it.
+- Python 3.9 or later, run as `python3`: `python3 --version` shows it.
+- Claude Code, logged in: `claude auth status` shows `"loggedIn": true`.
+
+## Installation
+
+```console
+claude plugin marketplace add lovaizu/ccpm
+claude plugin install overnight@ccpm
+```
+
+<!-- TODO: the `overnight` command of bin/overnight answers `--version` as this line says. -->
+In Claude Code, `! overnight --version` shows `overnight 0.1.0`.
+
 ## Documentation
 
+<!-- TODO: the `overnight` command of bin/overnight answers `--help` as this line says. -->
+- `! overnight --help`, in Claude Code: for you when you start a work, every option of the command,
+  whether it's required, and its default.
 - [Changelog](CHANGELOG.md): for you after an update, the changes in each version.
 - [Issues](https://github.com/lovaizu/ccpm/issues): where you ask for help or report a fault.
 

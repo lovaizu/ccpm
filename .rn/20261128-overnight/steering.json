@@ -47,7 +47,7 @@
       "kind": "readme",
       "refactor": "refactor-doc",
       "judged": 1,
-      "next": "generator",
+      "next": "evaluator",
       "entry": "content-3"
     },
     {
