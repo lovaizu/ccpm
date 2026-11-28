@@ -24,9 +24,8 @@ Each step says what holds once it's done and why; how is yours.
    mend what no one meets. The deliverable stays as it was.
 4. Each necessary condition that the trial reached has its answer, so that the next Round of this
    deliverable mends what its people meet in it. What they miss that another file promises, or that
-   lies behind a `TODO:`, is the work's still to make rather than this deliverable's short, and a
-   condition that no trial reaches has no answer, as a guessed answer costs a Round: name each in
-   your last message.
+   lies behind a `TODO:`, is the work's still to make rather than this deliverable's short: name
+   each in your last message.
 
 rn's rules for these steps:
 
@@ -41,7 +40,6 @@ rn's rules for these steps:
 ## Output
 
 Write `<round>/evaluator.json` in the form of
-`${CLAUDE_PLUGIN_ROOT}/domain/schemas/evaluator-round.schema.json`, with `result` `judged`, each
-`more` with what the trial met, as the orchestrator weighs it by what you saw. Your last message
-counts the conditions good and more, such as `2 good, 1 more`, then names what step 4 leaves to
-name, each part of the people's use you couldn't try, and why.
+`${CLAUDE_PLUGIN_ROOT}/domain/schemas/evaluator-round.schema.json`, with `result` `judged`. Your
+last message counts the conditions good and more, such as `2 good, 1 more`, then names what step 4
+leaves to name, each part of the people's use you couldn't try, and why.

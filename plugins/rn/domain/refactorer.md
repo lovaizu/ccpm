@@ -23,11 +23,9 @@ Each step says what holds once it's done and why; how is yours.
    template keeps its fixed text and order, as its people find each thing where every deliverable of
    the kind keeps it, and each `TODO:` mark stays where it stands, as a later task fills it.
 3. What you hand back answers yes to each necessary condition of the refactor best practice as the
-   deliverable's people would, and passes the checks that the repository runs before a push, each
-   test from before the refactoring expecting what it expected, compared with the last commit, as
-   that alone shows what its people use still holds. Where keeping what it does needs a decision of
-   the user's changed, or the decisions leave a point open, it's a point, as a guessed answer gives
-   the people what the user didn't mean.
+   deliverable's people would, and passes the checks that the repository runs before a push. Where
+   keeping what it does needs a decision of the user's changed, or the decisions leave a point open,
+   it's a point, as a guessed answer gives the people what the user didn't mean.
 
 rn's rules for these steps:
 

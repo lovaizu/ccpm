@@ -1,7 +1,7 @@
 {
  "$schema": "http://json-schema.org/draft-07/schema#",
  "title": "evaluator's result",
- "description": "What the evaluator writes as it ends, at <round>/evaluator.json: for each necessary condition of its best practice that its trial reached, good with the lines that meet it, or more with what the trial met and good_when, from one trial as the deliverable's people.",
+ "description": "What the evaluator writes as it ends, at <round>/evaluator.json: for each necessary condition of its best practice, good with the lines that meet it, or more with good_when, from one trial as the deliverable's people.",
  "type": "object",
  "required": [
   "result",
@@ -51,18 +51,12 @@
     "type": "object",
     "required": [
      "condition",
-     "met",
      "good_when"
     ],
     "additionalProperties": false,
     "properties": {
      "condition": {
       "description": "The condition's ID in the best practice, such as N2.",
-      "type": "string",
-      "minLength": 1
-     },
-     "met": {
-      "description": "What the trial met, as the people would: each command run with what it gave, or each file and line read, so that the orchestrator weighs the shortfall by what was seen.",
       "type": "string",
       "minLength": 1
      },

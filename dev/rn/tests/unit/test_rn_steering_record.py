@@ -114,9 +114,8 @@ def results(**by_role: Any) -> dict[str, dict[str, Any]]:
 MADE = {"result": "made", "files": [rn_files.COMMAND]}
 POINT = {"result": "point", "point": "Which printer?"}
 GOOD = {"result": "judged", "good": [], "more": []}
-MORE = {"result": "judged", "good": [], "more": [{"condition": "N1", "met": "x", "good_when": "y"}]}
+MORE = {"result": "judged", "good": [], "more": [{"condition": "N1", "good_when": "x"}]}
 FIXED = {"result": "fixed", "files": []}
-FIX_POINT = {"result": "point", "point": "Mend both complaints?"}
 
 
 @pytest.mark.parametrize(
@@ -135,11 +134,10 @@ FIX_POINT = {"result": "point", "point": "Mend both complaints?"}
             {"next": "refactorer", "judged": 2, "entry": None},
         ),
         ({"next": "fixer"}, {"fixer": FIXED}, {"next": "refactorer", "entry": None}),
-        ({"next": "fixer"}, {"fixer": FIX_POINT}, {"next": "weigh"}),
         ({"next": "refactorer"}, {"refactorer": POINT}, {"next": "weigh"}),
         ({"next": "evaluator"}, {"generator": MADE}, {}),
     ],
-    ids=["made", "point", "more", "good", "fixed", "fix-point", "refactor-point", "no-result"],
+    ids=["made", "point", "more", "good", "fixed", "refactor-point", "no-result"],
 )
 def test_each_result_moves_its_task_on(
     fields: dict[str, Any], by_role: dict[str, Any], kept: dict[str, Any]

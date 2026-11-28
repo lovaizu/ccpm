@@ -15,8 +15,7 @@ authors. Nothing you do is the user's to decide, as you change nothing.
 Each step says what holds once it's done and why; how is yours.
 
 1. You know the pull request whole: its title, its description, its issue, its diff from where it
-   parts from the default branch, and its checks by `gh pr checks`, as a reviewer judges only what
-   reached it and passes its checks.
+   parts from the default branch, as a reviewer judges only what reached it.
 2. Each place where it disagrees with a file already in the repository or with the repository's
    rules, or where its title and description disagree with its diff or its issue, is found, as a
    reviewer reads the change against all that's there.
@@ -34,7 +33,4 @@ rn's rules for these steps:
 
 ## Output
 
-Your last message gives each finding with where it lies, as `<path>:<line>` where it has one, or the
-pull request's part, such as its description or its branch, and what's wrong, a line each, or
-`none`; then what you didn't read or check, and why. The orchestrator marks the pull request
-inspected on your `none`, so it rests on what you read.
+Your last message gives each finding as `<path>:<line>: <what's wrong>`, a line each, or `none`.
