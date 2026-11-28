@@ -59,12 +59,17 @@ for plugin in plugins/*/; do
   plugin=$(basename "$plugin")
   code=$(git ls-files "plugins/$plugin/*.py" "dev/$plugin/tests/*.py")
   [ -n "$code" ] || continue
-  # A script's package imports its siblings from the folder that holds it, and a test imports its
-  # helpers from the tests' folder.
-  paths=$(git ls-files "plugins/$plugin/*/__main__.py" | while read -r main; do
-    dirname "$(dirname "$main")"
-  done | sort -u | sed 's/^/--search-path /')
-  [ ! -d "dev/$plugin/tests" ] || paths="$paths --search-path dev/$plugin/tests"
+  # The type checker finds the plugin's code where its tests find it: on the import path that the
+  # tests' conftest.py sets, and in the tests' folder, where their helpers lie.
+  tests="dev/$plugin/tests"
+  paths=""
+  [ ! -f "$tests/conftest.py" ] || paths=$(python3 -c '
+import sys
+before = list(sys.path)
+sys.path.insert(0, sys.argv[1])
+import conftest
+print(" ".join("--search-path " + folder for folder in sys.path if folder not in before))
+' "$tests")
   held design pyrefly check $paths $code
 done
 
