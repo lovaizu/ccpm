@@ -47,8 +47,8 @@
       "kind": "readme",
       "refactor": "refactor-doc",
       "judged": 2,
-      "next": "weigh",
-      "entry": "content-3"
+      "next": "fixer",
+      "entry": "fix-4"
     },
     {
       "task": "Make, by TDD with unit tests under dev/overnight/tests, the `overnight` command that runs one work through `claude -p` and retries it in the same conversation after growing waits, as the README says, with `overnight --help` listing every option, whether it's required, and its default.",
@@ -71,6 +71,7 @@
     "The README is in the shape it ends in once every feature is made, the parts of the later features marked `TODO:`, rather than listing them as what doesn't work yet.",
     "The README puts what a reader needs to decide it fits, the walkthrough and how it works, before its requirements and installation, as a reader decides before installing.",
     "The README says the waits' sum as it is: 7 retries wait 4 hours and 35 minutes in all, which spans the limit for a stop that comes 25 minutes or more after its 5-hour window starts, and says to raise `--retries` for a stop that comes earlier, rather than claiming the waits span the 5-hour limit.",
-    "The README's Documentation points to `overnight --help` for every option, whether it's required, and its default, which the command task makes."
+    "The README's Documentation points to `overnight --help` for every option, whether it's required, and its default, which the command task makes.",
+    "The README names one place for a work's state and log: the folder that the start prints, such as ~/.local/state/overnight/20261128-230012/, which holds state.json and the work's one log, apart from the folder the work runs in."
   ]
 }
