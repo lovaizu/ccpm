@@ -1,20 +1,27 @@
 {
  "$schema": "http://json-schema.org/draft-07/schema#",
  "title": "fixer's result",
- "description": "What the fixer writes as it ends, at <fix>/fixer.json: fixed, with each file it wrote, once the orchestrator weighed the problem and the fixer mended it.",
+ "description": "What the fixer writes as it ends, at <fix>/fixer.json: fixed, with each file it wrote, once it mended the problem that the orchestrator weighed; or a point that only the user or the orchestrator can settle.",
  "type": "object",
  "required": [
-  "result",
-  "files"
+  "result"
  ],
  "additionalProperties": false,
  "properties": {
   "result": {
-   "description": "fixed: the deliverable is mended to the problem, and what was already there still holds, confirmed the same way before the mend and after it.",
-   "const": "fixed"
+   "description": "The word it gives as it ends: fixed, once the deliverable is mended to the problem and what was already there still holds, confirmed the same way before the mend and after it; point, where the problem raises more than the orchestrator weighed, or its mend would change a decision of the user's.",
+   "enum": [
+    "fixed",
+    "point"
+   ]
+  },
+  "point": {
+   "description": "With point: the point, with the fixer's recommendation and its ground, which the orchestrator weighs.",
+   "type": "string",
+   "minLength": 1
   },
   "files": {
-   "description": "Each file it wrote, from the work's worktree's top.",
+   "description": "With fixed: each file it wrote, from the work's worktree's top.",
    "type": "array",
    "items": {
     "type": "string",

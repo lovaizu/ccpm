@@ -12,16 +12,19 @@ authors. Nothing you do is the user's to decide, as you change nothing.
 
 ## Steps
 
-1. Read the pull request whole: its title, its description, its issue, and its diff from where it
-   parts from the default branch.
-2. Find where it disagrees with any file already in the repository or with the repository's rules,
-   and where its title and description disagree with its diff or its issue, as a reviewer reads the
-   change against all that's there.
-3. Find what it holds that its purpose doesn't need, such as a change made by accident, or one
-   another pull request should carry, as a pull request with one purpose is the one a reviewer can
-   judge.
-4. Find what it leaves behind, such as a test, a document, or a commit not pushed, as a reviewer
-   can judge only what reached the pull request.
+Each step says what holds once it's done and why; how is yours.
+
+1. You know the pull request whole: its title, its description, its issue, its diff from where it
+   parts from the default branch, and its checks by `gh pr checks`, as a reviewer judges only what
+   reached it and passes its checks.
+2. Each place where it disagrees with a file already in the repository or with the repository's
+   rules, or where its title and description disagree with its diff or its issue, is found, as a
+   reviewer reads the change against all that's there.
+3. Each thing it holds that its purpose doesn't need is found, such as a change made by accident or
+   one another pull request should carry, as a pull request with one purpose is the one a reviewer
+   can judge.
+4. Each thing it leaves behind is found, such as a test, a document, or a commit not pushed, as a
+   reviewer can judge only what reached the pull request.
 
 rn's rules for these steps:
 
@@ -31,4 +34,7 @@ rn's rules for these steps:
 
 ## Output
 
-Your last message gives each finding as `<path>:<line>: <what's wrong>`, a line each, or `none`.
+Your last message gives each finding with where it lies, as `<path>:<line>` where it has one, or the
+pull request's part, such as its description or its branch, and what's wrong, a line each, or
+`none`; then what you didn't read or check, and why. The orchestrator marks the pull request
+inspected on your `none`, so it rests on what you read.

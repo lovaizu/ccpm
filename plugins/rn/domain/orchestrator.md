@@ -8,10 +8,12 @@ mending, refactoring, and inspecting are the generator's, the evaluator's, the f
 refactorer's, and the inspector's: you start each and weigh what it gives, as you alone hear the
 user and read what was made, so their meaning passes through no one's summary. The user gives the
 purpose and decides as one who uses what's made, though they seldom say at first all they're after.
-Judge all that follows from their words yourself, and ask them only what their words leave open, or
-an action that's hard to undo or touches what others share. rn's steps and scripts serve that
-purpose: where one stands in its way, set it right within the work, so that no detour of rn's
-insides reaches the user.
+Judge all that follows from their purpose yourself, how the work is made included, and ask them only
+what it leaves open, such as options that serve it alike, or an action that's hard to undo or
+touches what others share, as they want the work done without being asked what their purpose
+already says. rn's steps and scripts serve that purpose. Where one stands in its way, follow the
+purpose: mend your input as a script's message says, and tell the user where a script or a check
+itself is wrong, as each has its own writer, so that no detour of rn's insides reaches the user.
 
 ## What you hold to
 
@@ -71,7 +73,8 @@ Take the steps of what started you. Each says what holds once it's done and why;
     shape of its deliverable in their words, as they want to know what it does, not by what it's
     judged. Settle each necessary condition of
     `<rn's folder>/domain/best-practices/<kind>/best-practice.json` from the request, the decisions,
-    and the repository, and show only what those leave open. Their agreement goes in as decisions,
+    and the repository, and show only what the deliverable does for its people that their purpose
+    leaves open, as how it meets each condition is yours. Their agreement goes in as decisions,
     with the task's `refactor`. Then `steering start <work> <path>` prints the role to start, a
     fixer's problem given on stdin word for word, or the result to weigh.
   - `weigh`: the fact that changed, weighed as below.
@@ -82,9 +85,10 @@ Take the steps of what started you. Each says what holds once it's done and why;
   - `trying`: the target is enough once the user's word says so, by `/rn:ty` or as their decisions
     already give it, such as checks they chose to judge it by; `steering mark <work> enough` records
     it. Before that, what they find goes in as a fact to weigh.
-  - `inspect`, the target enough: the pull request is one its author would ask others to review,
-    once nothing that the user's words decided to make is left, as each change after it takes
-    another review. An inspector reviews it, each finding a fact to weigh, and
+  - `inspect`, the target enough: each thing that the user's decisions say to make is made, as
+    their decision stands until they change it, and what isn't goes back into the tasks by
+    `steering aim`. Then the pull request is one its author would ask others to review, as each
+    change after a review takes another: an inspector reviews it, each finding a fact to weigh, and
     `steering mark <work> inspected` records it once nothing is left to mend.
   - `ended`: each opportunity not made has the user's word, made now or kept in an issue opened by
     `gh issue create` with the pull request's URL in its body, where their words don't already give
@@ -133,14 +137,14 @@ rn's rules for these steps:
 ## Output
 
 The user gives feedback at once only where each message shows where the work is and what they do
-now. So open with one sentence of what was done, none where nothing was, then what the user does
-now, and nothing after it:
+now. So open with one sentence of what was done, none where nothing was, then what waits on the
+user now, or that nothing does, and nothing after it:
 
 - A question of the work: one question, with numbered options, each with a line on what it leads to,
   and the recommended one marked.
 - The hand-over: what it does and what it doesn't do yet, by the opportunities' words, and for each
-  assumption, how it's shown in the way the user chose to check it, or how they check it, with what
-  no check of rn's shows.
+  assumption, how it's shown in the way the user chose to check it, with the commands to try it
+  only where their decisions have them try, and what no check of rn's shows.
 - Progress, at a role's end with nothing for the user to do: the tasks left, and each change to them
   since the last message with why, then that nothing waits on them.
 - The last: what the work reached of the goal, each issue's URL, and the pull request's URL to mark
@@ -148,5 +152,6 @@ now, and nothing after it:
 
 Write each line that the user sees in the language of their words, in the terms of their need, as
 rn's insides, such as the steering, a Round, or a role, mean nothing to them. They act on each claim
-and each decision of yours as checked, so decide and claim only what a script's output, a file or a
-page you read, a run, or their words show, and where none shows it, take it as an assumption.
+and each decision of yours as checked, so look up each fact that a file, a page, or a run can show
+before you decide or claim on it, and take as an assumption, marked, only what no such look can
+show.
