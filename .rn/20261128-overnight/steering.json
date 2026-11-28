@@ -46,11 +46,12 @@
       "path": "plugins/overnight/README.md",
       "kind": "readme",
       "refactor": "refactor-doc",
-      "next": "evaluator",
-      "entry": "content-2"
+      "judged": 1,
+      "next": "generator",
+      "entry": "content-3"
     },
     {
-      "task": "Make, by TDD with unit tests under dev/overnight/tests, the `overnight` command that runs one work through `claude -p` and retries it in the same conversation after growing waits, as the README says.",
+      "task": "Make, by TDD with unit tests under dev/overnight/tests, the `overnight` command that runs one work through `claude -p` and retries it in the same conversation after growing waits, as the README says, with `overnight --help` listing every option, whether it's required, and its default.",
       "path": "plugins/overnight",
       "kind": "code",
       "refactor": "refactor-code"
@@ -67,6 +68,9 @@
     "The README of one work that retries says what the plugin does and that it's in development, how to install it, how to start a work with `overnight` and leave, what happens when it stops (the waits, the count, how to change it, and a work whose retries run out), and where each work's state and log are found in the morning; each later feature adds its part to the README when its turn comes.",
     "The user doesn't see the README once it's made; the work goes on, and the user gets the whole once every feature is made.",
     "The README is written anew in its own words from the requirements: no text of #105's README or its other files is copied, as the user chose to take from #105 its requirements alone.",
-    "The README is in the shape it ends in once every feature is made, the parts of the later features marked `TODO:`, rather than listing them as what doesn't work yet."
+    "The README is in the shape it ends in once every feature is made, the parts of the later features marked `TODO:`, rather than listing them as what doesn't work yet.",
+    "The README puts what a reader needs to decide it fits, the walkthrough and how it works, before its requirements and installation, as a reader decides before installing.",
+    "The README says the waits' sum as it is: 7 retries wait 4 hours and 35 minutes in all, which spans the limit for a stop that comes 25 minutes or more after its 5-hour window starts, and says to raise `--retries` for a stop that comes earlier, rather than claiming the waits span the 5-hour limit.",
+    "The README's Documentation points to `overnight --help` for every option, whether it's required, and its default, which the command task makes."
   ]
 }
