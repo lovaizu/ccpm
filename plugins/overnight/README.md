@@ -105,9 +105,10 @@ returns at once, so the work goes on after you close Claude Code.
 ### "At the limit, the work waits until you're back to type 'continue'."
 
 overnight types it for you. It runs the work with `claude -p`, Claude Code's non-interactive
-mode. When a run stops, overnight waits, then asks Claude again to go on. The waits before the
-retries are 5 and 10 minutes, then 60 minutes each, so the work goes on within an hour after
-the limit lifts, as long as it lifts before the retries run out.
+mode. When a run stops, overnight waits, then asks Claude again to go on. overnight waits 5
+minutes before the first retry, 10 minutes before the second, and 60 minutes before each retry
+after that. With these waits, the work goes on within an hour after the limit lifts, as long as the
+limit lifts before the retries run out.
 
 ### "Does it start the work over after a stop?"
 
