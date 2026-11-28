@@ -92,9 +92,9 @@ def test_what_the_aim_says_comes_next_is_taken_in(
 def test_a_round_past_the_limit_is_refused() -> None:
     """Given a steering whose command has its LIMIT Rounds judged.
     When an aim that has it made again on what was weighed is taken in.
-    Then Wrong is raised, saying that the user confirms what's left."""
+    Then Wrong is raised, saying that a fixer mends what's left or the task is left out."""
     held = holding(next="weigh", judged=LIMIT, entry="content-2")
-    with pytest.raises(Wrong, match="ask the user"):
+    with pytest.raises(Wrong, match="say fixer to mend what they left, or leave the task out"):
         taken_in(held, told("generator"))
 
 

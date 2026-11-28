@@ -16,7 +16,7 @@ Steering = dict[str, Any]
 # Each stage of the work once no task is left, as the steering's schema names them.
 STAGE = ("trying", "enough", "inspected")
 # How many judged Rounds of content a task takes at most, as remaking that brings no remedy has a
-# limit (the architecture's P3.3). What they leave goes to the user.
+# limit (the architecture's P3.3). What they leave is weighed by the orchestrator.
 LIMIT = 2
 # What a task keeps of where it is on its way, as the steering's schema names it.
 _WAY = ("next", "judged", "entry")
@@ -33,8 +33,8 @@ def taken_in(steering: Steering | None, aim: dict[str, Any]) -> Steering:
     Rounds kept, anew as generator from its first Round, fixer, or refactorer; and the steering's
     stage kept where the aim keeps its target, as a new target is handed over anew.
     Changes: nothing.
-    Refuses: Wrong where it would make a task again past LIMIT judged Rounds, as the user confirms
-    what they leave, naming it.
+    Refuses: Wrong where it would make a task again past LIMIT judged Rounds, naming the task and
+    what it takes instead.
     """
     held = list(steering["tasks"]) if steering else []
     tasks = [_task(each, _taken(held, each["path"])) for each in aim["tasks"]]
@@ -86,8 +86,8 @@ def _task(told: dict[str, Any], had: dict[str, Any] | None) -> dict[str, Any]:
         kept.pop(key, None)
     if said == "generator" and kept.get("judged", 0) >= LIMIT:
         raise Wrong(
-            f"{told['path']} has had its {LIMIT} judged Rounds; ask the user whether to mend what"
-            " they left, then say fixer, or leave the task out"
+            f"{told['path']} has had its {LIMIT} judged Rounds; say fixer to mend what they left,"
+            " or leave the task out"
         )
     if said == "anew":
         kept.pop("judged", None)

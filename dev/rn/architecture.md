@@ -44,7 +44,8 @@ deliverable's people to their aim, and cuts the trivial many thoroughly.
     whole, of its kind's refactor best practice, before the user touches it.
   - P3.2: before the user, each deliverable is tried by one who didn't make it, with only what its
     people have.
-  - P3.3: remaking has a limit, and what it leaves goes to the user to confirm.
+  - P3.3: remaking has a limit, and what it leaves is weighed like any other fact, the user's
+    only where a mend would change a decision of theirs.
   - P3.4: a mend confirms, the same way before it and after it, that what was there still holds.
 - P4: one measure of the vital few
   - P4.1: each fact that would change what the work aims at is weighed by one shared measure,
@@ -123,9 +124,9 @@ Strategies:
   changed. [P5.2]\
   Intent: the steering alone says what comes next, and nothing outside it keeps a deliverable on a
   dropped solution.
-- What the Rounds leave at the limit asked of the user, the script refusing a Round past it.
-  [P3.3]\
-  Intent: the user decides what they'd live with.
+- What the Rounds leave at the limit weighed by the orchestrator, mended by a fixer or left, the
+  script refusing a Round past it. [P3.3]\
+  Intent: the user is asked only what's theirs to decide.
 - Each Fix kept beside the deliverable's Rounds, with the problem in the words that raised it.
   [P6.1]\
   Intent: a pick-up finds a Fix under way and starts it again on the same problem.
@@ -315,11 +316,9 @@ sequenceDiagram
       end
     end
     opt what the Rounds leave at the limit [P3.3]
-      O->>U: what the people would still meet, in their terms, and whether to mend it now [P2.1]
-      U->>O: answers [P2.1]
-      O->>S: takes in the answer as a decision (Steering) [P4.1]
+      O->>S: weighs what the people would still meet, and takes in whether to mend it now as a decision, the user's first where a mend would change a decision of theirs (Steering) [P4.1]
       opt a mend now [P1.3]
-        O->>S: starts the Fix, with the problem in the user's words (Fix) [P6.1]
+        O->>S: starts the Fix, with the problem in the words that raised it (Fix) [P6.1]
         O->>F: starts one with the Fix, the deliverable, its best practice, and the work's decisions (Fix) [P5.1]
         F->>F: confirms that what's there holds, mends the least, and confirms again the same way [P3.4]
         F-->>O: ends, fixed (Fix) [P5.2]
