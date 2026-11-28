@@ -61,13 +61,13 @@ $ cat ~/.local/state/overnight/20261128-230012/log
 01:47 run 2 started
 01:47 run 2 stopped: 5-hour limit reached ∙ resets 4am. Retry 2 of 7 at 01:57.
 01:57 run 3 started
-01:57 run 3 stopped: 5-hour limit reached ∙ resets 4am. Retry 3 of 7 at 02:17.
-02:17 run 4 started
-02:17 run 4 stopped: 5-hour limit reached ∙ resets 4am. Retry 4 of 7 at 03:17.
-03:17 run 5 started
-03:17 run 5 stopped: 5-hour limit reached ∙ resets 4am. Retry 5 of 7 at 04:17.
-04:17 run 6 started
-05:03 run 6 done
+01:57 run 3 stopped: 5-hour limit reached ∙ resets 4am. Retry 3 of 7 at 02:57.
+02:57 run 4 started
+02:57 run 4 stopped: 5-hour limit reached ∙ resets 4am. Retry 4 of 7 at 03:57.
+03:57 run 5 started
+03:57 run 5 stopped: 5-hour limit reached ∙ resets 4am. Retry 5 of 7 at 04:57.
+04:57 run 6 started
+05:43 run 6 done
 work 20261128-230012 done after 6 runs
 $ cat ~/.local/state/overnight/20261128-230012/state.json
 {
@@ -80,7 +80,7 @@ $ git -C ~/work/shop log --oneline -1
 3f9c2a1 Move the tests in tests/unittest_old to pytest
 ```
 
-The work went on from where the limit stopped it, 17 minutes after the limit lifted.
+The work went on from where the limit stopped it, 57 minutes after the limit lifted.
 
 <!-- TODO: the queue, the next work's start, a start time, and how many run at once: the
 walkthrough puts the night's works in the queue with a start time, three of them run at once, and
@@ -106,7 +106,7 @@ returns at once, so the work goes on after you close Claude Code.
 
 overnight types it for you. It runs the work with `claude -p`, Claude Code's non-interactive
 mode. When a run stops, overnight waits, then asks Claude again to go on. The waits before the
-retries are 5, 10, and 20 minutes, then 60 minutes each, so the work goes on within an hour after
+retries are 5 and 10 minutes, then 60 minutes each, so the work goes on within an hour after
 the limit lifts, as long as it lifts before the retries run out.
 
 ### "Does it start the work over after a stop?"
@@ -126,11 +126,9 @@ few.
 
 ### "What if the limit lifts late, or an error keeps coming?"
 
-overnight retries 7 times by default, and those retries wait 4 hours and 35 minutes in all. The
-limit lifts 5 hours after its window starts, so the 7 retries outlast it when the stop comes 25
-minutes or more after the window starts. Where a work may use up the limit within 25 minutes of
-the window's start, raise the count with `--retries <count>`: `--retries 8` waits 5 hours and 35
-minutes in all, which outlasts the limit after any stop.
+overnight retries 7 times by default, and those retries wait 5 hours and 15 minutes in all. The
+limit lifts at most 5 hours after a stop, so the 7 retries outlast it after any stop. To retry more
+or fewer times, give `--retries <count>`.
 
 Once the retries run out, overnight records the work as failed, with `"status": "failed"` in
 `state.json`. In the morning, open the folder that overnight printed when the work started, such
