@@ -1,0 +1,94 @@
+{
+  "result": "judged",
+  "good": [
+    {
+      "condition": "N1",
+      "lines": [
+        "overnight is a Claude Code plugin with a command that runs a piece of work, or a work, that you",
+        "give it in Claude Code while you're away, and resumes it by itself after the usage limit or an",
+        "error stops it.",
+        "overnight is for you when you hand Claude Code work that runs for hours and leave it running at",
+        "night. With it, you find the work done by morning, or recorded as failed with its log, without",
+        "getting up to type \"continue\" once the limit lifts."
+      ]
+    },
+    {
+      "condition": "N2",
+      "lines": [
+        "- overnight doesn't resume a conversation that you have open in Claude Code: it runs work that it",
+        "- overnight doesn't run from a terminal outside Claude Code: Claude Code puts the command on the",
+        "- overnight doesn't keep your computer awake: before you leave, set the computer not to sleep while"
+      ]
+    },
+    {
+      "condition": "N3",
+      "lines": [
+        "In development, at 0.1.0: what overnight does may still change, and no work has yet run through a",
+        "real night on this version."
+      ]
+    },
+    {
+      "condition": "N4",
+      "lines": [
+        "[MIT](LICENSE)"
+      ]
+    },
+    {
+      "condition": "N5",
+      "lines": [
+        "## Non-goals",
+        "## Walkthrough",
+        "## How it works",
+        "## Requirements",
+        "## Installation",
+        "## Documentation",
+        "## License"
+      ]
+    },
+    {
+      "condition": "N6",
+      "lines": [
+        "At the end, you have your tests moved to pytest and committed by morning, from one command that you",
+        "01:42 run 1 stopped: 5-hour limit reached ∙ resets 4am. Retry 1 of 7 at 01:47.",
+        "04:17 run 6 started",
+        "05:03 run 6 done",
+        "work 20261128-230012 done after 6 runs",
+        "3f9c2a1 Move the tests in tests/unittest_old to pytest",
+        "You typed one command. The work went on from where the limit stopped it, 17 minutes after the",
+        "limit lifted."
+      ]
+    },
+    {
+      "condition": "N7",
+      "lines": [
+        "overnight runs your work in Claude Code without you, and each time a run stops short, it waits and",
+        "asks Claude to go on in the same conversation, until the work is done or the retries run out."
+      ]
+    },
+    {
+      "condition": "N9",
+      "lines": [
+        "- macOS or Linux: `uname` shows it.",
+        "- Python 3.9 or later, run as `python3`: `python3 --version` shows it.",
+        "- Claude Code, logged in: `claude auth status` shows `\"loggedIn\": true`.",
+        "claude plugin marketplace add lovaizu/ccpm",
+        "claude plugin install overnight@ccpm",
+        "In Claude Code, `! overnight --version` shows `overnight 0.1.0`."
+      ]
+    },
+    {
+      "condition": "N10",
+      "lines": [
+        "- `! overnight --help`, in Claude Code: for you when you start a work, every option of the command,",
+        "- [Changelog](CHANGELOG.md): for you after an update, the changes in each version.",
+        "- [Issues](https://github.com/lovaizu/ccpm/issues): where you ask for help or report a fault."
+      ]
+    }
+  ],
+  "more": [
+    {
+      "condition": "N8",
+      "good_when": "A reader whose work ended failed reads the answer to \"What if the limit lifts late, or an error keeps coming?\" and goes straight to where its state.json and log are, the folder that the start printed, such as ~/.local/state/overnight/20261128-230012/, and finds there the log the answer speaks of. Now the answer says \"The work's folder keeps state.json beside the log of each run\", while the walkthrough calls ~/work/shop the folder of the work and shows one file named log under ~/.local/state/overnight/, so the reader looks in their project folder first, or for a log per run that isn't there."
+    }
+  ]
+}

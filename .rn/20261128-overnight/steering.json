@@ -46,8 +46,8 @@
       "path": "plugins/overnight/README.md",
       "kind": "readme",
       "refactor": "refactor-doc",
-      "judged": 1,
-      "next": "evaluator",
+      "judged": 2,
+      "next": "weigh",
       "entry": "content-3"
     },
     {
