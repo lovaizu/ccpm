@@ -57,8 +57,12 @@ def test_reads_a_run_with_exit_0_and_no_error_as_done(
     Then the run is done, in the result's conversation."""
     double.answer(claude_double.DONE)
 
-    assert claude_reply_of(work_dir, None) == claude.Reply(
-        done=True, session_id=claude_double.SESSION_ID, reason=""
+    reply = claude_reply_of(work_dir, None)
+
+    assert (reply.done, reply.session_id, reply.reason) == (
+        True,
+        claude_double.SESSION_ID,
+        "",
     )
 
 
@@ -70,8 +74,12 @@ def test_reads_the_usage_limit_with_exit_1_as_stopped_with_its_message(
     Then the run stopped, in the result's conversation, for the result's message."""
     double.answer(claude_double.LIMIT)
 
-    assert claude_reply_of(work_dir, None) == claude.Reply(
-        done=False, session_id=claude_double.SESSION_ID, reason=claude_double.LIMIT_TEXT
+    reply = claude_reply_of(work_dir, None)
+
+    assert (reply.done, reply.session_id, reply.reason) == (
+        False,
+        claude_double.SESSION_ID,
+        claude_double.LIMIT_TEXT,
     )
 
 
@@ -83,8 +91,12 @@ def test_reads_the_usage_limit_with_exit_0_as_stopped_with_its_message(
     Then the run stopped, in the result's conversation, for the result's message."""
     double.answer(claude_double.LIMIT_EXIT_0)
 
-    assert claude_reply_of(work_dir, None) == claude.Reply(
-        done=False, session_id=claude_double.SESSION_ID, reason=claude_double.LIMIT_TEXT
+    reply = claude_reply_of(work_dir, None)
+
+    assert (reply.done, reply.session_id, reply.reason) == (
+        False,
+        claude_double.SESSION_ID,
+        claude_double.LIMIT_TEXT,
     )
 
 
@@ -96,8 +108,12 @@ def test_reads_an_error_with_no_result_as_stopped_with_its_stderr(
     Then the run stopped, in no known conversation, for the message on stderr."""
     double.answer(claude_double.NO_CONVERSATION)
 
-    assert claude_reply_of(work_dir, claude_double.SESSION_ID) == claude.Reply(
-        done=False, session_id=None, reason=claude_double.NO_CONVERSATION_TEXT
+    reply = claude_reply_of(work_dir, claude_double.SESSION_ID)
+
+    assert (reply.done, reply.session_id, reply.reason) == (
+        False,
+        None,
+        claude_double.NO_CONVERSATION_TEXT,
     )
 
 
@@ -109,8 +125,12 @@ def test_reads_a_run_killed_with_no_word_as_stopped_with_its_exit_code(
     Then the run stopped, in no known conversation, for the exit code that it ended with."""
     double.answer(claude_double.KILLED)
 
-    assert claude_reply_of(work_dir, None) == claude.Reply(
-        done=False, session_id=None, reason="claude ended with code -9 and no message"
+    reply = claude_reply_of(work_dir, None)
+
+    assert (reply.done, reply.session_id, reply.reason) == (
+        False,
+        None,
+        "claude ended with code -9 and no message",
     )
 
 

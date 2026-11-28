@@ -17,7 +17,6 @@ import json
 import os
 import signal
 import sys
-import time
 from typing import Any
 
 RECORDED = os.path.join(os.path.dirname(os.path.abspath(__file__)), "recorded")
@@ -40,8 +39,6 @@ NO_CONVERSATION_TEXT = "No conversation found with session ID: 00000000-0000-400
 FOLDER = "OVERNIGHT_CLAUDE_DOUBLE"
 _ANSWERS = "answers.json"
 _CALLS = "calls.jsonl"
-# The file that a run waits for before it answers, where a case asks it to hold.
-_HOLD = "hold"
 
 
 @functools.cache
@@ -69,16 +66,10 @@ class Double:
         os.chmod(claude, 0o755)
         self.answer()
 
-    def answer(self, *events: str, hold: bool = False) -> None:
-        """Has the next runs answer with `events`, one each, in order. With `hold`, each run waits
-        until `release` before it answers."""
+    def answer(self, *events: str) -> None:
+        """Has the next runs answer with `events`, one each, in order."""
         with open(os.path.join(self.folder, _ANSWERS), "w", encoding="utf-8") as f:
-            json.dump({"events": list(events), "hold": hold}, f)
-
-    def release(self) -> None:
-        """Lets each run that holds answer."""
-        with open(os.path.join(self.folder, _HOLD), "w", encoding="utf-8"):
-            pass
+            json.dump(list(events), f)
 
     def calls(self) -> list[dict[str, Any]]:
         """Each run it was asked, in order: its `args`, its `stdin`, its `cwd`, and its `sid`, the
@@ -106,12 +97,10 @@ def _run(folder: str) -> int:
             count = len(f.readlines())
     with open(calls, "a", encoding="utf-8") as f:
         f.write(json.dumps(call) + "\n")
-    if count >= len(answers["events"]):
+    if count >= len(answers):
         sys.stderr.write(f"claude double: no answer for run {count + 1}\n")
         return 1
-    while answers["hold"] and not os.path.exists(os.path.join(folder, _HOLD)):
-        time.sleep(0.05)
-    name = answers["events"][count]
+    name = answers[count]
     if name == KILLED:
         os.kill(os.getpid(), signal.SIGKILL)
     event = _events()[name]
