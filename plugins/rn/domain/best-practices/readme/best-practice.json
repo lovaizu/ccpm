@@ -183,7 +183,7 @@
      {
       "id": "N6",
       "about": "Walkthrough",
-      "what": "Does the walkthrough show a run on typical work that delivers what the product promises its users, as agreed, in a form the reader can see: the use as agreed until the product runs, and a real run once it does?",
+      "what": "Does the walkthrough show a real run on typical work that delivers what the product promises its users, as agreed, in a form the reader can see?",
       "why": "A reader trusts a benefit they've seen happen in work like their own more than one they only read about, so the walkthrough shows it happen.",
       "items": [
        {
@@ -282,7 +282,7 @@
        },
        {
         "at": "decide",
-        "text": "Where an idea that matters to the users is missing, ask the user to decide it."
+        "text": "Where an idea that matters to the users is missing, ask the user to add it to the ideas by which the product brings its users to their objectives."
        },
        {
         "at": "decide",

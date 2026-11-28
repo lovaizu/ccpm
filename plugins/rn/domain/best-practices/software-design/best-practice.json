@@ -1,6 +1,6 @@
 {
  "goal": {
-  "what": "The developers see, before anyone writes a body, whether the parts agreed for the product fit together, and the user mends each place where they don't.",
+  "what": "The developers see, before anyone writes a body, whether the parts agreed for the product fit together, and whoever decided the parts mends each place where they don't.",
   "critical_success_factors": [
    {
     "id": "C1",
@@ -88,7 +88,7 @@
    },
    {
     "id": "C3",
-    "what": "Each place where the agreed parts can't be built reaches the user before anyone builds around it.",
+    "what": "Each place where the agreed parts can't be built reaches whoever decided the parts before anyone builds around it.",
     "necessary_conditions": [
      {
       "id": "N4",
@@ -102,7 +102,7 @@
        },
        {
         "at": "make",
-        "text": "Write each gap in the form that the note of Gaps in the template gives, and leave its place in the skeleton open, holding only the modules, interfaces, and kinds of data that the decisions agreed name, since a part invented there hides the gap from the user, and the tests then build on it."
+        "text": "Write each gap in the form that the note of Gaps in the template gives, and leave its place in the skeleton open, holding only the modules, interfaces, and kinds of data that the decisions agreed name, since a part invented there hides the gap from whoever decided the parts, and the cases then build on it."
        },
        {
         "at": "make",

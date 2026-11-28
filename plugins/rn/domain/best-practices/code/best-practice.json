@@ -14,7 +14,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Take what the code must do from the decisions the user agreed to for the code, and from what the repository already holds that bears on it, such as the code that calls it: each behavior agreed for the code with its cases, the interfaces agreed for it, and the principles it follows. The agreed cases are the code's specification: each behavior of the code answers one of them."
+        "text": "Take what the code must do from the decisions the user agreed to for the code, and from what the repository already holds that bears on it, such as the code that calls it: each behavior agreed for the code with its cases, the interfaces agreed for it, and the principles it follows. The agreed cases are the code's specification: each behavior of the code answers one of them, and the other agreed decisions, such as the part's job, say only why a case asks what it does."
        },
        {
         "at": "decide",
@@ -120,11 +120,11 @@
       "items": [
        {
         "at": "decide",
-        "text": "For each module that N1.3 adds, design its cases before its code, each as a test's name with its Given, When, and Then, naming the agreed case that it supports where the agreed decisions ask for traceability: one case for each class of what the module takes and gives that its requirements treat apart, one for each refusal, and for each bound one case at the bound and one just past it. For example, `test_reads_back_an_entry_whose_text_holds_a_newline` supports `test_add_then_check_accepts_the_record`."
+        "text": "For each module that N1.3 adds, design its cases before its code, each as a test's name with its Given, When, and Then, naming the agreed case that it supports where the agreed decisions ask for traceability, one for each variation that its requirements name: one case for each class of what the module takes and gives that a requirement treats apart; for each bound, one case at it and one just past it; for a collection or a pick among several, the cases of none, one, and several that the requirement treats apart, and one in which another pick gives another result; for a check of something from outside, one case for each of no problem, a problem, and could not check; for a result that depends on what came before, one case for each transition the use brings about; each requirement tested at the interface that states it. For example, `test_reads_back_an_entry_whose_text_holds_a_newline` supports `test_add_then_check_accepts_the_record`."
        },
        {
         "at": "decide",
-        "text": "Where the code seems to need a case that no agreed case asks for, such as a mode that no agreed behavior reaches, end with `point` to take it back to the user, and write it once they agree to it, since until then it tests what no one asks for."
+        "text": "Where the code seems to need a case that no agreed case asks for, such as a mode that no agreed behavior reaches, end with `point` to take it back to whoever agreed the code's cases, and write it once an agreed case asks for it, since until then it tests what no element asks for."
        },
        {
         "at": "make",
@@ -184,7 +184,7 @@
        },
        {
         "at": "make",
-        "text": "For each line or branch that no test runs, name the case that calls for it. Where none does, remove it, as N3 says. Where a case that the tests name does, make that case's test reach it through the interface. Where only a case that no test names would, take that case back to the user, such as with `point`, and write its test once they agree to it."
+        "text": "For each line or branch that no test runs, name the case that calls for it. Where none does, remove it, as N3 says. Where a case that the tests name does, make that case's test reach it through the interface. Where only a case that no test names would, take that case back to whoever agreed the code's cases, such as with `point`, and write its test once they add it."
        },
        {
         "at": "make",

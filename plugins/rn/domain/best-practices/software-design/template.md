@@ -37,5 +37,5 @@
 > DELETE_TEMPLATE_COMMENT:
 > - `<gaps>`: a list, one gap a line, each naming the element of the design it bears on and what
 >   the developers can't build because of it, such as `S3: the guard hands the record no kind of
->   data, so no interface carries it`. It goes to the user, and holds only the gaps that the design
->   doesn't yet mend.
+>   data, so no interface carries it`. It goes to whoever decided the parts, and holds only the gaps
+>   that the design doesn't yet mend.

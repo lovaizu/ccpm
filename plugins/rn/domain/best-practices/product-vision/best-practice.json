@@ -14,7 +14,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Find the job that the product exists to do in the request, the user's words, and the steering's outcome and decisions, and, where the repository already holds the product, in what it already says the product does. Write it in one sentence as what the product gets done for the people who come to it, such as `turns a request into a deliverable that the people it's for can use`. Where none of these says it, ask the user what the product gets done, and for whom."
+        "text": "Find the job that the product exists to do in the steering's outcome and decisions, and, where the repository already holds the product, in what it already says the product does. Write it in one sentence as what the product gets done for the people who come to it, such as `turns a request into a deliverable that the people it's for can use`. Where none of these says it, ask the user what the product gets done, and for whom."
        },
        {
         "at": "decide",

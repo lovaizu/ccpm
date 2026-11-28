@@ -50,7 +50,7 @@
       "id": "N2",
       "about": "the whole",
       "what": "Does the code still carry out each design decision that N1.1 notes: each component's job, each concept that the code handles, and what each part hands another?",
-      "why": "The developers rely on these decisions to know where a part belongs and what it hands to which, so code that a refactoring moved away from them sends each of them to the wrong place. A change of a component, of a concept, or of what one part hands another is a change of the design, which the user decides before any code follows, as a refactoring changes the code's structure within the design.",
+      "why": "The developers rely on these decisions to know where a part belongs and what it hands to which, so code that a refactoring moved away from them sends each of them to the wrong place. A change of a component, of a concept, or of what one part hands another is a change of the design, decided as a design decision before any code follows, as a refactoring changes the code's structure within the design.",
       "items": [
        {
         "at": "decide",
@@ -58,7 +58,7 @@
        },
        {
         "at": "decide",
-        "text": "Where it does, take the change out of the plan, and name it in the `point` you end with: the smell it mends, the places it reaches, and the design decision that it changes, since the user is to decide it first."
+        "text": "Where it does, take the change out of the plan, and name it in the `point` you end with: the smell it mends, the places it reaches, and the design decision that it changes, since the design is to decide it first."
        }
       ]
      }

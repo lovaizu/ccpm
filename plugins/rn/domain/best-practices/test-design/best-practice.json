@@ -1,6 +1,6 @@
 {
   "goal": {
-    "what": "The developers see, before anyone builds a part, whether the parts joined as agreed give each key result, and the user mends each place where they can't.",
+    "what": "The developers see, before anyone builds a part, whether the parts joined as agreed give each key result, and whoever decided the parts mends each place where they can't.",
     "critical_success_factors": [
       {
         "id": "C1",
@@ -10,7 +10,7 @@
             "id": "N1",
             "about": "E2E cases",
             "what": "Where the agreed testing runs the product whole, does each key result have an E2E case that runs an objective's main use at the size of a real request, and names the key result?",
-            "why": "The developers know that the product does what it promises its users only where a case runs it as its users do, and a case written before any part is built fixes what the parts together must give. ISTQB's test analysis takes each test condition from the test basis, here each key result. A product that holds a prompt runs whole as the user's E2E run, in which the user runs a real request and a developer watches each reply, so no E2E test code is written.",
+            "why": "The developers know that the product does what it promises its users only where a case runs it as its users do, and a case written before any part is built fixes what the parts together must give. ISTQB's test analysis takes each test condition from the test basis, here each key result. For a product that holds a prompt, the agreed testing runs the product whole as the user's E2E run, in which the user runs a real request and a developer watches each reply, so no E2E test code is written.",
             "items": [
               {
                 "at": "decide",
@@ -158,7 +158,7 @@
       },
       {
         "id": "C4",
-        "what": "Each place where the cases show the agreed parts can't give a key result reaches the user before anyone builds around it.",
+        "what": "Each place where the cases show the agreed parts can't give a key result reaches whoever decided the parts before anyone builds around it.",
         "necessary_conditions": [
           {
             "id": "N6",
@@ -176,7 +176,7 @@
               },
               {
                 "at": "make",
-                "text": "Write each gap in the form that the note of Gaps in the template gives, and write the case that meets the gap as the decisions agreed draw it, with only the parts, interfaces, and behaviors they name, since a case built on a part invented around the gap fixes that part in place before the user decides the mend."
+                "text": "Write each gap in the form that the note of Gaps in the template gives, and write the case that meets the gap as the decisions agreed draw it, with only the parts, interfaces, and behaviors they name, since a case built on a part invented around the gap fixes that part in place before whoever decided the parts decides the mend."
               },
               {
                 "at": "make",
