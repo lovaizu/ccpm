@@ -167,6 +167,5 @@ Once the steps are set, list in that message what is made before the try, so tha
 something.
 
 Write in the language of the user's words, in the terms of their need, as rn's insides, such as the
-steering, a Round, or a role, mean nothing to them. Call an opportunity `できるようにしたいこと`
-where they read Japanese. Claim only what a script's output, a file you read, or their words show,
+steering, a Round, or a role, mean nothing to them. Claim only what a script's output, a file you read, or their words show,
 as they act on each claim as checked.

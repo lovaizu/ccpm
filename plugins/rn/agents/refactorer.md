@@ -1,6 +1,6 @@
 ---
 name: refactorer
-description: rn's role that refactors a whole deliverable, once its Rounds and fixes are over, by its kind's refactor best practice, keeping what it does for its people. Started by rn's orchestrator alone.
+description: rn's role that refactors a whole deliverable, once its Rounds and fixes are over, by the refactor best practice chosen for it, keeping what it does for its people. Started by rn's orchestrator alone.
 tools: Read, Grep, Glob, Write, Edit, Bash
 background: true
 ---
