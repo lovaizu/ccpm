@@ -61,5 +61,6 @@
     "A retry with no conversation to go on in, as no earlier run named one, gives the prompt again, as nothing was done yet; a resume that names no conversation leaves the one it resumed for the next retry. The README's \"No\" to starting over stays true, so neither takes a remedy.",
     "The tests check the retry after a resume that finds no conversation, test each case once, and check that each retry resumes the conversation with continue.",
     "The user had both points that the Rounds left mended: no test compares minutes read from the real clock, and the command's test takes --retries 0 as the least it accepts."
-  ]
+  ],
+  "stage": "trying"
 }
