@@ -20,6 +20,8 @@ TOP = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), 
 RN = os.path.join(TOP, "plugins", "rn")
 PRACTICES = os.path.join(RN, "domain", "best-practices")
 SCHEMAS = os.path.join(RN, "domain", "schemas")
+with open(os.path.join(RN, ".claude-plugin", "plugin.json"), encoding="utf-8") as _manifest:
+    VERSION = json.load(_manifest)["version"]
 
 # The outcome and the needs of the README's walkthrough, in English.
 OUTCOME = (
@@ -83,10 +85,11 @@ def aim(tasks: list[dict[str, Any]] | None = None, **fields: Any) -> dict[str, A
 def steering(
     paths: tuple[str, ...] = (COMMAND, GUIDE), stage: str | None = None, **fields: Any
 ) -> dict[str, Any]:
-    """A steering in its schema's form: the walkthrough's tree, with its fields as given, its tasks
-    left at the paths given, none started, and the stage given, absent where none is."""
+    """A steering in its schema's form, written by this rn: the walkthrough's tree, with its fields
+    as given, its tasks left at the paths given, none started, and the stage given, absent where
+    none is."""
     held = aim([each for each in TASKS if each["path"] in paths], **fields)
-    return {**held, **({"stage": stage} if stage else {})}
+    return {**held, "rn": VERSION, **({"stage": stage} if stage else {})}
 
 
 @functools.cache

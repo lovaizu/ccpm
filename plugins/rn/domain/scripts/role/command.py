@@ -5,16 +5,15 @@ and removes the trials' folders that the role leaves."""
 
 from __future__ import annotations
 
-import glob
 import json
 import os
 from collections.abc import Sequence
 from typing import Any
 
 import form
-from fault import Answer, Wrong
+from fault import Answer
 from host import Host
-from place import WorkPlace
+from place import WorkPlace, version
 from repository import trial, worktree
 from steering import record, rounds
 
@@ -46,8 +45,10 @@ def main(argv: Sequence[str], given: str, plugin_root: str, host: Host) -> Answe
     if role not in _ROLES:
         return 0, "", ""
     schemas = os.path.join(plugin_root, "domain", "schemas")
-    works = worktree.left(str(hook["cwd"]), host, os.path.join(schemas, "steering.schema.json"))
-    faults = [fault for work in works for fault in _faults(work, schemas)]
+    works = worktree.left(
+        str(hook["cwd"]), host, os.path.join(schemas, "steering.schema.json"), version(plugin_root)
+    )
+    faults = [fault for work in works for fault in rounds.faults(work, schemas)]
     faults += [fault for work in works for fault in _missing(work, role, schemas)]
     if faults:
         return 2, "", "".join(f"role: {each}\n" for each in faults)
@@ -55,17 +56,6 @@ def main(argv: Sequence[str], given: str, plugin_root: str, host: Host) -> Answe
         _moved(work, schemas)
         trial.removed(work)
     return 0, "", ""
-
-
-def _faults(work: WorkPlace, schemas: str) -> list[str]:
-    """Each result of the work that leaves its schema, in words."""
-    found = []
-    for root in sorted(glob.glob(os.path.join(work.rounds, "*"))):
-        try:
-            rounds.entries(root, schemas)
-        except Wrong as why:
-            found.append(str(why))
-    return found
 
 
 def _missing(work: WorkPlace, role: str, schemas: str) -> list[str]:

@@ -68,20 +68,22 @@ def works(cwd: str, host: Host) -> list[WorkPlace]:
     return [WorkPlace(worktree, each) for each in sorted(found, reverse=True)]
 
 
-def left(cwd: str, host: Host, schema: str) -> list[WorkPlace]:
+def left(cwd: str, host: Host, schema: str, version: str) -> list[WorkPlace]:
     """Each piece of work with something left to do, as `works` gives it, whose steering has
-    something due other than its end, or that has no steering yet. A work whose steering leaves
-    the steering's schema at `schema` is an earlier rn's, which this rn doesn't go on with, as the
-    work ended keeps its folder in the repository once its pull request is merged.
+    something due other than its end, or that has no steering yet. A work whose steering names
+    another `version` of rn is left to do until it's inspected, as `steering` brings its records
+    into this rn's form. A work whose steering names no version and leaves the steering's schema at
+    `schema` is an rn's before 0.13.0, which this rn doesn't go on with, as the work ended keeps its
+    folder in the repository once its pull request is merged.
 
     Refuses: Wrong where the work's steering isn't JSON, naming its path.
     """
-    return [each for each in works(cwd, host) if _open(each, schema)]
+    return [each for each in works(cwd, host) if _open(each, schema, version)]
 
 
-def _open(work: WorkPlace, schema: str) -> bool:
-    """Whether the work has something left to do: no steering yet, or one in this rn's form with
-    something due but its end."""
+def _open(work: WorkPlace, schema: str, version: str) -> bool:
+    """Whether the work has something left to do: no steering yet, one of another version not yet
+    inspected, or one in this rn's form with something due but its end."""
     if not os.path.isfile(work.steering):
         return True
     with open(work.steering, encoding="utf-8") as f:
@@ -89,4 +91,6 @@ def _open(work: WorkPlace, schema: str) -> bool:
             steering = json.load(f)
         except ValueError as error:
             raise Wrong(f"{work.steering}: isn't JSON: {error}") from None
+    if steering.get("rn", version) != version:
+        return steering.get("stage") != "inspected"
     return not form.faults(steering, schema) and due(steering) != ["ended"]

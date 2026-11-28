@@ -50,12 +50,17 @@
    }
   },
   "stage": {
-   "description": "Where the work stands once no task is left: trying, in the user's hands, waiting on their word; enough, once they say it is; inspected, once the inspector passed the pull request whole. Absent before the hand-over.",
+   "description": "Where the work stands once no task is left: trying, in the user's hands, waiting on their word; enough, once they say it is; inspected, once the inspector passed the pull request whole. Absent before the hand-over. Kept in every version's form, as an rn of another version knows by `inspected` that the work ended.",
    "enum": [
     "trying",
     "enough",
     "inspected"
    ]
+  },
+  "rn": {
+   "description": "The version of rn whose form the work's records hold, as its plugin.json names it, so that an rn of another version knows to bring them into its own. Absent in a work that an rn before 0.13.0 wrote.",
+   "type": "string",
+   "minLength": 1
   }
  },
  "definitions": {

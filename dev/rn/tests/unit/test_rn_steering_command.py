@@ -341,3 +341,42 @@ def test_a_start_that_can_not_be_is_refused(
     at(made, **fields)
     code, _, err = call(made, "start", path, words=words)
     assert (code, says in err) == (1, True)
+
+
+def test_a_steering_of_another_version_in_this_rns_form_is_marked_with_this_one(
+    made: WorkPlace,
+) -> None:
+    """Given a steering that an rn before 0.13.0 wrote, naming no version, in this rn's form.
+    When `steering due` runs.
+    Then the steering names this rn's version, and the command is due to make."""
+    value = rn_files.steering()
+    del value["rn"]
+    steering(made, value)
+    assert call(made, "due") == (0, f"make\t{rn_files.COMMAND}\tcode\tgenerator\n", "")
+    assert held(made) == rn_files.steering()
+
+
+def test_records_of_another_version_out_of_this_rns_form_are_named(made: WorkPlace) -> None:
+    """Given a steering of another version, and a Fix whose result an earlier fixer wrote.
+    When `steering due` runs.
+    Then it gives 1 naming the version and each record to bring into this rn's form, and
+    changes nothing."""
+    steering(made, {**rn_files.steering(), "rn": "0.0.1"})
+    folder = os.path.join(made.rounds, quote(rn_files.COMMAND, safe=""), "fix-1")
+    rn_files.write_json(os.path.join(folder, "fixer.json"), {"result": "fixed", "files": []})
+    git(made.worktree, "add", "-A")
+    git(made.worktree, "commit", "-q", "-m", "fix")
+    code, _, err = call(made, "due")
+    assert (code, "written by rn 0.0.1" in err, "fixer.json" in err) == (1, True, True)
+    assert unchanged(made)
+
+
+def test_a_steering_of_another_version_that_is_not_json_is_refused(made: WorkPlace) -> None:
+    """Given a steering that isn't JSON.
+    When `steering due` runs.
+    Then it gives 1 naming its path."""
+    os.makedirs(made.folder, exist_ok=True)
+    with open(made.steering, "w", encoding="utf-8") as f:
+        f.write("{")
+    code, _, err = call(made, "due")
+    assert (code, "steering.json: isn't JSON" in err) == (1, True)

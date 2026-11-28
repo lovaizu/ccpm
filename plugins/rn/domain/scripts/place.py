@@ -1,9 +1,10 @@
 """Decides where the work lies and what it's called: its name from the day and a slug of what it's
 for, the worktree it's made in, its folder there, and the paths of its steering and its
-Rounds and Fixes in that folder."""
+Rounds and Fixes in that folder, and the version of rn that writes them."""
 
 from __future__ import annotations
 
+import json
 import os
 import re
 from dataclasses import dataclass
@@ -40,6 +41,18 @@ class WorkPlace:
     def rounds(self) -> str:
         """The folder of the work's Rounds and Fixes, `<folder>/rounds/`."""
         return os.path.join(self.folder, "rounds")
+
+
+def version(plugin_root: str) -> str:
+    """The version of rn at its folder, as its manifest holds it.
+
+    Takes: rn's folder, the one that holds `.claude-plugin/plugin.json`.
+    Gives: the manifest's `version`, such as `0.13.0`.
+    Changes: nothing.
+    Refuses: nothing.
+    """
+    with open(os.path.join(plugin_root, ".claude-plugin", "plugin.json"), encoding="utf-8") as f:
+        return str(json.load(f)["version"])
 
 
 def named(today: date, slug: str) -> str:

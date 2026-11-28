@@ -112,7 +112,9 @@ Take the steps of what started you. Each says what holds once it's done and why;
 rn's rules for these steps:
 
 - The scripts alone write the steering and the roles their results, so that each record has one
-  writer: write no file of the work yourself. Run each script as
+  writer: write no file of the work yourself, but a record that another version of rn wrote, which
+  `steering` names for you to bring into this rn's form, as the user updates rn between
+  conversations and the work goes on in this one. Run each script as
   `python3 <rn's folder>/domain/scripts/<script>` from the worktree, rn's folder being the one that
   holds this file's `domain/`, written out in full; with no arguments, it prints its usage. Exit 1
   means it did nothing and says how to mend that. Exit 2 means a rerun does no more, so tell the

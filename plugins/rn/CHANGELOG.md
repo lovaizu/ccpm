@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.13.0] - 2026-11-27
+## [0.13.0-rc.1] - 2026-11-28
 
 ### Changed
 
@@ -17,6 +17,7 @@
 - rn keeps what you're after as an opportunity solution tree, a small request one branch and a large one many, with no means in it. The solution it aims at carries the assumptions that you test once it's in your hands, and rn names each one at the hand-over.
 - rn's first task puts each part of what you get in its place, in the shape it ends in, with each piece that a later task makes marked `TODO:`. Each task after it fills its pieces, so what you meet first, such as the README, leads what's built under it, each task's end passes your repository's checks, and the marks left show what's missing. rn hands nothing over while a `TODO:` that the work added is left.
 - On a stop, rn commits and pushes what a role left half made as work in progress, and goes on from it on `/rn:up`.
+- After you update rn, `/rn:up` brings the work that an earlier version left into the new one before it goes on, so a stopped work never gets stuck on records the new version reads differently.
 - rn plans the tasks back from the solution it aims at, and adds and drops them as the work shows what that solution takes. Each time a task is done, it tells you what's left and each change to the plan with why, in place of a count such as `（1/3）`.
 - Where AI evaluators still find something after two tries, rn mends it or leaves it on its own, and asks you only where the mend would change something you decided.
 

@@ -63,11 +63,13 @@ def test_work_of_a_name_already_taken_is_refused(worktree: str) -> None:
 
 
 def test_the_work_of_the_worktree_is_found_newest_first(worktree: str) -> None:
-    """Given a piece of work, a later one with no steering yet, an ended one, one of an earlier rn
-    whose steering is in another form, and a folder of another name in `.rn/`.
+    """Given a piece of work, a later one with no steering yet, an ended one, one of an rn before
+    0.13.0 whose steering is in another form, one of another version in another form, one of
+    another version inspected, and a folder of another name in `.rn/`.
     When each piece of work, and each with something left to do, is asked.
-    Then the later comes first, the ended one and the earlier rn's are left out of what's left, and
-    the other folder is passed over."""
+    Then the later comes first, the other version's not inspected is kept for steering to bring
+    into this rn's form, the ended ones and the earlier rn's are left out of what's left, and the
+    other folder is passed over."""
     first = new(WorkPlace(worktree, NAME))
     rn_files.write_json(first.steering, rn_files.steering())
     later = new(WorkPlace(worktree, OTHER))
@@ -75,9 +77,13 @@ def test_the_work_of_the_worktree_is_found_newest_first(worktree: str) -> None:
     rn_files.write_json(ended.steering, rn_files.steering(paths=(), stage="inspected"))
     earlier = new(WorkPlace(worktree, "20261124-receipts"))
     rn_files.write_json(earlier.steering, {"ost": {"target": "O1"}, "state": {"steps": []}})
+    other = new(WorkPlace(worktree, "20261123-refunds"))
+    rn_files.write_json(other.steering, {"rn": "0.0.1", "ost": {}})
+    done = new(WorkPlace(worktree, "20261122-taxes"))
+    rn_files.write_json(done.steering, {"rn": "0.0.1", "stage": "inspected"})
     write_files(os.path.join(worktree, ".rn", "notes"), {"a.md": "a\n"})
-    assert works(worktree, run) == [later, first, ended, earlier]
-    assert left(worktree, run, SCHEMA) == [later, first]
+    assert works(worktree, run) == [later, first, ended, earlier, other, done]
+    assert left(worktree, run, SCHEMA, rn_files.VERSION) == [later, first, other]
 
 
 def test_a_worktree_with_no_work_holds_none(worktree: str, tmp_path: Any) -> None:
@@ -95,4 +101,4 @@ def test_a_steering_that_is_not_json_is_refused(worktree: str) -> None:
     made = new(WorkPlace(worktree, NAME))
     write_files(made.folder, {"steering.json": "{"})
     with pytest.raises(Wrong, match="steering.json: isn't JSON"):
-        left(worktree, run, SCHEMA)
+        left(worktree, run, SCHEMA, rn_files.VERSION)

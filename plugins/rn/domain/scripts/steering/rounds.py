@@ -7,12 +7,14 @@ the role's result, and a Fix its problem in `problem.md`."""
 
 from __future__ import annotations
 
+import glob
 import os
 import re
 from typing import Any, NamedTuple
 from urllib.parse import quote
 
 import form
+from fault import Wrong
 from place import WorkPlace
 
 # The stages of a deliverable's course, as each folder's name begins.
@@ -42,6 +44,18 @@ class Entry(NamedTuple):
 def folder_of(work: WorkPlace, deliverable: str) -> str:
     """The folder of the deliverable's Rounds and Fixes."""
     return os.path.join(work.rounds, quote(deliverable, safe=""))
+
+
+def faults(work: WorkPlace, schemas: str) -> list[str]:
+    """Each result of the work that leaves its schema, in words, as `entries` names it; none
+    where each holds."""
+    found = []
+    for root in sorted(glob.glob(os.path.join(work.rounds, "*"))):
+        try:
+            entries(root, schemas)
+        except Wrong as why:
+            found.append(str(why))
+    return found
 
 
 def entries(root: str, schemas: str) -> list[Entry]:

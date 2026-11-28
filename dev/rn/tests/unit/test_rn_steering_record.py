@@ -16,8 +16,9 @@ from steering.record import LIMIT, marked, moved, taken_in
 def test_a_first_aim_makes_the_steering() -> None:
     """Given the work with no steering, and an aim with its tree, tasks, and decision.
     When the aim is taken in.
-    Then the steering holds each, none started, and no stage."""
-    assert taken_in(None, rn_files.aim()) == rn_files.steering()
+    Then the steering holds each, none started, and no stage, its version for the command to
+    mark."""
+    assert {**taken_in(None, rn_files.aim()), "rn": rn_files.VERSION} == rn_files.steering()
 
 
 def command(steering: dict[str, Any]) -> dict[str, Any]:

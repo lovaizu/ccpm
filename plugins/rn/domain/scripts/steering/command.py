@@ -11,10 +11,10 @@ from typing import Any
 import form
 from fault import Answer, Wrong, answered
 from host import Host
-from place import WorkPlace, of_folder
+from place import WorkPlace, of_folder, version
 from repository import todo
 
-from steering import due, record, start
+from steering import due, record, rounds, start
 
 USAGE = """\
 usage: steering aim <work>   (the aim on stdin)
@@ -42,6 +42,9 @@ def main(
       left of what the work makes, as `todo.left` finds them, as each is a part still to make.
     - `due <work>`: gives 0 printing each line that `due.due` gives, a line each.
 
+    Each first brings the work's records written by another version of rn into this rn's, as
+    `_aligned` does, so that no step meets a record of another form part way.
+
     `<work>` is the work's folder, as `place.of_folder` takes it. 1 with `steering: <what's wrong>`,
     changing nothing, where the input is Wrong: a result or a steering that's missing, isn't JSON,
     or leaves its schema, naming each place, an aim that isn't JSON or leaves its schema, or an aim
@@ -51,6 +54,9 @@ def main(
     """
     if not argv or argv[0] not in _SUBCOMMANDS or len(argv) != _SUBCOMMANDS[argv[0]][1]:
         return 2, "", USAGE
+    aligned = answered("steering", lambda: _aligned(of_folder(cwd, argv[1]), plugin_root))
+    if aligned[0] != 0:
+        return aligned
     if argv[0] == "start":
         return answered(
             "steering", lambda: _start(of_folder(cwd, argv[1]), argv[2], plugin_root, stdin)
@@ -68,6 +74,35 @@ def main(
     )
 
 
+def _aligned(work: WorkPlace, plugin_root: str) -> Answer:
+    """0 where the work has no steering yet, or its steering names this rn's version. Where it
+    names another, or none, as an rn before 0.13.0 wrote it: each record held to this rn's
+    schemas, the steering then marked with this rn's version, or Wrong naming each that leaves
+    its form, for the orchestrator to bring into it."""
+    if not os.path.isfile(work.steering):
+        return 0, "", ""
+    schemas = os.path.join(plugin_root, "domain", "schemas")
+    try:
+        with open(work.steering, encoding="utf-8") as f:
+            held = json.load(f)
+    except json.JSONDecodeError as error:
+        raise Wrong(f"{work.steering}: isn't JSON: {error}") from None
+    now = version(plugin_root)
+    if held.get("rn") == now:
+        return 0, "", ""
+    marked = {**held, "rn": now}
+    found = form.faults(marked, os.path.join(schemas, "steering.schema.json"))
+    found = [f"{work.steering}: {each}" for each in found] + rounds.faults(work, schemas)
+    if found:
+        raise Wrong(
+            f"the work's records were written by rn {held.get('rn', 'before 0.13.0')}, and this"
+            f" is rn {now}; bring each into this rn's form, then run steering again: "
+            + "; ".join(found)
+        )
+    _written(work, marked)
+    return 0, "", ""
+
+
 def _aim(work: WorkPlace, plugin_root: str, stdin: Callable[[], str]) -> Answer:
     schemas = os.path.join(plugin_root, "domain", "schemas")
     try:
@@ -78,7 +113,7 @@ def _aim(work: WorkPlace, plugin_root: str, stdin: Callable[[], str]) -> Answer:
     if found:
         raise Wrong("the aim leaves its schema, aim.schema.json: " + "; ".join(found))
     held = _steering(work, schemas) if os.path.isfile(work.steering) else None
-    steering = record.taken_in(held, aim)
+    steering = {**record.taken_in(held, aim), "rn": version(plugin_root)}
     _written(work, steering)
     return 0, _lines(due.due(steering)), ""
 

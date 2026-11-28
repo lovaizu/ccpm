@@ -9,7 +9,7 @@ from datetime import date
 
 from fault import Answer, answered
 from host import Host
-from place import WorkPlace, named, of_folder
+from place import WorkPlace, named, of_folder, version
 
 from repository import trial, worktree
 
@@ -49,7 +49,7 @@ def _new(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
 
 
 def _works(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
-    found = worktree.left(cwd, host, _schema(plugin_root))
+    found = worktree.left(cwd, host, _schema(plugin_root), version(plugin_root))
     return 0, "".join(f"{each.folder}\n" for each in found), ""
 
 
