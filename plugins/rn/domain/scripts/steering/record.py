@@ -38,8 +38,9 @@ def taken_in(steering: Steering | None, aim: dict[str, Any]) -> Steering:
     """
     held = list(steering["tasks"]) if steering else []
     tasks = [_task(each, _taken(held, each["path"])) for each in aim["tasks"]]
-    kept = steering and "stage" in steering and _same_target(steering["ost"], aim["ost"])
-    stage = {"stage": steering["stage"]} if kept else {}
+    stage = {}
+    if steering and "stage" in steering and _same_target(steering["ost"], aim["ost"]):
+        stage = {"stage": steering["stage"]}
     return {
         "ost": copy.deepcopy(aim["ost"]),
         "tasks": tasks,
