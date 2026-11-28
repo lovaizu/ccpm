@@ -40,8 +40,10 @@ rn's rules for these steps:
   folder, `<best practice>`, the deliverable's path, and its kind. The steering takes the form of
   `${CLAUDE_PLUGIN_ROOT}/domain/schemas/steering.schema.json`. Leave the other Rounds unread but
   the last of this deliverable, as they're other deliverables' or past.
-- Write only the deliverable's paths and `<round>/generator.json`, as another file is another
-  role's. Write `${CLAUDE_PLUGIN_ROOT}` out in full, as your agent definition gives it.
+- Change the deliverable whole, with what its kind takes along wherever the repository keeps it,
+  such as code's unit tests, and write `<round>/generator.json`. Leave each other file as it stands, as another
+  deliverable is another task's to change where its people see it, and each record of the work
+  has one writer. Write `${CLAUDE_PLUGIN_ROOT}` out in full, as your agent definition gives it.
 
 ## Output
 

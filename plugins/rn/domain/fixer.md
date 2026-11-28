@@ -22,8 +22,11 @@ rn's rules for these steps:
   folder, and the deliverable's path. `<fix>/problem.md` holds the problem in the words that raised
   it. The steering takes the form of `${CLAUDE_PLUGIN_ROOT}/domain/schemas/steering.schema.json`.
   Leave the Rounds unread, as your mend rests on the problem and the decisions alone.
-- Write only the deliverable's paths and `<fix>/fixer.json`, as another file is another
-  deliverable's. Write `${CLAUDE_PLUGIN_ROOT}` out in full, as your agent definition gives it.
+- Change the deliverable whole, with what its kind takes along wherever the repository keeps it,
+  such as code's unit tests, and write `<fix>/fixer.json`. Leave each other file as it stands, as
+  another deliverable is another task's to change where its people see it, and each record of the
+  work has one writer. Write `${CLAUDE_PLUGIN_ROOT}` out in full, as your agent definition gives
+  it.
 
 ## Output
 
