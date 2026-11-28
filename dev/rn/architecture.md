@@ -209,8 +209,8 @@ Strategies:
   Intent: the user judges only which need brings them closest to what they're after.
 - The languages proposed once at the start and kept as the user's decisions. [P2.4]\
   Intent: the user reads rn in their own language, and others read the repository in its own.
-- One generator and one evaluator for each Round, the evaluator judging every condition from one
-  trial. [P3.2]\
+- One generator and one evaluator for each Round, the evaluator judging each condition that one
+  trial reaches. [P3.2]\
   Intent: the people's use is one act, so it's tried once and judged whole.
 - The evaluator given the deliverable and its best practice, never what rn meant. [P3.2]\
   Intent: it meets only what the people would meet.

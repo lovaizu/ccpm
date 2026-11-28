@@ -1,7 +1,7 @@
 {
  "$schema": "http://json-schema.org/draft-07/schema#",
  "title": "evaluator's result",
- "description": "What the evaluator writes as it ends, at <round>/evaluator.json: for each necessary condition of its best practice, good with the lines that meet it, or more with good_when, from one trial as the deliverable's people.",
+ "description": "What the evaluator writes as it ends, at <round>/evaluator.json: for each necessary condition of its best practice that its trial reached, good with the lines that meet it, or more with good_when, from one trial as the deliverable's people.",
  "type": "object",
  "required": [
   "result",

@@ -32,7 +32,8 @@ def main(argv: Sequence[str], given: str, plugin_root: str, host: Host) -> Answe
     - For one of those roles, for each piece of work with something left to do in the worktree
       that the input's `cwd` lies in, the one rn runs in, as `worktree.left` gives them: 2 with
       each result that leaves its schema, a Round's or a Fix's, a line each as `form.held` names
-      it, changing nothing, so that Claude Code keeps the role going with those words until each
+      it, and each entry of a task that this role takes next with no result of the role yet,
+      changing nothing, so that Claude Code keeps the role going with those words until each
       holds. Otherwise it moves each task on by its next role's result as `record.moved` does,
       writing the steering where it changes, removes each of its trials' folders as
       `trial.removed` does, and gives 0.
@@ -47,6 +48,7 @@ def main(argv: Sequence[str], given: str, plugin_root: str, host: Host) -> Answe
     schemas = os.path.join(plugin_root, "domain", "schemas")
     works = worktree.left(str(hook["cwd"]), host, os.path.join(schemas, "steering.schema.json"))
     faults = [fault for work in works for fault in _faults(work, schemas)]
+    faults += [fault for work in works for fault in _missing(work, role, schemas)]
     if faults:
         return 2, "", "".join(f"role: {each}\n" for each in faults)
     for work in works:
@@ -63,6 +65,21 @@ def _faults(work: WorkPlace, schemas: str) -> list[str]:
             rounds.entries(root, schemas)
         except Wrong as why:
             found.append(str(why))
+    return found
+
+
+def _missing(work: WorkPlace, role: str, schemas: str) -> list[str]:
+    """Each entry of a task that the role takes next and that holds no result of the role, in
+    words, as a role that ends without its result leaves its task where it was."""
+    held = _steering(work, schemas)
+    found = []
+    for each in held["tasks"] if held else []:
+        if each.get("next", "generator") != role or "entry" not in each:
+            continue
+        folder = os.path.join(rounds.folder_of(work, each["path"]), each["entry"])
+        name = rounds.RESULTS[role][0]
+        if not os.path.isfile(os.path.join(folder, name)):
+            found.append(f"{folder} holds no {name}; write it as your Output says")
     return found
 
 

@@ -10,8 +10,9 @@ fixer's, the refactorer's, and the inspector's: you start each and weigh what it
 hear the user and read what was made, so their meaning passes through no one's summary. The user
 gives the purpose and decides as one who uses what's made, though they seldom say at first all
 they're after. Judge all that follows from their purpose yourself, how the work is made included,
-and ask them only what it leaves open, as they want the work done without being asked what their
-purpose already says. rn's steps and scripts serve that purpose.
+and ask them only what it leaves open, or before an act that can't be undone or touches what
+others share, as they want the work done without being asked what their purpose already says, and
+what can't be taken back stays theirs. rn's steps and scripts serve that purpose.
 
 ## What you hold to
 
@@ -80,15 +81,16 @@ Take the steps of what started you. Each says what holds once it's done and why;
     the way they chose to check it, as the assumptions are theirs to judge and not how rn made it.
     `steering mark <work> trying` records it.
   - `trying`: the target is enough once the user's word says so, by `/rn:ty` or as their decisions
-    already give it, such as checks they chose to judge it by; `steering mark <work> enough` records
-    it. Before that, what they find goes in as a fact to weigh.
+    already give it, such as checks they chose to judge it by, as only they know whether what they
+    hold does what they're after; `steering mark <work> enough` records it. Before that, what they
+    find goes in as a fact to weigh.
   - `inspect`, the target enough: the pull request is one its author would ask others to review, as
     each change after a review takes another: an inspector reviews it, each finding a fact to weigh,
     and `steering mark <work> inspected` records it once nothing is left to mend.
   - `ended`: each opportunity not made has the user's word, made now or kept in an issue opened by
     `gh issue create` with the pull request's URL in its body, where their words don't already give
-    it. One made now goes to `steering aim` as the target, with its tasks. Then propose the merge,
-    which stays the user's.
+    it, as every need named stays theirs to decide. One made now goes to `steering aim` as the
+    target, with its tasks. Then propose the merge, which stays the user's.
 - A fact to weigh, which is a role's result, or a problem with what was made, such as the user's
   words by `/rn:gm`, or an inspector's finding: what was made meets the user's purpose with the
   least remedy that the vital few keeps, so that the deliverable doesn't grow. Give it to
@@ -103,7 +105,7 @@ Take the steps of what started you. Each says what holds once it's done and why;
   first, as its write stays whole, then each role stops.
 - `/rn:up`: the work that `repository works` gives goes on from where it stopped, which work asked
   where it gives more than one, each role that the stop left without a result started again on what
-  it left half made.
+  it left half made, so that a stop costs the work nothing it made.
 - The user's words to call the work off, such as `中止して`: only what they confirm goes, such as the
   pull request, the branch, or the worktree, as a cancel can't be undone. Each role stops first.
 

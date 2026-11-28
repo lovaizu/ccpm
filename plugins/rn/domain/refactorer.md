@@ -42,5 +42,6 @@ rn's rules for these steps:
 
 Write `<round>/refactorer.json` in the form of
 `${CLAUDE_PLUGIN_ROOT}/domain/schemas/generator-round.schema.json`: `made` with each file you wrote,
-or `point`. Your last message is its `result`. Write a point as one question in the people's terms,
+or `point`. Your last message is its `result`, then how you confirmed that the deliverable does
+for its people each thing it did, and what you couldn't confirm. Write a point as one question in the people's terms,
 then `I recommend <the option>, as <its ground>.`, so that the user settles it with a yes.

@@ -1,8 +1,8 @@
 """The unit cases of role/command.py, rn's hook once a role ends: an agent that isn't rn's left
 alone, a role's result moving its task on with nothing committed, a session outside git, each
-result out of its schema keeping the role going, work in another worktree left alone, the work
-ended and the work of an earlier rn left alone, the trials' folders removed, the inspector left
-alone, and arguments of another form."""
+result out of its schema keeping the role going, a role that ends with no result kept going, work
+in another worktree left alone, the work ended and the work of an earlier rn left alone, the
+trials' folders removed, the inspector left alone, and arguments of another form."""
 
 from __future__ import annotations
 
@@ -129,6 +129,24 @@ def test_a_result_out_of_its_schema_keeps_the_role_going(
     code, _, err = ended(made, "rn:generator")
     assert (code, says in err, err.startswith("role: ")) == (2, True, True)
     assert git(made.worktree, "rev-parse", "HEAD") == before
+
+
+@pytest.mark.parametrize(("agent", "code"), [("rn:generator", 2), ("rn:evaluator", 0)])
+def test_a_role_that_ends_with_no_result_keeps_going(
+    made: WorkPlace, agent: str, code: int
+) -> None:
+    """Given a steering whose command's generator works in content-1, which holds no result yet.
+    When the generator ends, or another role.
+    Then the generator's end gives 2 naming the result to write, so that it goes on, and the other
+    role's gives 0, and the steering stays as it is."""
+    value = rn_files.steering()
+    value["tasks"][0]["entry"] = "content-1"
+    rn_files.write_json(made.steering, value)
+    os.makedirs(os.path.join(made.rounds, "invoice%2F__main__.py", "content-1"))
+    given, _, err = ended(made, agent)
+    assert (given, "holds no generator.json" in err) == (code, code == 2)
+    with open(made.steering, encoding="utf-8") as f:
+        assert json.load(f) == value
 
 
 def test_the_hook_leaves_work_in_another_worktree_alone(made: WorkPlace, tmp_path: Any) -> None:
