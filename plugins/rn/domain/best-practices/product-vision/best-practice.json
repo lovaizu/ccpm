@@ -14,7 +14,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Find the job that the product exists to do in the steering's outcome and decisions, and, where the repository already holds the product, in its README. Write it in one sentence as what the product gets done for the people who come to it, such as `turns a request into a deliverable that the people it's for can use`. Where none of these says it, ask the user what the product gets done, and for whom."
+        "text": "Find the job that the product exists to do in the steering's outcome and decisions, and, where the repository already holds the product, in what it already says the product does. Write it in one sentence as what the product gets done for the people who come to it, such as `turns a request into a deliverable that the people it's for can use`. Where none of these says it, end with `point`, asking what the product gets done, and for whom."
        },
        {
         "at": "decide",
@@ -26,7 +26,7 @@
        },
        {
         "at": "decide",
-        "text": "For each person whose job the goal, the decisions, and what the product does leave unclear, ask the user `What does <person> come to the product to get done?`, with the job you'd guess as your recommendation."
+        "text": "For each person whose job the goal, the decisions, and what the product does leave unclear, end with `point`, asking `What does <person> come to the product to get done?`, with the job you'd guess as your recommendation."
        },
        {
         "at": "decide",
@@ -70,7 +70,7 @@
       "id": "N3",
       "about": "the whole",
       "what": "Does the vision describe only what the users do and get, not how the product works inside?",
-      "why": "The vision must stay true while the inside of the product changes, so it describes only what the users do and get, and leaves how the product does it to the architecture.",
+      "why": "The vision must stay true while the inside of the product changes, so it describes only what the users do and get, and leaves how the product does it to where its insides are described.",
       "items": [
        {
         "at": "make",
@@ -124,7 +124,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Once each role has its objectives, and before you write any key result, list each piece of work the product plans that the steering's decisions name. Where the repository already holds the product, add each of its open issues and each feature its README names."
+        "text": "Once each role has its objectives, and before you write any key result, list each piece of work the product plans that the steering's decisions name. Where the repository already holds the product, add each of its open issues and each feature it already says it offers."
        },
        {
         "at": "decide",
@@ -140,7 +140,7 @@
        },
        {
         "at": "decide",
-        "text": "To keep only the work that serves an end, read, for each piece that serves no objective, what the request, the decisions, and the issue that asks for the piece say it's for. Where they name an end that no objective names, add the objective. Where they leave it open, ask the user `Is <piece> not needed, or does it serve an end that no objective names?`, with the answer you'd give as your recommendation."
+        "text": "To keep only the work that serves an end, read, for each piece that serves no objective, what the request, the decisions, and the issue that asks for the piece say it's for. Where they name an end that no objective names, add the objective. Where they leave it open, end with `point`, asking `Is <piece> not needed, or does it serve an end that no objective names?`, with the answer you'd give as your recommendation."
        }
       ]
      }
@@ -154,11 +154,11 @@
       "id": "N6",
       "about": "Concept",
       "what": "Does the concept state first the one way by which the product brings the users to their objectives, and then only the ideas without which this way fails at a moment of their use?",
-      "why": "The developers make many choices that no line of the vision names, and the concept lets each of them lean the same way, so that the users meet one product and not a set of parts that pull apart. The user gives the product's purpose and intent and decides by them, so the maker derives the concept from what they gave, and hands back only what it leaves open.",
+      "why": "The developers make many choices that no line of the vision names, and the concept lets each of them lean the same way, so that the users meet one product and not a set of parts that pull apart. The user gives the product's purpose and intent and decides by them, so the maker derives the concept from what they gave, and hands back as a point only what it leaves open.",
       "items": [
        {
         "at": "decide",
-        "text": "To find the one way that the user means, read what they gave of the product's purpose and intent: the steering's outcome and decisions, the user's words in the request and in their answers, and, where the repository already holds the product, its README, and its open issues. List each way these say or imply that the product brings the roles to their objectives, such as a rule the user gave for when rn asks them, since the one way comes from whoever conceived the product, and an analysis of what goes wrong today yields only a list of fixes with no center."
+        "text": "To find the one way that the user means, read what they gave of the product's purpose and intent: the steering's outcome and decisions, the user's words in the request and in their answers, and, where the repository already holds the product, what it already says the product does, and its open issues. List each way these say or imply that the product brings the roles to their objectives, such as a rule the user gave for when rn asks them, since the one way comes from whoever conceived the product, and an analysis of what goes wrong today yields only a list of fixes with no center."
        },
        {
         "at": "decide",
@@ -166,11 +166,11 @@
        },
        {
         "at": "decide",
-        "text": "To leave the user only the decision that's theirs, ask them about the one way only where what they gave and the field's practice leave two ways open that would lead the developers to different choices, or where the way is hard to undo or changes what other people share, such as a service that other teams use. Ask in terms of what the roles get, such as `Should <role> get <result> or <result> at <moment>?`, with the way you'd take as your recommendation and what it rests on."
+        "text": "To leave the user only the decision that's theirs, end with `point` on the one way only where what they gave and the field's practice leave two ways open that would lead the developers to different choices, or where the way is hard to undo or changes what other people share, such as a service that other teams use. Ask it in terms of what the roles get, such as `Should <role> get <result> or <result> at <moment>?`, with the way you'd take as your recommendation and what it rests on."
        },
        {
         "at": "decide",
-        "text": "To find where the one way must hold, list the moments of the users' use, from the moment they first meet the product to the moment they reach the objective, as a [customer journey map](https://www.nngroup.com/articles/journey-mapping-101/) does, such as the request, the goal confirmed, the questions answered, the plan signed off, and each deliverable signed off."
+        "text": "To find where the one way must hold, list the moments of the users' use, from the moment they first meet the product to the moment they reach the objective, as a [customer journey map](https://www.nngroup.com/articles/journey-mapping-101/) does, such as the request, the goal confirmed, the questions answered, the shape of each deliverable agreed, and each deliverable signed off."
        },
        {
         "at": "decide",
@@ -178,11 +178,11 @@
        },
        {
         "at": "decide",
-        "text": "Ask the user about an idea only where those sources leave two ideas open that give the roles different results at that moment, or where the idea is hard to undo or changes what other people share, in the form that N6.3 asks in."
+        "text": "End with `point` on an idea only where those sources leave two ideas open that give the roles different results at that moment, or where the idea is hard to undo or changes what other people share, in the form that N6.3 asks in."
        },
        {
         "at": "decide",
-        "text": "Keep only the ideas on which the one way stands, as the developers hold the concept in mind at every choice, and a list too long to hold leans no choice. Move an idea that carries out another, such as how a fix is made, to the README's How it works or the architecture, where its people need it. Drop each idea where taking it out leaves the one way holding at every moment."
+        "text": "Keep only the ideas on which the one way stands, as the developers hold the concept in mind at every choice, and a list too long to hold leans no choice. Move an idea that carries out another, such as how a fix is made, out of the vision, as it's how the product works, which its people read where the product's workings are described. Drop each idea where taking it out leaves the one way holding at every moment."
        },
        {
         "at": "make",
