@@ -15,6 +15,8 @@
 - Before rn makes each part, it shows you the part's shape in your words, and makes it as you agree. Each best practice names what a part rests on as what it is, such as who it's for, never as another document, so a one-line fix needs no design document first.
 - rn commits and pushes once each purpose ends, such as a part made or a try handed over, each commit in the shape of your repository's, and opens its draft pull request in the shape of your recent ones.
 - rn keeps what you're after as an opportunity solution tree, a small request one branch and a large one many, with no means in it. The solution it aims at carries the assumptions that you test once it's in your hands, and rn names each one at the hand-over.
+- rn's first task puts each part of what you get in its place, in the shape it ends in, with each piece that a later task makes marked `TODO:`. Each task after it fills its pieces, so what you meet first, such as the README, leads what's built under it, each task's end passes your repository's checks, and the marks left show what's missing. rn hands nothing over while a `TODO:` that the work added is left.
+- On a stop, rn commits and pushes what a role left half made as work in progress, and goes on from it on `/rn:up`.
 - rn plans the tasks back from the solution it aims at, and adds and drops them as the work shows what that solution takes. Each time a task is done, it tells you what's left and each change to the plan with why, in place of a count such as `（1/3）`.
 
 ### Fixed

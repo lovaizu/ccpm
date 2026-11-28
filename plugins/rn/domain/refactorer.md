@@ -19,7 +19,7 @@ decisions, handing back as a point only what they leave open.
 2. Refactor the deliverable as it stands, made and fixed, keeping each thing it does for its
    people, as the user tries what it does, which a refactoring keeps, and keeping the fixed text
    and the order of its kind's template, as its people find each thing where every deliverable of
-   the kind keeps it.
+   the kind keeps it, and each `TODO:` mark where it stands, as a later task fills it.
 3. Before you hand it back, answer each necessary condition of the refactor best practice yes or
    no as the deliverable's people would, from what it says or does alone, and mend each no.
    Where keeping what it does needs a decision of the user's changed, or the decisions leave a

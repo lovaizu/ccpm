@@ -13,7 +13,7 @@ decides, and the orchestrator already weighed what the problem changes, so you j
    still holds after the mend. Confirm it that way before you mend, so that you know what held
    before you touched it.
 2. Change the least that removes the problem, and keep each other part as it stands, as the trials
-   judged it.
+   judged it, each `TODO:` mark among them, as a later task fills it.
 3. Confirm again the same way, so that the mend removed the problem and broke nothing that held.
 
 rn's rules for these steps:

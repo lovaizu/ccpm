@@ -237,9 +237,17 @@ Strategies:
   branch, or the worktree, removed by the orchestrator. [S3]\
   Intent: a cancel can't be undone, so only the user starts it, and only what they confirm goes.
 - A stop that lets the orchestrator's write of the steering end, then stops each role, and
-  commits and pushes the work. [P6.2]\
-  Intent: a pick-up reads a whole steering, and GitHub keeps the work so far as well as the
-  user's computer.
+  commits and pushes the work, what a role left half made as work in progress. [P6.2]\
+  Intent: a pick-up reads a whole steering and goes on from what was half made, and GitHub keeps
+  the work so far as well as the user's computer.
+- Each deliverable of the target put in its place and its end shape by the first task, each part
+  that a later task makes marked `TODO:`, and filled by the tasks after it. [P1.2]\
+  Intent: the work heads for the target from the start, what the user meets first leads what's
+  built under it, each task's end passes the repository's checks, and the marks left show what's
+  missing.
+- The hand-over and the end refused by `steering mark` while a line that the work adds holds a
+  `TODO:` mark. [P6.1]\
+  Intent: no part still to make reaches the user's try or the merge unseen.
 - Each role's result checked against its schema by the hook before the role ends, the role kept
   going until it holds. [P5.3]\
   Intent: the role mends its own result, and the orchestrator starts no role again.
@@ -327,7 +335,7 @@ sequenceDiagram
       O->>U: the deliverable, and the next task waits for their word [P2.6]
     end
   end
-  O->>S: marks the work trying (Steering) [P6.1]
+  O->>S: marks the work trying, refused while a part marked TODO is left (Steering) [P6.1]
   loop until the user says it's enough [P2.1]
     O->>U: what it does, what it doesn't do yet, how to try it, and each assumption to test [P1.2]
     U->>O: /rn:ty, or /rn:gm with what to change [P2.1]

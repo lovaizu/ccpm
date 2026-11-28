@@ -22,11 +22,17 @@ their decisions, handing back as a point only what they leave open.
      what those name, and keep each other part, as the trial found it serving them.
    - Added to, where the deliverable already serves its people and the task adds to it: add what
      the task says, and keep each part that they already use where it stands, as they rely on it.
+
+   Make the parts that the task names, and fill each `TODO:` mark among them. Keep each other mark
+   as it stands, as a later task of the steering fills it, and mark `TODO:`, naming what goes
+   there, each part of the deliverable's end shape that the task leaves to a later one, in the
+   form its kind keeps, so that it passes the repository's checks as it stands.
 3. Before you hand it back, answer each necessary condition yes or no as its people would, from
-   what the deliverable says or does alone, and mend each no, as the evaluator asks the same
-   questions and each no sends the deliverable back for another Round. Where a mend needs a
-   decision of the user's changed, or the decisions leave a point open, make nothing more and give
-   it as a point, as a guessed answer gives the people what the user didn't mean.
+   what the deliverable says or does alone, a part marked `TODO:` being one not made yet rather
+   than a no, and mend each no, as the evaluator asks the same questions and each no sends the
+   deliverable back for another Round. Where a mend needs a decision of the user's changed, or the
+   decisions leave a point open, make nothing more and give it as a point, as a guessed answer
+   gives the people what the user didn't mean.
 
 rn's rules for these steps:
 

@@ -2,7 +2,8 @@
 aim taken in, each mark of the stage, each written to the steering alone, what's due read, each
 start of a task's next role with what it's given, and each refusal: a steering missing or out of its
 schema, an aim that isn't JSON, leaves its schema, or that the steering refuses, a mark that the
-steering refuses, a start that can't be, and arguments of another form."""
+steering refuses, a hand-over or an end with a TODO left, a start that can't be, and arguments of
+another form."""
 
 from __future__ import annotations
 
@@ -14,8 +15,9 @@ from urllib.parse import quote
 
 import pytest
 import rn_files
+from host import run
 from place import WorkPlace
-from repo_files import git
+from repo_files import git, write_files
 from steering.command import USAGE, main
 
 NAME = "20261126-invoice-from-statement"
@@ -40,7 +42,7 @@ def steering(work: WorkPlace, value: Any) -> None:
 def call(work: WorkPlace, *argv: str, words: str = "") -> tuple[int, str, str]:
     """What `steering` gives with the arguments on the work, and the words given on stdin."""
     given = argv[:1] + (FOLDER,) + argv[1:]
-    return main(given, work.worktree, rn_files.RN, lambda: words)
+    return main(given, work.worktree, rn_files.RN, lambda: words, run)
 
 
 def unchanged(work: WorkPlace) -> bool:
@@ -111,6 +113,18 @@ def test_each_mark_is_written_and_gives_whats_due(made: WorkPlace, stage: str, l
     assert held(made)["stage"] == stage
 
 
+@pytest.mark.parametrize("stage", ["trying", "inspected"])
+def test_a_hand_over_or_an_end_with_a_todo_left_is_refused(made: WorkPlace, stage: str) -> None:
+    """Given a steering with no task left, and the work's guide still holding a TODO.
+    When the work is marked trying, or inspected.
+    Then it gives 1 naming the TODO's place, and changes nothing, as what it marks is still to
+    make."""
+    write_files(made.worktree, {rn_files.GUIDE: "# Guide\n\nTODO: the rules.\n"})
+    steering(made, rn_files.steering(paths=()))
+    code, _, err = call(made, "mark", stage)
+    assert (code, f"{rn_files.GUIDE}:3: TODO" in err, unchanged(made)) == (1, True, True)
+
+
 def test_a_mark_that_can_not_be_is_refused_and_changes_nothing(made: WorkPlace) -> None:
     """Given the walkthrough's steering.
     When the work is marked at a stage that isn't one.
@@ -152,7 +166,7 @@ def test_arguments_of_another_form_give_the_usage(argv: Sequence[str]) -> None:
     """Given no subcommand, one that isn't steering's, or too few arguments.
     When steering runs.
     Then it gives 2 with the usage."""
-    assert main(argv, "/", rn_files.RN, str) == (2, "", USAGE)
+    assert main(argv, "/", rn_files.RN, str, run) == (2, "", USAGE)
 
 
 def rounds_of(work: WorkPlace, path: str = rn_files.COMMAND) -> str:

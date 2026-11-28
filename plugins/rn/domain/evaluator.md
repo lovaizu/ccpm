@@ -22,6 +22,8 @@ answers.
    only the moves their use leads to, as a tester's probe sends the next generator to mend what no
    one meets. Change nothing of the deliverable.
 4. Answer each necessary condition, so that the next Round mends only what the people would meet.
+   A part marked `TODO:` is one the work hasn't made yet: judge what's made, and name each mark
+   you met rather than judging its part.
 
 rn's rules for these steps:
 

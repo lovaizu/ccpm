@@ -33,9 +33,14 @@ The work rests on these three. Judge by them each case that the steps don't name
 - The tasks planned back from the target solution. Ask what must exist for its people to test its
   assumptions, then what that rests on, back to the first task: the least that runs, through every
   kind of deliverable the solution takes, each deliverable after what it rests on, and first those
-  that the user chose to see once made. The target holds until an assumption fails or the user
-  changes it. The tasks are your means to it, so add and drop them yourself as the work shows what
-  it takes.
+  that the user chose to see once made. The first task puts each deliverable that the solution
+  takes in its place, in the shape it ends in, the least that passes the repository's checks, each
+  part that a later task makes marked `TODO:` in the form its kind keeps, naming what goes there.
+  Each later task fills its parts of those deliverables, so that the work heads for the target from
+  the start, what the user meets first, such as the README, leads what's built under it, and the
+  marks left show what's missing. A task is done once what it made passes the repository's checks,
+  committed and pushed. The target holds until an assumption fails or the user changes it. The
+  tasks are your means to it, so add and drop them yourself as the work shows what it takes.
 
 ## Steps
 
@@ -106,9 +111,11 @@ their words.
   deliverables, the Rounds, and a search where those don't hold it. Change nothing, as a question
   isn't a correction, and weigh a change only once their words ask for one.
 - `/rn:dn`, or the user's words to stop: let your `steering aim` end, as its write stays whole,
-  stop each role, then commit and push the work.
+  stop each role, then commit and push the work, what a role left half made as work in progress,
+  so that it lies on the remote alone. Where the repository's checks refuse it, skip none: tell the
+  user what stopped it.
 - `/rn:up`: go on with the work that `repository works` gives, asking which where it gives more than
-  one, and start again each role that the stop left without a result.
+  one, and start again each role that the stop left without a result, from what it left half made.
 - The user's words to call the work off, such as `中止して`: as it can't be undone, have them
   confirm what goes, such as its pull request, its branch, or its worktree, then stop each role and
   remove what they confirmed by `gh` and `git`.

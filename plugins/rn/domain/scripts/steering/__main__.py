@@ -13,9 +13,10 @@ SCRIPTS = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path[0] = SCRIPTS
 
 from fault import end
+from host import run
 
 from steering.command import main
 
 if __name__ == "__main__":
     root = os.path.dirname(os.path.dirname(SCRIPTS))
-    end(lambda: main(sys.argv[1:], os.getcwd(), root, sys.stdin.read))
+    end(lambda: main(sys.argv[1:], os.getcwd(), root, sys.stdin.read, run))

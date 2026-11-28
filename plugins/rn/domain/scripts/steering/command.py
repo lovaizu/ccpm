@@ -10,7 +10,9 @@ from typing import Any
 
 import form
 from fault import Answer, Wrong, answered
+from host import Host
 from place import WorkPlace, of_folder
+from repository import todo
 
 from steering import due, record, start
 
@@ -22,11 +24,13 @@ usage: steering aim <work>   (the aim on stdin)
 """
 
 
-def main(argv: Sequence[str], cwd: str, plugin_root: str, stdin: Callable[[], str]) -> Answer:
+def main(
+    argv: Sequence[str], cwd: str, plugin_root: str, stdin: Callable[[], str], host: Host
+) -> Answer:
     """The exit code, stdout, and stderr of `steering` with the arguments, from the folder `cwd`,
-    with rn's folder at `plugin_root`, and what it's given on stdin read by `stdin`, which `aim`
-    and `start` of a Fix read. Each writes the steering alone, as the orchestrator commits and
-    pushes the work at each end of a purpose.
+    with rn's folder at `plugin_root`, what it's given on stdin read by `stdin`, which `aim`
+    and `start` of a Fix read, and git reached through `host`. Each writes the steering alone, as
+    the orchestrator commits and pushes the work at each end of a purpose.
 
     - `aim <work>`: takes the aim on stdin, in the form of `aim.schema.json`, into the steering
       as `record.taken_in` makes it, the steering made where the work has none yet, and gives 0
@@ -34,13 +38,15 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, stdin: Callable[[], st
     - `start <work> <path>`: starts the task's next role as `start.started` does, writing the
       steering where it changes, and gives 0 printing the line that gives the role.
     - `mark <work> <stage>`: marks the stage that the work reached as `record.marked` does, and
-      gives 0 printing what's due.
+      gives 0 printing what's due. The hand-over, `trying`, and the end, `inspected`, take no TODO
+      left of what the work makes, as `todo.left` finds them, as each is a part still to make.
     - `due <work>`: gives 0 printing each line that `due.due` gives, a line each.
 
     `<work>` is the work's folder, as `place.of_folder` takes it. 1 with `steering: <what's wrong>`,
     changing nothing, where the input is Wrong: a result or a steering that's missing, isn't JSON,
     or leaves its schema, naming each place, an aim that isn't JSON or leaves its schema, or an aim
-    or a mark that `record` refuses, or a start that `start` refuses; 2 with the usage where the
+    or a mark that `record` refuses, a hand-over or an end with a TODO left, naming each, or a
+    start that `start` refuses, and where something is Missing; 2 with the usage where the
     arguments are other than these.
     """
     if not argv or argv[0] not in _SUBCOMMANDS or len(argv) != _SUBCOMMANDS[argv[0]][1]:
@@ -51,6 +57,10 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, stdin: Callable[[], st
         )
     if argv[0] == "aim":
         return answered("steering", lambda: _aim(of_folder(cwd, argv[1]), plugin_root, stdin))
+    if argv[0] == "mark":
+        return answered(
+            "steering", lambda: _mark(of_folder(cwd, argv[1]), argv[2], plugin_root, host)
+        )
     subcommand = _SUBCOMMANDS[argv[0]][0]
     schemas = os.path.join(plugin_root, "domain", "schemas")
     return answered(
@@ -73,8 +83,12 @@ def _aim(work: WorkPlace, plugin_root: str, stdin: Callable[[], str]) -> Answer:
     return 0, _lines(due.due(steering)), ""
 
 
-def _mark(work: WorkPlace, given: list[str], schemas: str) -> Answer:
-    steering = record.marked(_steering(work, schemas), given[0])
+def _mark(work: WorkPlace, stage: str, plugin_root: str, host: Host) -> Answer:
+    schemas = os.path.join(plugin_root, "domain", "schemas")
+    steering = record.marked(_steering(work, schemas), stage)
+    left = todo.left(work.worktree, host) if stage in _MADE else []
+    if left:
+        raise Wrong(f"the work has a part still to make, marked `TODO:`, at {'; '.join(left)}")
     _written(work, steering)
     return 0, _lines(due.due(steering)), ""
 
@@ -114,10 +128,12 @@ def _lines(lines: list[str]) -> str:
     return "".join(f"{each}\n" for each in lines)
 
 
+# The stages that say the work is made: the hand-over of the target and the end of the work.
+_MADE = {"trying", "inspected"}
 # Each subcommand, by its name, with the number of arguments it takes, its name among them.
 _SUBCOMMANDS: dict[str, tuple[Callable[[WorkPlace, list[str], str], Answer], int]] = {
     "aim": (_due, 2),
     "start": (_due, 3),
-    "mark": (_mark, 3),
+    "mark": (_due, 3),
     "due": (_due, 2),
 }
