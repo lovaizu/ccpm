@@ -21,7 +21,7 @@ for folder in (SCRIPTS, HERE):
     if folder not in sys.path:
         sys.path.insert(0, folder)
 
-from claude import claude_double  # noqa: E402
+from claude import claude_double
 
 
 @pytest.fixture(autouse=True)

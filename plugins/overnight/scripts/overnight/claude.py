@@ -5,20 +5,21 @@ from __future__ import annotations
 import json
 import subprocess
 from dataclasses import dataclass
-from typing import Any, Optional
+from typing import Any
 
 
 @dataclass(frozen=True)
 class Reply:
     """What a run of Claude Code gave: `done`, the `session_id` of its conversation where its reply
-    names one, else None, and, where it isn't done, the `reason` it stopped, on one line, else ""."""
+    names one, else None, and, where it isn't done, the `reason` it stopped, on one line, else
+    ""."""
 
     done: bool
-    session_id: Optional[str]
+    session_id: str | None
     reason: str
 
 
-def ask(folder: str, allowed_tools: str, prompt: str, session_id: Optional[str]) -> Reply:
+def ask(folder: str, allowed_tools: str, prompt: str, session_id: str | None) -> Reply:
     """Runs `claude -p` in `folder` with `prompt` on stdin and the tools that `allowed_tools` names,
     as `claude --allowed-tools` takes them; in the conversation `session_id` by `--resume`, or in a
     new one where it's None; and waits until it ends. The run is done only where claude exits 0 and

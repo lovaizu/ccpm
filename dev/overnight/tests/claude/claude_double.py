@@ -44,7 +44,7 @@ _CALLS = "calls.jsonl"
 _HOLD = "hold"
 
 
-@functools.lru_cache(maxsize=None)
+@functools.cache
 def _events() -> dict[str, dict[str, Any]]:
     events: dict[str, dict[str, Any]] = {}
     for record in RECORDS:
