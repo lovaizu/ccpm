@@ -1,0 +1,69 @@
+{
+  "result": "judged",
+  "good": [
+    {
+      "condition": "N1",
+      "lines": [
+        "\"\"\"Decides what the `overnight` command takes from the user and what it gives back.\"\"\"",
+        "\"\"\"Decides the course of one work: its runs of `claude`, the waits between them, when the work is",
+        "\"\"\"Decides how overnight runs `claude`, the one program outside it that it runs, and how it reads",
+        "\"\"\"carry, as the `overnight` command starts it apart from the user's session to carry one work:"
+      ]
+    },
+    {
+      "condition": "N2",
+      "lines": [
+        "    The words are `--dir <folder> --allowed-tools <tools> [--retries <count>] <prompt>`, or",
+        "    Refuses: with exit code 2 and the reason on stderr, before it starts the work: a word missing,",
+        "    Takes: the work's folder, which exists, the work, the host that runs `claude`, the clock that",
+        "    Gives: `claude -p --output-format json --allowed-tools <tools>`, with `--resume <session>`",
+        "    Gives: done only where the run exits 0 and its result says `is_error` false, as a run that"
+      ]
+    },
+    {
+      "condition": "N4",
+      "lines": [
+        "uv sync --locked",
+        "uv run sh dev/scripts/check.sh",
+        "    return {\"PATH\": folder + os.pathsep + os.environ[\"PATH\"], FOLDER: folder}",
+        "    return subprocess.run(",
+        "        [COMMAND, *words],",
+        "        cwd=TOP,",
+        "        env={**os.environ, **env, \"HOME\": str(tmp_path)},"
+      ]
+    },
+    {
+      "condition": "N6",
+      "lines": [
+        "    return claude.read(subprocess.CompletedProcess([], *given(event)))",
+        "    carry(",
+        "        str(folder), Work(str(tmp_path), \"Read,Edit\", retries, PROMPT), host, clock.now, clock.sleep",
+        "    )",
+        "COMMAND = os.path.join(PLUGIN, \"bin\", \"overnight\")"
+      ]
+    },
+    {
+      "condition": "N8",
+      "lines": [
+        "        parser.error(f\"--dir {args.dir}: no such folder\")",
+        "        parser.error(\"the prompt is empty: give the work's prompt as the last word, in quotes\")",
+        "            \"claude isn't on the PATH: run overnight from Claude Code, as `! overnight ...`\"",
+        "        raise argparse.ArgumentTypeError(f\"must be a whole number from 0, not {text!r}\")"
+      ]
+    }
+  ],
+  "more": [
+    {
+      "condition": "N3",
+      "good_when": "A maintainer who changes how a retry goes finds every way it goes agreed in the README. Today work.py's carry does two things the README doesn't agree to, and one of them goes against it. First, after a run that named no session, it gives the prompt again in a new conversation (\"or with the prompt again where none named one\"). The README says the opposite: \"Does it start the work over after a stop? No. Each retry goes on in the same conversation\". Second, when a resume names no session, as \"a resume that finds no conversation\" does, `session = read.session or session` keeps resuming the old session on every later retry. Once it's good, the README and the code agree on what a retry does in both cases, so the maintainer knows which behavior to keep."
+    },
+    {
+      "condition": "N5",
+      "good_when": "Each way a retry goes has a test named for it. That includes a retry after a resume that finds no conversation, which the record \"a resume that finds no conversation\" gives but which only test_claude.py reads, so no test of one work shows what the next retry does. Once it's good, a maintainer who changes that path sees a test fail."
+    },
+    {
+      "condition": "N7",
+      "good_when": "Each case has one test that asserts its whole result. Today the case of 0 retries is tested twice on the same branch: test_work.py's test_a_work_with_no_retries_fails_at_its_first_stop and test_overnight_command.py's test_a_work_with_retries_0_fails_at_its_first_stop. The second checks only the count of calls and state.json. test_a_work_whose_7_retries_run_out_is_recorded_failed checks `len(host.calls) == 8` but not that each retry resumed the session with `continue`. Once it's good, a change to how a work fails breaks one test, and that test shows everything the case gives."
+    }
+  ]
+}

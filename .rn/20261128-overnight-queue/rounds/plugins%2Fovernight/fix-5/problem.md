@@ -1,0 +1,1 @@
+The tests fail now and then, and miss a boundary: test_a_stopped_run_is_retried_7_times_where_retries_isnt_given compares the minute read from the real clock at the start and at the stop, so it fails when the stand-in's run crosses a minute; and no test runs the command with --retries 0, the least it accepts, so refusing 0 would pass every test.

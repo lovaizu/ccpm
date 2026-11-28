@@ -1,0 +1,76 @@
+{
+  "result": "judged",
+  "good": [
+    {
+      "condition": "N1",
+      "lines": [
+        "\"\"\"Decides what the `overnight` command takes from the user and what it gives back.\"\"\"",
+        "\"\"\"Decides how overnight runs `claude`, the one program outside it that it runs, and how it reads",
+        "\"\"\"Decides the course of one work: its runs of `claude`, the waits between them, when the work is",
+        "\"\"\"carry, as the `overnight` command starts it apart from the user's session to carry one work:",
+        "\"\"\"overnight, as bin/overnight runs it: `python3 <plugin>/scripts/overnight ...`. It runs the code"
+      ]
+    },
+    {
+      "condition": "N2",
+      "lines": [
+        "    The words are `--dir <folder> --allowed-tools <tools> [--retries <count>] <prompt>`, or",
+        "    Refuses: with exit code 2 and the reason on stderr, before it starts the work: a word missing,",
+        "    Gives: `claude -p --output-format json --allowed-tools <tools>`, with `--resume <session>`",
+        "    Gives: done only where the run exits 0 and its result says `is_error` false, as a run that",
+        "    Takes: the work's folder, which exists, the work, the host that runs `claude`, the clock that",
+        "    Changes: starts `python3 <scripts>/carry <folder> <work as JSON>` in a session of its own, so"
+      ]
+    },
+    {
+      "condition": "N3",
+      "lines": [
+        "overnight counts a run as done only when Claude Code exits with 0 and its result says no error.",
+        "    done = ran.returncode == 0 and result.get(\"is_error\") is False",
+        "retries are 5, 10, and 20 minutes, then 60 minutes each. The waits span the 5-hour limit, so the",
+        "WAITS = (5, 10, 20, 60)",
+        "No. Each retry goes on in the same conversation, by `claude -p --resume <session_id>`, so Claude",
+        "        stdin = work.prompt if session is None else CONTINUE",
+        "`--retries <count>` sets another count, such as `--retries 10`.",
+        "            start_new_session=True,"
+      ]
+    },
+    {
+      "condition": "N6",
+      "lines": [
+        "from overnight.work import Work, carry",
+        "    return claude.read(subprocess.CompletedProcess([], *given(event)))",
+        "        [COMMAND, *words],"
+      ]
+    },
+    {
+      "condition": "N7",
+      "lines": [
+        "    assert host.calls == [(CLAUDE, str(tmp_path), PROMPT), (resume, str(tmp_path), \"continue\")]",
+        "    assert clock.waits == [300, 600, 1200, 3600, 3600, 3600, 3600]",
+        "        f\"03:50 run 8 stopped: {REFUSAL}. No retries left.\",",
+        "        \"work 20261128-231502 failed after 8 runs\",",
+        "    assert _read(RATE_LIMIT) == claude.Read(False, session_of(RATE_LIMIT), result_of(RATE_LIMIT))"
+      ]
+    },
+    {
+      "condition": "N8",
+      "lines": [
+        "        parser.error(f\"--dir {args.dir}: no such folder\")",
+        "        raise argparse.ArgumentTypeError(f\"must be a whole number from 0, not {text!r}\")",
+        "        parser.error(\"the prompt is empty: give the work's prompt as the last word, in quotes\")",
+        "            \"claude isn't on the PATH: run overnight from Claude Code, as `! overnight ...`\""
+      ]
+    }
+  ],
+  "more": [
+    {
+      "condition": "N4",
+      "good_when": "A maintainer who runs the tests on every push sees them pass on every run, whatever the wall clock says. Now test_a_stopped_run_is_retried_7_times_where_retries_isnt_given asserts that the minute the run started equals the minute it stopped, read off the real clock, so a run of the double that starts in one minute and stops in the next, such as at 12:59:59.95 and 13:00:00.05, fails the test though overnight did nothing wrong."
+    },
+    {
+      "condition": "N5",
+      "good_when": "A maintainer who changes how `--retries` is read learns from a test when `overnight --retries 0 ...`, the fewest the command's refusal allows (\"a whole number from 0\"), stops starting a work. Now only -1 and `two` are tried at the command, so a change that refuses 0 too passes every test."
+    }
+  ]
+}

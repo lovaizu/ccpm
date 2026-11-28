@@ -1,0 +1,8 @@
+{
+  "result": "made",
+  "files": [
+    "dev/overnight/tests/unit/test_work.py",
+    "dev/overnight/tests/unit/test_overnight_command.py",
+    "plugins/overnight/scripts/overnight/work.py"
+  ]
+}

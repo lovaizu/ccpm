@@ -3,19 +3,19 @@ line of a record in recorded/: claude 2.1.332's runs of `claude -p --output-form
 anthropics/claude-code#79500, a rate limit that exits 0, as the plugin guide's Each result of a
 double from a record says.
 
-It serves the cases as a program named `claude` on the PATH, which `put_on_path` makes in a folder,
-for a case that runs the `overnight` command whole. It gives the runs the case names, one for each
-call, in order, and keeps each call it was asked."""
-
-# TODO: the double as a host that overnight's code calls in the test's own process, giving each
-# event's run as the code's own type, once the code names how it runs `claude`.
+It serves the cases two ways: as a `Host` that overnight's code calls in the test's own process,
+and as a program named `claude` on the PATH, which `put_on_path` makes in a folder, for a case that
+runs the `overnight` command whole. Each gives the runs the case names, one for each call, in
+order, and keeps each call it was asked."""
 
 from __future__ import annotations
 
 import functools
 import json
 import os
+import subprocess
 import sys
+from collections.abc import Sequence
 from typing import Any, NamedTuple
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -66,6 +66,21 @@ def session_of(event: str) -> str:
 def result_of(event: str) -> str:
     """The result in what the record of the event printed."""
     return json.loads(given(event).out)["result"]
+
+
+class Host:
+    """A host of `claude`, as overnight's code takes one, that gives the events' runs in order, as
+    the code takes them, and keeps each call in `calls` as its argv, its folder, and its stdin."""
+
+    def __init__(self, *events: str) -> None:
+        self._events = events
+        self.calls: list[tuple[list[str], str, str]] = []
+
+    def __call__(
+        self, argv: Sequence[str], cwd: str, stdin: str
+    ) -> subprocess.CompletedProcess[str]:
+        self.calls.append((list(argv), cwd, stdin))
+        return subprocess.CompletedProcess(list(argv), *given(self._events[len(self.calls) - 1]))
 
 
 def put_on_path(folder: str, *events: str) -> dict[str, str]:
