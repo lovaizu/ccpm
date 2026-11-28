@@ -1,0 +1,14 @@
+{
+  "result": "made",
+  "files": [
+    "plugins/overnight/scripts/overnight/claude.py",
+    "plugins/overnight/scripts/overnight/record.py",
+    "plugins/overnight/scripts/overnight/work.py",
+    "dev/overnight/tests/claude/claude_double.py",
+    "dev/overnight/tests/claude/recorded/claude-manual.jsonl",
+    "dev/overnight/tests/unit/test_overnight_claude.py",
+    "dev/overnight/tests/unit/test_overnight_command.py",
+    "dev/overnight/tests/unit/test_overnight_record.py",
+    "dev/overnight/tests/unit/test_overnight_work.py"
+  ]
+}

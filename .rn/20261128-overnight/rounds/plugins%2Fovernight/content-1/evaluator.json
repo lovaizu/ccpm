@@ -1,0 +1,68 @@
+{
+ "result": "judged",
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "\"\"\"How a run is asked of Claude Code, and how its reply is read: done, or stopped and why.\"\"\"",
+    "\"\"\"The command line of `overnight`: the options it takes, how it checks them, and what it prints as",
+    "\"\"\"Where a work's state and log lie, and the form of each: the folder that the start prints, which",
+    "\"\"\"When one work's runs are asked of Claude Code: the retries in the same conversation, the waits"
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "if ran.returncode == 0 and result.get(\"is_error\") is False:",
+    "_FIRST_WAITS = (timedelta(minutes=5), timedelta(minutes=10))",
+    "_LATER_WAIT = timedelta(minutes=60)",
+    "RETRIES = 7",
+    "args += [\"--resume\", session_id]",
+    "start_new_session=True,"
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "folder = os.path.join(str(tmp_path), \"home\")",
+    "monkeypatch.setenv(\"HOME\", folder)",
+    "double = claude_double.Double(os.path.join(str(tmp_path), \"claude\"))",
+    "monkeypatch.setenv(\"PATH\", double.path + os.pathsep + os.environ[\"PATH\"])"
+   ]
+  },
+  {
+   "condition": "N6",
+   "lines": [
+    "OVERNIGHT = os.path.join(PLUGIN, \"bin\", \"overnight\")",
+    "return subprocess.run([OVERNIGHT, *args], capture_output=True, text=True, cwd=cwd, check=False)",
+    "return claude.ask(work_dir, TOOLS, \"Move the tests\", session_id)",
+    "work.carry(",
+    "folder = record.start(START, \"/home/you/work/shop\")"
+   ]
+  },
+  {
+   "condition": "N8",
+   "lines": [
+    "parser.error(f\"--dir {args.dir}: no such folder\")",
+    "parser.error(\"--allowed-tools is empty: name the tools that Claude may use for the work\")",
+    "parser.error(\"the prompt is empty: say what the work is\")",
+    "parser.error(\"no claude is on the PATH: install Claude Code, or add its folder to the PATH\")",
+    "raise argparse.ArgumentTypeError(f'must be a whole number from 0, not \"{text}\"')"
+   ]
+  }
+ ],
+ "more": [
+  {
+   "condition": "N2",
+   "good_when": "A maintainer who calls work.carry or work.main learns from its docstring alone what becomes of the work when Claude Code can't be started for a run, such as when the work's folder is gone or claude has left the PATH by night. Today only claude.ask's docstring says it raises FileNotFoundError, and carry says only that it gives the work's last state, done or failed."
+  },
+  {
+   "condition": "N5",
+   "good_when": "Each case the specification asks for has its test and holds. A run that Claude Code can't even start, as when the work's folder is removed or claude is gone from the PATH before a run, is a stop like any other error: it is retried and in the end recorded as failed. In the trial such a work died with a traceback in its log, and its state.json said \"running\" with 0 runs for good. A second work started in the same second as another gets its own work folder and start lines; in the trial the second `overnight` printed a Python traceback ending in `FileExistsError: [Errno 17] File exists: '.../.local/state/overnight/20261128-205554'` and exited 1. The edge of the done rule has its test too: claude exits 0 with a result that doesn't say is_error false, which counts as a stop. Loosening the rule to `not result.get(\"is_error\")` passes every test today."
+  },
+  {
+   "condition": "N7",
+   "good_when": "Each behavior that a line of the code holds is one that some test checks, and each case has one test that asserts its whole result. Today coverage is 100%, yet a maintainer can delete the state written between runs (work.py `record.write(folder, record.State(\"running\", work.dir, session_id, runs))`), send the work's errors elsewhere than its log (command.py `stderr=log,`), or keep a stop's reason on several lines (claude.py `\" \".join(message.split())`), and all 38 tests still pass. Meanwhile one case is split across tests on the same branch: a started work that ends at once is checked by three command tests (what it prints, that it's carried through, that it runs in its own session), a new run that ends with no error by two claude tests (how it's asked, how its reply is read), and a stop then a resumed run by two work tests (the state and log, and what the retry asks)."
+  }
+ ]
+}

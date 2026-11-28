@@ -3,6 +3,9 @@ of one work in test_overnight_work.py."""
 
 from __future__ import annotations
 
+import os
+
+import pytest
 from claude import claude_double
 from overnight import claude
 
@@ -100,6 +103,23 @@ def test_reads_the_usage_limit_with_exit_0_as_stopped_with_its_message(
     )
 
 
+def test_reads_exit_0_with_a_result_that_doesnt_say_no_error_as_stopped(
+    double: claude_double.Double, work_dir: str
+) -> None:
+    """Given Claude Code that exits 0 with a result that doesn't say whether it's an error
+    When overnight reads its reply
+    Then the run stopped, in the result's conversation, for the result's message."""
+    double.answer(claude_double.NO_IS_ERROR)
+
+    reply = claude_reply_of(work_dir, None)
+
+    assert (reply.done, reply.session_id, reply.reason) == (
+        False,
+        claude_double.SESSION_ID,
+        claude_double.LIMIT_TEXT,
+    )
+
+
 def test_reads_an_error_with_no_result_as_stopped_with_its_stderr(
     double: claude_double.Double, work_dir: str
 ) -> None:
@@ -131,6 +151,41 @@ def test_reads_a_run_killed_with_no_word_as_stopped_with_its_exit_code(
         False,
         None,
         "claude ended with code -9 and no message",
+    )
+
+
+def test_reads_a_run_in_a_folder_that_is_gone_as_stopped_for_the_missing_folder(
+    double: claude_double.Double, work_dir: str
+) -> None:
+    """Given a work whose folder is gone
+    When overnight asks Claude Code for a run
+    Then the run stopped, in no known conversation, because claude couldn't start in the folder."""
+    double.answer(claude_double.DONE)
+    gone = os.path.join(work_dir, "gone")
+
+    reply = claude_reply_of(gone, None)
+
+    assert (reply.done, reply.session_id, reply.reason) == (
+        False,
+        None,
+        f"claude couldn't start: No such file or directory: {gone}",
+    )
+
+
+def test_reads_a_run_with_no_claude_on_the_path_as_stopped_for_the_missing_claude(
+    work_dir: str, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Given a PATH that no longer holds a claude
+    When overnight asks Claude Code for a run
+    Then the run stopped, in no known conversation, because there was no claude to start."""
+    monkeypatch.setenv("PATH", "")
+
+    reply = claude_reply_of(work_dir, None)
+
+    assert (reply.done, reply.session_id, reply.reason) == (
+        False,
+        None,
+        "claude couldn't start: No such file or directory: claude",
     )
 
 

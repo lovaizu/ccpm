@@ -2,7 +2,8 @@
 run, in turn, from one line of a record in recorded/: Claude Code 2.1.332's runs of `claude -p
 --output-format json` that end with no error, first and by `--resume`, and one that resumes a
 conversation that isn't there; and, of Claude Code's result form and its message, a run stopped by
-the usage limit, with exit 1 and with exit 0; as the plugin guide's Each result of a double from a
+the usage limit, with exit 1 and with exit 0, and a run that exits 0 with a result that doesn't say
+is_error; as the plugin guide's Each result of a double from a
 record says. A run past the answers it was given fails with exit 1, naming itself, so that a body
 that runs claude once too often shows it.
 
@@ -27,6 +28,7 @@ RESUMED = "done: a run that goes on in the same conversation by --resume ends wi
 NO_CONVERSATION = "stopped: --resume names a conversation that isn't there"
 LIMIT = "stopped: the usage limit, exit 1"
 LIMIT_EXIT_0 = "stopped: the usage limit, exit 0"
+NO_IS_ERROR = "stopped: exit 0 with a result that doesn't say is_error"
 # Not a record: the run is killed by a signal, as the system does to a process it stops, so that
 # claude gives no word.
 KILLED = "killed"

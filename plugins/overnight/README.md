@@ -31,8 +31,6 @@ gave overnight carried through by morning, not only the first. -->
 
 ## Walkthrough
 
-<!-- TODO: the `overnight` command of bin/overnight runs this walkthrough as it's written. -->
-
 At the end, you have your tests moved to pytest and committed by morning, from one command that you
 typed before you left, though the usage limit stopped the work in the night.
 
@@ -87,8 +85,6 @@ walkthrough puts the night's works in the queue with a start time, three of them
 each next work starts when one ends, so the morning's log shows each work done. -->
 
 ## How it works
-
-<!-- TODO: the `overnight` command of bin/overnight works as this section says. -->
 
 overnight runs your work in Claude Code without you, and each time a run stops short, overnight
 waits and asks Claude to go on in the same conversation, until the work is done or the retries run
@@ -166,12 +162,10 @@ claude plugin marketplace add lovaizu/ccpm
 claude plugin install overnight@ccpm
 ```
 
-<!-- TODO: the `overnight` command of bin/overnight answers `--version` as this line says. -->
 In Claude Code, `! overnight --version` shows `overnight 0.1.0`.
 
 ## Documentation
 
-<!-- TODO: the `overnight` command of bin/overnight answers `--help` as this line says. -->
 - `! overnight --help`, in Claude Code: for you when you start a work, every option of the command,
   whether it's required, and its default.
 - [Changelog](CHANGELOG.md): for you after an update, the changes in each version.

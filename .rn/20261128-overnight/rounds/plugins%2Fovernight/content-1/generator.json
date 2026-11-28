@@ -1,0 +1,12 @@
+{
+  "result": "made",
+  "files": [
+    "plugins/overnight/scripts/overnight/command.py",
+    "plugins/overnight/scripts/overnight/work.py",
+    "plugins/overnight/scripts/overnight/record.py",
+    "plugins/overnight/README.md",
+    "dev/overnight/tests/unit/test_overnight_command.py",
+    "dev/overnight/tests/unit/test_overnight_work.py",
+    "dev/overnight/tests/unit/test_overnight_record.py"
+  ]
+}

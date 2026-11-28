@@ -46,7 +46,9 @@
       "path": "plugins/overnight",
       "kind": "code",
       "refactor": "refactor-code",
-      "entry": "content-1"
+      "judged": 1,
+      "next": "evaluator",
+      "entry": "content-2"
     }
   ],
   "decisions": [
@@ -65,6 +67,7 @@
     "The README says the waits' sum as it is: 7 retries wait 5 hours and 15 minutes in all, which outlasts the 5-hour limit after any stop, and the walkthrough's log shows those waits.",
     "The README's Documentation points to `overnight --help` for every option, whether it's required, and its default, which the command task makes.",
     "The README names one place for a work's state and log: the folder that the start prints, such as ~/.local/state/overnight/20261128-230012/, which holds state.json and the work's one log, apart from the folder the work runs in.",
-    "`--dir` may be left out, for the folder that overnight is started in; `--allowed-tools` is required, as a work without tools does nothing all night."
+    "`--dir` may be left out, for the folder that overnight is started in; `--allowed-tools` is required, as a work without tools does nothing all night.",
+    "The command's first Round is made again on its evaluation: a run that can't start, such as a missing folder or `claude` gone from the PATH, is a failed run that is retried and, once the retries run out, recorded as failed, as the solution retries on any error; a second start in the same second gets its own folder, as a user starts several works; tests show that a run exiting 0 without `is_error` false isn't done, that state.json is written between runs, and that the background process's errors go to the work's log, as the README promises the morning's state and log. Left out: docstrings beyond what the mend changes, the stop reason's line joining, and merging tests that share a case, which the refactor weighs."
   ]
 }

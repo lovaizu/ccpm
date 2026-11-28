@@ -23,13 +23,19 @@ def ask(folder: str, allowed_tools: str, prompt: str, session_id: str | None) ->
     """Runs `claude -p` in `folder` with `prompt` on stdin and the tools that `allowed_tools` names,
     as `claude --allowed-tools` takes them; in the conversation `session_id` by `--resume`, or in a
     new one where it's None; and waits until it ends. The run is done only where claude exits 0 and
-    its result says no error. Raises FileNotFoundError where no `claude` is on the PATH."""
+    its result says no error. Where claude can't start, such as when `folder` is gone or no `claude`
+    is on the PATH, the run isn't done, in no known conversation, and its reason names what's
+    missing."""
     args = ["claude", "-p", "--output-format", "json", "--allowed-tools", allowed_tools]
     if session_id is not None:
         args += ["--resume", session_id]
-    ran = subprocess.run(
-        args, input=prompt, capture_output=True, text=True, cwd=folder, check=False
-    )
+    try:
+        ran = subprocess.run(
+            args, input=prompt, capture_output=True, text=True, cwd=folder, check=False
+        )
+    except OSError as error:
+        reason = f"claude couldn't start: {error.strerror}: {error.filename}"
+        return Reply(done=False, session_id=None, reason=reason)
     result = _result(ran.stdout)
     found = result.get("session_id")
     if ran.returncode == 0 and result.get("is_error") is False:
