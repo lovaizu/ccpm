@@ -1,0 +1,101 @@
+{
+ "result": "judged",
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "overnight is a Claude Code plugin with a command that runs the pieces of work you give it in",
+    "Claude Code while you're away, one after another, and resumes each by itself after the usage limit",
+    "or an error stops it.",
+    "overnight is for you when you hand Claude Code work that runs for hours and leave it running at",
+    "night. With it, you find each piece of work done by morning, or recorded as failed with its log,",
+    "without getting up to type \"continue\" once the limit lifts or to start the next."
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "- overnight doesn't resume a conversation that you have open in Claude Code: it runs work that it",
+    "- overnight doesn't run from a terminal outside Claude Code: Claude Code puts the command on the",
+    "- overnight doesn't keep your computer awake: before you leave, set the computer not to sleep while"
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "In development, at 0.1.0: overnight runs the pieces of work you add one at a time, in the order",
+    "you add them, and starts the next when one ends. No real night has yet carried a work through this",
+    "version. It doesn't yet run more than one at once, or start work at a given time."
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "## License",
+    "[MIT](LICENSE)"
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "## Non-goals",
+    "## Requirements",
+    "## Installation",
+    "## Walkthrough",
+    "## How it works",
+    "## Documentation",
+    "## License"
+   ]
+  },
+  {
+   "condition": "N6",
+   "lines": [
+    "At the end, you have your tests moved to pytest and your blog's broken links fixed, each committed",
+    "overnight: work 20261128-231610 waits in the queue after 1 work, to run in /home/you/work/blog",
+    "01:42 run 1 stopped: 5-hour limit reached ∙ resets 4am. Retry 1 of 7 at 01:47.",
+    "work 20261128-231502 done after 6 runs",
+    "The second work started as the first ended, and its log shows it done too:",
+    "You typed two commands. The first work went on from where the limit stopped it, 17 minutes after",
+    "the limit lifted, and the second started the minute the first ended."
+   ]
+  },
+  {
+   "condition": "N7",
+   "lines": [
+    "overnight runs your pieces of work in Claude Code without you, one after another, and each time a",
+    "run stops short, it waits and asks Claude to go on in the same conversation, until the work is done",
+    "or the retries run out, then starts the next."
+   ]
+  },
+  {
+   "condition": "N8",
+   "lines": [
+    "### \"Does the work go on after you close Claude Code?\"",
+    "### \"At the limit, the work waits until you're back to type 'continue'.\"",
+    "### \"Does it start the work over after a stop?\"",
+    "### \"Claude Code can exit with 0 at the limit. How does it know a run stopped short?\"",
+    "### \"What if the limit lifts late, or an error keeps coming?\"",
+    "`state.json` and starts the next work, so one failed work doesn't stop the rest of the night. The",
+    "### \"If the computer restarts or overnight stops in the night, what becomes of the works?\"",
+    "### \"Does it stop at night to ask your permission?\""
+   ]
+  },
+  {
+   "condition": "N9",
+   "lines": [
+    "- Claude Code, logged in: `claude auth status` shows `\"loggedIn\": true`.",
+    "claude plugin marketplace add lovaizu/ccpm",
+    "claude plugin install overnight@ccpm",
+    "In Claude Code, `! overnight --version` shows `overnight 0.1.0`."
+   ]
+  },
+  {
+   "condition": "N10",
+   "lines": [
+    "- [Changelog](CHANGELOG.md): for you after an update, the changes in each version.",
+    "- [Issues](https://github.com/lovaizu/ccpm/issues): where you ask for help or report a fault."
+   ]
+  }
+ ],
+ "more": []
+}

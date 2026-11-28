@@ -1,14 +1,16 @@
 # overnight
 
-overnight is a Claude Code plugin with a command that runs one piece of work in Claude Code while
-you're away, and resumes the work by itself after the usage limit or an error stops it.
+overnight is a Claude Code plugin with a command that runs the pieces of work, or works, that you
+give it in Claude Code while you're away, one after another, and resumes each work by itself after
+the usage limit or an error stops it.
 
-In development, at 0.1.0: overnight runs one piece of work at a time. It doesn't yet keep a queue
-of work, start the next piece of work when one ends, or start work at a given time.
+In development, at 0.1.0: overnight runs the works one at a time, in the order you add them, and
+starts the next when one ends. No work has yet run through a real night on this version.
+overnight doesn't yet run more than one work at once or start a work at a given time.
 
 overnight is for you when you hand Claude Code work that runs for hours and leave it running at
-night. With it, you find the work done by morning, or recorded as failed with its log, without
-getting up to type "continue" once the limit lifts.
+night. With it, you find each work done by morning, or recorded as failed with its log, without
+getting up to type "continue" once the limit lifts or to start the next work.
 
 ## Non-goals
 
@@ -39,13 +41,12 @@ In Claude Code, `! overnight --version` shows `overnight 0.1.0`.
 
 ## Walkthrough
 
-At the end, you have your tests moved to pytest and committed by morning, from one command that
-you typed the night before.
+At the end, you have your tests moved to pytest and your blog's broken links fixed, each committed
+by morning, from two commands that you typed the night before.
 
-This run shows what overnight is built to do. No real night run of this version has produced it
-yet.
+This run shows what overnight aims to do, not a night that someone recorded.
 
-At 23:15, before you leave, you start the work in Claude Code:
+At 23:15, before you leave, you start the first work in Claude Code:
 
 ```console
 ! overnight --dir ~/work/shop \
@@ -55,9 +56,19 @@ overnight: work 20261128-231502 started in /home/you/work/shop
 overnight: state and log in /home/you/.local/state/overnight/20261128-231502/
 ```
 
-Once overnight prints these two lines, you close Claude Code.
+A minute later, you add the second work. It waits in the queue while the first runs:
 
-In the morning, the work's log shows it done, and your repository holds its commit:
+```console
+! overnight --dir ~/work/blog \
+    --allowed-tools "Read,Edit,Bash(make linkcheck:*),Bash(git add:*),Bash(git commit:*)" \
+    "Fix each broken link that make linkcheck reports, and commit"
+overnight: work 20261128-231610 waits in the queue after 1 work, to run in /home/you/work/blog
+overnight: state and log in /home/you/.local/state/overnight/20261128-231610/
+```
+
+Once overnight prints these lines, you close Claude Code.
+
+In the morning, the first work's log shows it done, and your repository holds its commit:
 
 ```console
 $ cat ~/.local/state/overnight/20261128-231502/log
@@ -85,18 +96,30 @@ $ git -C ~/work/shop log --oneline -1
 3f9c2a1 Move the tests in tests/unittest_old to pytest
 ```
 
-You typed one command. The work went on from where the limit stopped it, 17 minutes after the
-limit lifted.
+The second work started as the first ended, and its log shows it done too:
+
+```console
+$ cat ~/.local/state/overnight/20261128-231610/log
+05:03 run 1 started
+05:38 run 1 done
+work 20261128-231610 done after 1 run
+$ git -C ~/work/blog log --oneline -1
+b72e04d Fix the broken links that make linkcheck reports
+```
+
+You typed two commands. The first work went on from where the limit stopped it, 17 minutes after
+the limit lifted.
 
 ## How it works
 
-overnight runs your work in Claude Code without you, and each time a run stops short, it waits and
-asks Claude to go on in the same conversation, until the work is done or the retries run out.
+overnight runs your works in Claude Code without you, one after another, and each time a run
+stops short, it waits and asks Claude to go on in the same conversation, until the work is done
+or the retries run out, then starts the next.
 
-### "Does the work go on after you close Claude Code?"
+### "Do the works go on after you close Claude Code?"
 
-Yes. overnight runs the work apart from the Claude Code session that you start it from, and
-returns at once, so the work goes on after you close Claude Code.
+Yes. overnight runs the works apart from the Claude Code session that you add them from, and
+returns at once, so the works go on after you close Claude Code.
 
 ### "At the limit, the work waits until you're back to type 'continue'."
 
@@ -123,8 +146,16 @@ few.
 ### "What if the limit lifts late, or an error keeps coming?"
 
 After 7 retries, which wait 4 hours and 35 minutes in all, overnight records the work as failed in
-`state.json` and stops. The work's folder keeps `state.json` beside the log of each run.
-`--retries <count>` sets another count, such as `--retries 10`.
+`state.json` and starts the next work, so one failed work doesn't stop the rest of the night. The
+work's folder keeps `state.json` beside the log of each run. `--retries <count>` sets another
+count, such as `--retries 10`.
+
+### "If the computer restarts or overnight stops in the night, what becomes of the works?"
+
+They wait for you, as the queue lives in a file. In Claude Code, `! overnight` with no work given
+starts again on the works still waiting, in their order, and runs none that already ended. The work
+that was running when overnight stopped goes on in its conversation, as a retry. Adding a work
+with `overnight` starts the waiting works again too.
 
 ### "Does it stop at night to ask your permission?"
 
