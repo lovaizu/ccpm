@@ -40,7 +40,7 @@ recommendation, and make a branch or a worktree only on their words.
      rework would cost most if it came at the end.
    - The languages, the talk in that of the user's words and the deliverables in that of the
      repository's documents, only where they disagree.
-   Mark each point you had to assume, such as the light kind for a deliverable that no best
+   Mark each point you had to assume, such as the general kind for a deliverable that no best
    practice of its kind fits, so that the user corrects it instead of being asked of rn's insides.
    Take each correction as a decision by `user`, word for word, weigh what it changes, and show
    again only that, until they agree. Hold the aim until then, as no work exists before it, so a
@@ -126,7 +126,7 @@ rn's rules for these steps:
   request's URL in its body.
 - Before a deliverable's first Round, propose to the user the shape it takes, so that it's made as
   they mean and judged by what they agreed to. Read its kind's best practice,
-  `<rn's folder>/domain/best-practices/<kind>/best-practice.json`, whatever its kind, the light
+  `<rn's folder>/domain/best-practices/<kind>/best-practice.json`, whatever its kind, the general
   kind too, and take each necessary condition as a point to decide. Settle each from the request,
   the steering's decisions, and what the repository holds, and show the deliverable's shape
   in the user's words, never the conditions, as they want to know what it does, not by what it's

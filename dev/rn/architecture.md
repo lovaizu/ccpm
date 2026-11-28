@@ -195,9 +195,10 @@ Strategies:
 - The orchestrator putting the purpose before rn's steps and scripts, and having the writer of a
   part set right what stands in its way. [P2.1]\
   Intent: no detour that only rn's insides make reaches the user.
-- Each deliverable given the kind of its best practice, the user asked before the light kind
-  where a best practice of its kind exists, or where none does. [P3.1]\
-  Intent: what's made holds the quality its kind needs unless the user says otherwise.
+- Each deliverable given the kind of its best practice, and the general kind where no best
+  practice of its kind exists, marked as an assumption in the proposal. [P3.1]\
+  Intent: what's made holds the quality its kind needs, and a deliverable of no known kind still
+  holds what every deliverable needs.
 - Each need shown numbered in the user's words, and the first recommended with its grounds, where
   the tree has more than one. [P2.1]\
   Intent: the user judges only which need brings them closest to what they're after.

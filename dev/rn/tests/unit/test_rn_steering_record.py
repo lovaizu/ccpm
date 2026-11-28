@@ -246,11 +246,11 @@ def test_each_result_moves_its_deliverable_on(
 
 
 def test_a_kind_with_no_refactoring_ends_once_it_is_good() -> None:
-    """Given a steering whose light deliverable's evaluator found each condition good.
+    """Given a steering whose general deliverable's evaluator found each condition good.
     When the steering is moved on.
     Then the deliverable is done, as no refactoring of its kind exists."""
     held = holding(next="evaluator", entry="content-1")
-    command(held)["kind"] = "light"
+    command(held)["kind"] = "general"
     assert command(moved(held, results(generator=MADE, evaluator=GOOD)))["status"] == "done"
 
 

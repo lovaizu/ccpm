@@ -78,12 +78,12 @@ def refactoring(kind: str) -> str | None:
 
     Takes: a deliverable's kind.
     Gives: `refactor-code` for `code`, `software-design`, `test-design`, and
-    `test-implementation`; None for `light`, which its check alone makes; and `refactor-doc` for
-    each other kind.
+    `test-implementation`; None for `general`, as its form differs with each deliverable and no
+    refactor best practice fits every form; and `refactor-doc` for each other kind.
     Changes: nothing.
     Refuses: nothing.
     """
-    if kind == "light":
+    if kind == "general":
         return None
     return "refactor-code" if kind in _CODE else "refactor-doc"
 

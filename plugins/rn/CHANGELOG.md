@@ -11,6 +11,7 @@
 - rn keeps your decisions in your own words.
 - rn works on the branch you start it on, and asks you what to do where that branch isn't one for the work, such as the default branch. It makes a branch or a worktree only when you ask for one.
 - On a cancel, rn asks what goes, and removes only what you confirm.
+- A part that no best practice fits is made by the general kind, which holds what every part needs: who uses it and for what, nothing more than that needs, a check agreed before it's made, the form its reader takes, and no disagreement with your repository. It takes the place of the light kind.
 - Before rn makes each part, it shows you the part's shape in your words, and makes it as you agree. Each best practice names what a part rests on as what it is, such as who it's for, never as another document, so a one-line fix needs no design document first.
 - rn commits and pushes once each purpose ends, such as a part made or a step tried, each commit in the shape of your repository's, and opens its draft pull request in the shape of your recent ones.
 - The need's tree is one flat list, and a solution no longer carries a riskiest assumption to test, as the least that runs in your hands tests it.

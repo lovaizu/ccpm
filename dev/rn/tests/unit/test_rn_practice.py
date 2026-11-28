@@ -1,7 +1,7 @@
 """The unit cases of practice.py, where each kind's best practice lies and what of it each role
 gets: `kinds` of rn's best practices, and of a folder with none; `read` of a best practice, one
 missing, and one that isn't JSON; `judged` without any practice; and `refactoring` of a kind of
-code, of light, and of another kind.
+code, of general, and of another kind.
 dev/scripts/practices.py holds each of rn's best practices to its schema."""
 
 from __future__ import annotations
@@ -38,24 +38,24 @@ def test_kinds_are_rns_best_practices_by_their_folders_names() -> None:
 
 
 def test_kinds_leave_out_a_folder_with_no_best_practice_json(tmp_path: Any) -> None:
-    """Given a plugin folder whose best practices hold light, and readme with a template alone
+    """Given a plugin folder whose best practices hold general, and readme with a template alone
     When the kinds are asked
-    Then light alone is a kind"""
+    Then general alone is a kind"""
     top = os.path.join(str(tmp_path), "domain", "best-practices")
     rn_files.write_json(
-        os.path.join(top, "light", "best-practice.json"), rn_files.practice("light")
+        os.path.join(top, "general", "best-practice.json"), rn_files.practice("general")
     )
     os.makedirs(os.path.join(top, "readme"))
     with open(os.path.join(top, "readme", "template.md"), "w", encoding="utf-8") as f:
         f.write("# notes\n")
-    assert normalized(kinds(str(tmp_path))) == {"light": os.path.join(top, "light")}
+    assert normalized(kinds(str(tmp_path))) == {"general": os.path.join(top, "general")}
 
 
 def test_read_gives_the_best_practice_json():
-    """Given rn's best practice of the kind light
+    """Given rn's best practice of the kind general
     When its folder is read
     Then it gives its best-practice.json as the JSON holds it"""
-    assert read(os.path.join(rn_files.PRACTICES, "light")) == rn_files.practice("light")
+    assert read(os.path.join(rn_files.PRACTICES, "general")) == rn_files.practice("general")
 
 
 def test_read_of_a_folder_with_no_best_practice_is_refused_naming_the_file(tmp_path: Any):
@@ -88,10 +88,10 @@ def test_judged_gives_the_goal_and_each_condition_without_its_practice():
 
 @pytest.mark.parametrize(
     ("kind", "by"),
-    [("test-design", "refactor-code"), ("light", None), ("invoice", "refactor-doc")],
+    [("test-design", "refactor-code"), ("general", None), ("invoice", "refactor-doc")],
 )
 def test_refactoring_of_a_kind(kind: str, by: str | None):
-    """Given a kind of code, light, or another kind, one that the work made among them
+    """Given a kind of code, general, or another kind, one that the work made among them
     When the kind it's refactored by is asked
     Then it gives refactor-code, None, or refactor-doc"""
     assert refactoring(kind) == by
