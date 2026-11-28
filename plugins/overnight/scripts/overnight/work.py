@@ -1,14 +1,13 @@
 """Decides the course of one work: its runs of `claude`, the waits between them, when the work is
-done or failed, and what its folder records of it, in `state.json` and `log`."""
+done or failed, and what its folder records of it, in `work.json`, `state.json`, and `log`."""
 
 from __future__ import annotations
 
 import datetime
 import json
 import os
-import subprocess
-import sys
-from typing import Callable, NamedTuple
+from collections.abc import Mapping
+from typing import Any, Callable, NamedTuple
 
 from overnight import claude
 
@@ -20,10 +19,9 @@ WAITS = (5, 10, 20, 60)
 RETRIES = 7
 # What a retry asks Claude, in the session where the run stopped, as the user would type it.
 CONTINUE = "continue"
-# The package that carries a work apart from the session, as `start` runs it.
-CARRY = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "carry")
-# The work's log in its folder: the lines of its course, and what the process that carries it
-# writes, such as a traceback.
+# The files of a work's folder: what the user asked, where the work stands, and its course.
+WORK = "work.json"
+STATE = "state.json"
 LOG = "log"
 
 
@@ -37,49 +35,49 @@ class Work(NamedTuple):
     prompt: str
 
 
-def start(folder: str, work: Work) -> None:
-    """Starts carrying the work apart from the caller's session, and returns at once.
+def put(folder: str, work: Work) -> None:
+    """Puts the work in its folder, which exists, to wait for its carry.
 
-    Takes: the work's folder, which exists, and the work.
-    Changes: starts `python3 <scripts>/carry <folder> <work as JSON>` in a session of its own, so
-    that closing the caller's session doesn't stop it, with what it writes on stdout and stderr,
-    such as a traceback, appended to the folder's `log`.
+    Changes: writes `work.json`, then `state.json` with `status` `waiting`, the work's `dir`,
+    `session_id` null, and `runs` 0, so that `status` gives a status only once both are written.
     """
-    with open(os.path.join(folder, LOG), "a", encoding="utf-8") as log:
-        subprocess.Popen(
-            [sys.executable, CARRY, folder, json.dumps(work._asdict())],
-            stdin=subprocess.DEVNULL,
-            stdout=log,
-            stderr=log,
-            start_new_session=True,
-        )
+    _write(os.path.join(folder, WORK), work._asdict())
+    _state(folder, "waiting", work, None, 0)
 
 
-def work_of(text: str) -> Work:
-    """The work that `start` gave the carry package as JSON."""
-    return Work(**json.loads(text))
+def status(folder: str) -> str | None:
+    """The work's status in the folder: `waiting`, `running`, `done`, or `failed`, or None where no
+    work is put in it, such as a file or a folder that `put` hasn't finished."""
+    path = os.path.join(folder, STATE)
+    return _read(path)["status"] if os.path.isfile(path) else None
 
 
 def carry(
     folder: str,
-    work: Work,
     host: claude.Host,
     now: Callable[[], datetime.datetime],
     sleep: Callable[[float], None],
 ) -> None:
-    """Carries the work until a run is done or the retries run out.
+    """Carries the work in the folder, from where its state stands, until a run is done or the
+    retries run out.
 
-    Takes: the work's folder, which exists, the work, the host that runs `claude`, the clock that
-    gives the local time, and the sleep that waits for a number of seconds.
-    Changes: runs `claude` in the work's folder, first with the prompt, then, after each stop and
+    Takes: the folder of a work that `put` put there, which waits or runs, the host that runs
+    `claude`, the clock that gives the local time, and the sleep that waits for a number of
+    seconds.
+    Changes: runs `claude` in the work's `dir`, first with the prompt, then, after each stop and
     its wait, with `continue` in the last session that a run named, or with the prompt again where
-    no run named one. Appends to the folder's `log` a line as each run starts and ends, and the
-    work's end, `work <id> done after <n> runs` or `work <id> failed after <n> runs`, with `<id>`
-    the folder's name. Writes `state.json` after each run: `status`, as `running`, `done`, or
-    `failed`, the work's `dir`, the last `session_id` that a run named, or null, and the `runs`.
+    no run named one. A work that was running, as a carry stopped, goes on at once with the run
+    after its last that ended. Appends to the folder's `log` a line as each run starts and ends,
+    and the work's end, `work <id> done after <n> runs` or `work <id> failed after <n> runs`, with
+    `<id>` the folder's name. Writes `state.json` as the carry starts and after each run:
+    `status`, as `running`, `done`, or `failed`, the work's `dir`, the last `session_id` that a run
+    named, or null, and the `runs` that ended.
     """
-    session: str | None = None
-    run = 0
+    work = Work(**_read(os.path.join(folder, WORK)))
+    state = _read(os.path.join(folder, STATE))
+    session: str | None = state["session_id"]
+    run: int = state["runs"]
+    _state(folder, "running", work, session, run)
     # Each run ends the work or waits for the next, so the loop ends only where a run ends it.
     while True:
         run += 1
@@ -88,7 +86,7 @@ def carry(
         read = claude.read(host(claude.command(work.tools, session), work.dir, stdin))
         session = read.session or session
         status = _status(read.done, run > work.retries)
-        _state(folder, {"status": status, "dir": work.dir, "session_id": session, "runs": run})
+        _state(folder, status, work, session, run)
         if status != "running":
             _ended(folder, now(), run, read, status)
             return
@@ -125,7 +123,21 @@ def _log(folder: str, line: str) -> None:
         f.write(line + "\n")
 
 
-def _state(folder: str, state: dict[str, object]) -> None:
-    with open(os.path.join(folder, "state.json"), "w", encoding="utf-8") as f:
-        json.dump(state, f, indent=2)
+def _state(folder: str, status: str, work: Work, session: str | None, runs: int) -> None:
+    state = {"status": status, "dir": work.dir, "session_id": session, "runs": runs}
+    _write(os.path.join(folder, STATE), state)
+
+
+def _read(path: str) -> dict[str, Any]:
+    with open(path, encoding="utf-8") as f:
+        return json.load(f)
+
+
+def _write(path: str, content: Mapping[str, object]) -> None:
+    # Written whole beside the file, then put in its place, so that a stop of the computer as it
+    # writes leaves the file as it was, which a runner started again reads.
+    beside = path + ".new"
+    with open(beside, "w", encoding="utf-8") as f:
+        json.dump(content, f, indent=2)
         f.write("\n")
+    os.replace(beside, path)

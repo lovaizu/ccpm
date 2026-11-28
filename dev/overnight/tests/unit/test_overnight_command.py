@@ -12,7 +12,7 @@ import sys
 import time
 from typing import Callable
 
-from double.claude_double import DONE, RATE_LIMIT, asked, put_on_path, session_of
+from double.claude_double import DONE, RATE_LIMIT, RESUMED, asked, put_on_path, session_of
 
 # The top of the repository, four folders above this file's: unit/, tests/, overnight/, and dev/.
 TOP = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
@@ -53,7 +53,9 @@ def _double(tmp_path, *events: str) -> tuple[dict[str, str], str]:
 def _works(tmp_path) -> list[str]:
     """The folders of the works under the home's .local/state/overnight/, or [] where it's none."""
     top = tmp_path / ".local" / "state" / "overnight"
-    return sorted(str(top / name) for name in os.listdir(top)) if top.exists() else []
+    if not top.exists():
+        return []
+    return sorted(str(top / name) for name in os.listdir(top) if (top / name).is_dir())
 
 
 def _until(check: Callable[[], bool]) -> None:
@@ -77,11 +79,13 @@ def _read(path: str) -> str:
         return f.read()
 
 
-def _ended(folder: str, double: str) -> None:
-    """Waits until the work in the folder has ended and its process with it."""
+def _ended(folder: str, double: str, runner: int = 0) -> None:
+    """Waits until the work in the folder has ended, and with it the process of the runner that
+    ran `claude` the runner-th time, from 0."""
     state = os.path.join(folder, "state.json")
-    _until(lambda: os.path.exists(state) and '"running"' not in _read(state))
-    _until(lambda: _gone(asked(double)[0]["sid"]))
+    ended = ('"status": "done"', '"status": "failed"')
+    _until(lambda: os.path.exists(state) and any(each in _read(state) for each in ended))
+    _until(lambda: _gone(asked(double)[runner]["sid"]))
 
 
 def _refused(tmp_path, env: dict[str, str], *words: str) -> tuple[int, str, str, list[str]]:
@@ -189,6 +193,112 @@ def test_a_work_with_0_retries_fails_at_its_first_stop(tmp_path):
         r"\d\d:\d\d run 1 started\n\d\d:\d\d run 1 stopped: API Error: Rate limit reached\. "
         rf"No retries left\.\nwork {os.path.basename(folder)} failed after 1 run\n",
         _read(os.path.join(folder, "log")),
+    )
+
+
+def _two_works(
+    tmp_path, *events: str, stopped: bool = False
+) -> tuple[dict[str, str], str, list[str], subprocess.CompletedProcess[str]]:
+    """Adds the shop's work, whose run the rate limit stops, and, as it waits for its retry, the
+    blog's, with the runner stopped before where stopped is true: the double's variables and
+    folder, the works' folders, and what the second command gave."""
+    env, double = _double(tmp_path, RATE_LIMIT, *events)
+    shop, blog = tmp_path / "shop", tmp_path / "blog"
+    shop.mkdir()
+    blog.mkdir()
+    _overnight(tmp_path, env, "--dir", str(shop), "--allowed-tools", "Read", PROMPT)
+    [first] = _works(tmp_path)
+    log = os.path.join(first, "log")
+    _until(lambda: os.path.exists(log) and "Retry" in _read(log))
+    if stopped:
+        runner = asked(double)[0]["sid"]
+        os.killpg(runner, signal.SIGTERM)
+        _until(lambda: _gone(runner))
+    ran = _overnight(tmp_path, env, "--dir", str(blog), "--allowed-tools", "Read", PROMPT)
+    return env, double, _works(tmp_path), ran
+
+
+# The calls of `claude` as the shop's work goes on in its session before the blog's work runs.
+_RESUME = ["claude", "-p", "--output-format", "json", "--allowed-tools", "Read", "--resume"]
+
+
+def _shop_then_blog(tmp_path) -> list[tuple[list[str], str, str]]:
+    shop, blog = str(tmp_path / "shop"), str(tmp_path / "blog")
+    return [
+        (_RESUME[:-1], shop, PROMPT),
+        ([*_RESUME, session_of(RATE_LIMIT)], shop, "continue"),
+        (_RESUME[:-1], blog, PROMPT),
+    ]
+
+
+def _calls(double: str) -> list[tuple[list[str], str, str]]:
+    return [(call["argv"], call["cwd"], call["stdin"]) for call in asked(double)]
+
+
+def test_a_work_added_while_another_runs_waits_in_the_queue_after_it(tmp_path):
+    """Given the shop's work, which runs
+    When the user adds the blog's work
+    Then it exits 0, saying that the blog's work waits in the queue after 1 work, and names its
+    state folder, with nothing on stderr"""
+    _, double, [_, second], ran = _two_works(tmp_path)
+    os.killpg(asked(double)[0]["sid"], signal.SIGTERM)
+    work, blog = os.path.basename(second), tmp_path / "blog"
+    assert (ran.returncode, ran.stdout, ran.stderr) == (
+        0,
+        (
+            f"overnight: work {work} waits in the queue after 1 work, to run in {blog}\n"
+            f"overnight: state and log in {second}/\n"
+        ),
+        "",
+    )
+
+
+def test_a_work_added_while_no_runner_runs_starts_the_works_pending(tmp_path):
+    """Given the shop's work, which waited for its retry, and the runner stopped
+    When the user adds the blog's work
+    Then it exits 0, saying that the blog's work waits in the queue after 1 work, and the shop's
+    work goes on in its session before the blog's work runs, each recorded done"""
+    _, double, [first, second], ran = _two_works(tmp_path, RESUMED, DONE, stopped=True)
+    assert (ran.returncode, ran.stderr) == (0, "")
+    assert ran.stdout.startswith(f"overnight: work {os.path.basename(second)} waits in the queue")
+    _ended(second, double, 1)
+    assert _calls(double) == _shop_then_blog(tmp_path)
+    assert json.loads(_read(os.path.join(first, "state.json")))["status"] == "done"
+    assert json.loads(_read(os.path.join(second, "state.json")))["status"] == "done"
+
+
+def test_overnight_with_no_work_given_goes_on_with_the_works_pending(tmp_path):
+    """Given the shop's work, which waited for its retry, then the blog's, and the runner stopped
+    When the user runs `overnight` with no work given
+    Then it says that the queue goes on with 2 works, and the shop's work goes on in its session
+    before the blog's work runs, each recorded done"""
+    env, double, [first, second], _ = _two_works(tmp_path, RESUMED, DONE)
+    runner = asked(double)[0]["sid"]
+    os.killpg(runner, signal.SIGTERM)
+    _until(lambda: _gone(runner))
+    ran = _overnight(tmp_path, env)
+    assert (ran.returncode, ran.stdout, ran.stderr) == (
+        0,
+        f"overnight: the queue goes on with 2 works, from work {os.path.basename(first)}\n",
+        "",
+    )
+    _ended(second, double, 1)
+    assert _calls(double) == _shop_then_blog(tmp_path)
+    assert json.loads(_read(os.path.join(first, "state.json")))["status"] == "done"
+    assert json.loads(_read(os.path.join(second, "state.json")))["status"] == "done"
+
+
+def test_overnight_with_no_work_given_and_none_pending_says_so(tmp_path):
+    """Given no work added
+    When the user runs `overnight` with no work given
+    Then it exits 0, saying that no work waits in the queue, and starts no work"""
+    env, double = _double(tmp_path)
+    ran = _overnight(tmp_path, env)
+    assert (ran.returncode, ran.stdout, ran.stderr, asked(double)) == (
+        0,
+        "overnight: no work waits in the queue\n",
+        "",
+        [],
     )
 
 

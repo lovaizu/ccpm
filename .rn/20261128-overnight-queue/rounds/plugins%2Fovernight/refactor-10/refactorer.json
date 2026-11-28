@@ -1,0 +1,8 @@
+{
+ "result": "made",
+ "files": [
+  "plugins/overnight/scripts/overnight/work.py",
+  "plugins/overnight/scripts/overnight/queue.py",
+  "plugins/overnight/scripts/overnight/command.py"
+ ]
+}

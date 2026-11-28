@@ -7,7 +7,7 @@ import os
 import sys
 
 # Python puts this folder first on the import path. The code imports its package from scripts/,
-# this folder's parent, so that folder takes its place. Also in ../carry/__main__.py.
+# this folder's parent, so that folder takes its place. Also in ../runner/__main__.py.
 SCRIPTS = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path[0] = SCRIPTS
 

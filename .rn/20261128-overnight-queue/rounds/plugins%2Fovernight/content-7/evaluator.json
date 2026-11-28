@@ -1,0 +1,85 @@
+{
+  "result": "judged",
+  "good": [
+    {
+      "condition": "N1",
+      "lines": [
+        "\"\"\"Decides the queue: where the works wait, in what order, and that one runner at a time carries",
+        "\"\"\"Decides the course of one work: its runs of `claude`, the waits between them, when the work is",
+        "\"\"\"Decides what the `overnight` command takes from the user and what it gives back.\"\"\"",
+        "\"\"\"Decides how overnight runs `claude`, the one program outside it that it runs, and how it reads",
+        "\"\"\"The code of the `overnight` command: `command` for what it takes and gives, `queue` for the",
+        "\"\"\"The runner, as the `overnight` command starts it apart from the user's session to run the"
+      ]
+    },
+    {
+      "condition": "N2",
+      "lines": [
+        "    \"\"\"The folders of the works in the folder of the works that haven't ended, the one running and",
+        "    Gives: `<top>/<yyyymmdd-hhmmss>`, named by the time of the add, so that the names sort in the",
+        "    Changes: starts `python3 <scripts>/runner <top>` in a session of its own, so that closing the",
+        "    Changes: carries the works, and returns once none is pending. Where another runner runs, it",
+        "    Changes: writes `work.json`, then `state.json` with `status` `waiting`, the work's `dir`,",
+        "    Takes: the folder of a work that `put` put there, which waits or runs, the host that runs",
+        "    The words are `--dir <folder> --allowed-tools <tools> [--retries <count>] <prompt>` to add a",
+        "    Refuses: with exit code 2 and the reason on stderr, before it adds or starts anything: a word"
+      ]
+    },
+    {
+      "condition": "N3",
+      "lines": [
+        "    \"\"\"Runs the queue: carries each pending work in turn, as `work.carry` says, until none is",
+        "    pending, the one that was running first, so that a runner started again goes on with it.",
+        "starts again on the works still waiting, in their order, and runs none that already ended. The work",
+        "            folders = pending(top)",
+        "            while folders:",
+        "                work.carry(folders[0], host, now, sleep)"
+      ]
+    },
+    {
+      "condition": "N4",
+      "lines": [
+        "# The tools that build and check the plugins, set up by `uv sync --locked` from uv.lock, which holds",
+        "testpaths = [\"dev\"]",
+        "def _until(check: Callable[[], bool]) -> None:",
+        "        env={**os.environ, **env, \"HOME\": str(tmp_path)},"
+      ]
+    },
+    {
+      "condition": "N6",
+      "lines": [
+        "    queue.run(top, host, clock.now, clock.sleep)",
+        "    folder = queue.add(top, work.Work(where, \"Read\", retries, prompt), clock.now, clock.sleep)",
+        "    carry(folder, host, clock.now, clock.sleep)",
+        "    return subprocess.run(",
+        "        [COMMAND, *words],"
+      ]
+    },
+    {
+      "condition": "N7",
+      "lines": [
+        "    assert host.calls == [(CLAUDE, shop, SHOP), (CLAUDE, blog, BLOG)]",
+        "    assert (work.status(first), work.status(second), queue.pending(top)) == (\"done\", \"done\", [])",
+        "    assert host.calls == [(resume, shop, \"continue\"), (CLAUDE, blog, BLOG)]",
+        "    assert first.calls == [(CLAUDE, shop, SHOP), (resume, shop, \"continue\"), (CLAUDE, blog, BLOG)]",
+        "fail_under = 100"
+      ]
+    },
+    {
+      "condition": "N8",
+      "lines": [
+        "        parser.error(f\"--dir {args.dir}: no such folder\")",
+        "        parser.error(\"the prompt is empty: give the work's prompt as the last word, in quotes\")",
+        "            \"claude isn't on the PATH: run overnight from Claude Code, as `! overnight ...`\"",
+        "        raise argparse.ArgumentTypeError(f\"must be a whole number from 0, not {text!r}\")",
+        "        parser.error(f\"the following arguments are required: {', '.join(missing)}\")"
+      ]
+    }
+  ],
+  "more": [
+    {
+      "condition": "N5",
+      "good_when": "A maintainer who changes how the runner ends finds a test that fails when a work added just as the runner finishes its last work is left waiting with no runner to carry it. Today the case that queue.run's comment names, \"a work added as the runner ends is either seen by that look or added after the lock is free\", has no test: replacing `while pending(top):` with `if pending(top):` in queue.py leaves all 41 tests passing, so a maintainer could strand a work added at that moment, which the user would find still waiting in the morning, and no test would tell them."
+    }
+  ]
+}

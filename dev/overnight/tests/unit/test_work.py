@@ -4,10 +4,10 @@ process with a double of `claude` and a clock that each wait moves on."""
 
 from __future__ import annotations
 
-import datetime
 import json
 import os
 
+import pytest
 from double.claude_double import (
     DONE,
     KILLED,
@@ -18,7 +18,8 @@ from double.claude_double import (
     Host,
     session_of,
 )
-from overnight.work import Work, carry
+from double.clock import Clock
+from overnight.work import Work, carry, put, status
 
 PROMPT = "Move the tests to pytest"
 CLAUDE = ["claude", "-p", "--output-format", "json", "--allowed-tools", "Read,Edit"]
@@ -30,29 +31,22 @@ REFUSAL = (
 )
 
 
-class Clock:
-    """A clock that starts at 23:15 and moves on only by each wait, keeping each wait in seconds."""
+class Stopped(Exception):
+    """The runner's stop, as a restart of the computer stops it, raised where a case stops it."""
 
-    def __init__(self) -> None:
-        self.at = datetime.datetime(2026, 11, 28, 23, 15)
-        self.waits: list[float] = []
 
-    def now(self) -> datetime.datetime:
-        return self.at
-
-    def sleep(self, seconds: float) -> None:
-        self.waits.append(seconds)
-        self.at += datetime.timedelta(seconds=seconds)
+def _put(tmp_path, retries: int) -> str:
+    folder = tmp_path / "20261128-231502"
+    folder.mkdir()
+    put(str(folder), Work(str(tmp_path), "Read,Edit", retries, PROMPT))
+    return str(folder)
 
 
 def _carried(tmp_path, retries: int, *events: str) -> tuple[Host, Clock, str]:
-    folder = tmp_path / "20261128-231502"
-    folder.mkdir()
+    folder = _put(tmp_path, retries)
     host, clock = Host(*events), Clock()
-    carry(
-        str(folder), Work(str(tmp_path), "Read,Edit", retries, PROMPT), host, clock.now, clock.sleep
-    )
-    return host, clock, str(folder)
+    carry(folder, host, clock.now, clock.sleep)
+    return host, clock, folder
 
 
 def _log(folder: str) -> list[str]:
@@ -63,6 +57,27 @@ def _log(folder: str) -> list[str]:
 def _state(folder: str) -> dict:
     with open(os.path.join(folder, "state.json"), encoding="utf-8") as f:
         return json.load(f)
+
+
+def test_a_work_put_in_its_folder_waits_with_no_runs(tmp_path):
+    """Given a folder for a work
+    When overnight puts the work in it
+    Then the work waits, with no session and no runs, and state.json says so"""
+    folder = _put(tmp_path, 7)
+    assert status(folder) == "waiting"
+    assert _state(folder) == {
+        "status": "waiting",
+        "dir": str(tmp_path),
+        "session_id": None,
+        "runs": 0,
+    }
+
+
+def test_a_folder_with_no_work_put_in_it_has_no_status(tmp_path):
+    """Given a folder that no work was put in
+    When overnight asks the work's status there
+    Then it has none"""
+    assert status(str(tmp_path)) is None
 
 
 def test_a_work_whose_first_run_is_done_is_recorded_done(tmp_path):
@@ -113,20 +128,67 @@ def test_a_work_records_where_it_stands_while_it_waits(tmp_path):
     """Given a work whose first run the API refuses, exiting 1
     When overnight waits for the retry
     Then state.json says the work is running, in the first run's session, after 1 run"""
-    folder = tmp_path / "20261128-231502"
-    folder.mkdir()
+    folder = _put(tmp_path, 7)
     seen: list[dict] = []
     clock = Clock()
 
     def sleep(seconds: float) -> None:
-        seen.append(_state(str(folder)))
+        seen.append(_state(folder))
         clock.sleep(seconds)
 
-    work = Work(str(tmp_path), "Read,Edit", 7, PROMPT)
-    carry(str(folder), work, Host(REFUSED, RESUMED), clock.now, sleep)
+    carry(folder, Host(REFUSED, RESUMED), clock.now, sleep)
     assert seen == [
         {"status": "running", "dir": str(tmp_path), "session_id": session_of(REFUSED), "runs": 1}
     ]
+
+
+def test_a_work_records_that_it_runs_as_its_first_run_starts(tmp_path):
+    """Given a work that waits
+    When overnight carries it, as its first run starts
+    Then state.json says the work is running, with no session and no runs ended"""
+    folder = _put(tmp_path, 7)
+    seen: list[dict] = []
+    host = Host(DONE)
+
+    def watched(argv, cwd: str, stdin: str):
+        seen.append(_state(folder))
+        return host(argv, cwd, stdin)
+
+    clock = Clock()
+    carry(folder, watched, clock.now, clock.sleep)
+    assert seen == [{"status": "running", "dir": str(tmp_path), "session_id": None, "runs": 0}]
+
+
+def test_a_work_stopped_while_it_waits_goes_on_in_its_session_when_carried_again(tmp_path):
+    """Given a work whose first run the rate limit stops, and whose carry stops as it waits
+    When overnight carries the work again, and its run is done
+    Then it asks `claude` at once to continue in the first run's session, as run 2, and records the
+    work done after 2 runs"""
+    folder = _put(tmp_path, 7)
+    clock = Clock()
+
+    def stop(_: float) -> None:
+        raise Stopped
+
+    with pytest.raises(Stopped):
+        carry(folder, Host(RATE_LIMIT), clock.now, stop)
+    host = Host(RESUMED)
+    carry(folder, host, clock.now, clock.sleep)
+    resume = [*CLAUDE, "--resume", session_of(RATE_LIMIT)]
+    assert (host.calls, clock.waits) == ([(resume, str(tmp_path), "continue")], [])
+    assert _log(folder) == [
+        "23:15 run 1 started",
+        f"23:15 run 1 stopped: {STOPPED}. Retry 1 of 7 at 23:20.",
+        "23:15 run 2 started",
+        "23:15 run 2 done",
+        "work 20261128-231502 done after 2 runs",
+    ]
+    assert _state(folder) == {
+        "status": "done",
+        "dir": str(tmp_path),
+        "session_id": session_of(RESUMED),
+        "runs": 2,
+    }
 
 
 def test_a_retry_after_a_run_that_named_no_session_gives_the_prompt_again(tmp_path):

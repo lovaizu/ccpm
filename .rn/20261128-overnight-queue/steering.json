@@ -51,14 +51,7 @@
       }
     ]
   },
-  "tasks": [
-    {
-      "task": "Make the queue by TDD, in Python's standard library alone: works added wait in a file, one runner runs them one after another and starts the next when one ends, done or failed, and a runner started again picks up where it was.",
-      "path": "plugins/overnight",
-      "kind": "code",
-      "refactor": "refactor-code"
-    }
-  ],
+  "tasks": [],
   "decisions": [
     "The user gives the purpose and intent; how the work goes on is the orchestrator's to decide.",
     "The work runs from outside Claude Code: a command starts `claude -p` and retries it, as Claude Code's own continue at the usage limit is unstable; no keys are sent into an interactive session.",
@@ -81,6 +74,8 @@
     "The user had both points that the Rounds left mended: no test compares minutes read from the real clock, and the command's test takes --retries 0 as the least it accepts.",
     "The user doesn't try any part: once a part's tests pass, the next opportunity's solution becomes the target without asking, in the order the tree holds them, and the pull request is inspected once all are made.",
     "The README's top status says that no real night has carried a work through this version yet.",
-    "`overnight` with no work given starts the runner on the works still waiting, and a work running when the runner stopped goes on in its session as a retry; any `overnight` that adds a work starts the runner too where none runs."
+    "`overnight` with no work given starts the runner on the works still waiting, and a work running when the runner stopped goes on in its session as a retry; any `overnight` that adds a work starts the runner too where none runs.",
+    "A test shows that a work added just as the runner ends still runs.",
+    "What the Rounds leave is mended without asking, as the user mended it before and leaves the steps to the orchestrator: a test shows that adding a work with no runner running starts the works still waiting, and the command's test of a waiting work checks its exit code and stderr too. The test of a work added as the runner ends keeps wrapping queue.pending, as only a race between processes reaches that moment otherwise, and a race gives no same result each run."
   ]
 }
