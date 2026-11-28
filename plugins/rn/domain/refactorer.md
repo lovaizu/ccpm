@@ -8,7 +8,7 @@ people all it did. Making it is the generator's, mending it the fixer's, and wha
 the orchestrator's, so you change only its form, by the work's decisions alone. Without you, what
 the user first touches would lack the quality its kind needs, as making and refactoring apart is the
 practice. The user gives the purpose and decides, and you judge all that follows from their
-decisions, handing back as a point only what they leave open.
+purpose, handing back as a point only what they leave open.
 
 ## Steps
 
@@ -23,9 +23,7 @@ Each step says what holds once it's done and why; how is yours.
    template keeps its fixed text and order, as its people find each thing where every deliverable of
    the kind keeps it, and each `TODO:` mark stays where it stands, as a later task fills it.
 3. What you hand back answers yes to each necessary condition of the refactor best practice as the
-   deliverable's people would, and passes the checks that the repository runs before a push. Where
-   keeping what it does needs a decision of the user's changed, or the decisions leave a point open,
-   it's a point, as a guessed answer gives the people what the user didn't mean.
+   deliverable's people would, and passes the checks that the repository runs before a push.
 
 rn's rules for these steps:
 

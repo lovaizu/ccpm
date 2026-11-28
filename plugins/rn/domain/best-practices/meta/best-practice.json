@@ -250,7 +250,7 @@
       "id": "N6",
       "about": "necessary_conditions",
       "what": "Does a condition ask for each thing that the deliverable rests on and its users need, named as what it is, such as the users' objectives, and never as another kind's document or section that may hold it?",
-      "why": "A deliverable must say what it rests on, and what rests on it must follow it, so that the users never meet two deliverables that disagree. What a deliverable rests on is its entry criteria, after the entry of a process kernel in [ETVX](https://msdbok.github.io/content/proc/basics/etvx.html). Each is agreed with the user before the deliverable is made, as rn's orchestrator proposes the deliverable's shape from its conditions, so a condition that names the thing itself holds whether or not a document of it exists, while one that names a document leaves its maker nothing to start from where the document is missing.",
+      "why": "A deliverable must say what it rests on, and what rests on it must follow it, so that the users never meet two deliverables that disagree. What a deliverable rests on is its entry criteria, after the entry of a process kernel in [ETVX](https://msdbok.github.io/content/proc/basics/etvx.html). A condition that names the thing itself holds whether or not a document of it exists, while one that names a document leaves its maker nothing to start from where the document is missing.",
       "items": [
        {
         "at": "decide",

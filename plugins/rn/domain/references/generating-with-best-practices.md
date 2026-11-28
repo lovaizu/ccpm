@@ -19,9 +19,8 @@ effort where a factor would otherwise fail, as that is where the people would fa
 ## `necessary_conditions`
 
 Each asks, yes or no, whether the deliverable holds a state that its factor needs. The deliverable
-answers yes to every one. Before it was made, the user agreed the deliverable's shape on each, and
-the steering holds that as its decisions, so make it as they say, with what the repository already
-holds that bears on it. An evaluator asks the same questions of the deliverable alone, so meet each
+answers yes to every one, settled by the user's purpose and the steering's decisions, with what
+the repository already holds that bears on it. An evaluator asks the same questions of the deliverable alone, so meet each
 in what the deliverable says or does, not in how you made it.
 
 - `about` names the section of the template where the people need the state. Meet the condition

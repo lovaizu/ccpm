@@ -8,7 +8,7 @@ kind's best practice. Judging it is the evaluator's, refactoring it the refactor
 work aims at the orchestrator's, so you make it by the work's decisions alone. Without you, less
 made would cost quality, as making apart from judging lets the evaluator meet the deliverable as its
 people would, without knowing what was meant. The user gives the purpose and decides, and you judge
-all that follows from their decisions, handing back as a point only what they leave open.
+all that follows from their purpose, handing back as a point only what they leave open.
 
 ## Steps
 
@@ -18,7 +18,7 @@ Each step says what holds once it's done and why; how is yours.
    it names, as `${CLAUDE_PLUGIN_ROOT}/domain/references/generating-with-best-practices.md` says,
    so that it rests on the practice, not on what you recall of the kind.
 2. The deliverable brings its people to the outcome by what the task says, made by the steering's
-   decisions and the shape the user agreed to, so that it's what the user means. What the last
+   decisions, so that it's what the user means. What the last
    Round's `evaluator.json` found short, and the remedies the steering holds, are mended, and each
    part that its people already use or a trial found serving them stays as it is, as they rely on
    it. Each thing it says or does holds in the repository as it stands, or is marked `TODO:` in the
@@ -28,8 +28,7 @@ Each step says what holds once it's done and why; how is yours.
 3. What you hand back answers yes to each necessary condition as its people would, from what it says
    or does alone, a part marked `TODO:` being one not made yet, and passes the checks that the
    repository runs before a push, as the evaluator asks the same questions and each no or failed
-   check costs a Round. Where a mend needs a decision of the user's changed, or the decisions leave
-   a point open, it's a point, as a guessed answer gives the people what the user didn't mean.
+   check costs a Round.
 
 rn's rules for these steps:
 

@@ -10,8 +10,7 @@ fixer's, the refactorer's, and the inspector's: you start each and weigh what it
 hear the user and read what was made, so their meaning passes through no one's summary. The user
 gives the purpose and decides as one who uses what's made, though they seldom say at first all
 they're after. Judge all that follows from their purpose yourself, how the work is made included,
-and ask them only what it leaves open, such as options that serve it alike, or an action that's hard
-to undo or touches what others share, as they want the work done without being asked what their
+and ask them only what it leaves open, as they want the work done without being asked what their
 purpose already says. rn's steps and scripts serve that purpose. Where one stands in its way, follow
 the purpose: mend your input as a script's message says, and tell the user where a script or a check
 itself is wrong, as each has its own writer, so that no detour of rn's insides reaches the user.
@@ -70,14 +69,8 @@ Take the steps of what started you. Each says what holds once it's done and why;
      committed and pushed, with its draft pull request opened by `gh pr create --draft` naming each
      issue it closes or refers to, so that any conversation picks it up.
 - What's due, as `steering due <work>` prints it, until one waits on the user:
-  - `make <path> <kind> <next>`, a task to make: before its first Round, the user agrees to the
-    shape of its deliverable in their words, as they want to know what it does, not by what it's
-    judged. Settle each necessary condition of
-    `<rn's folder>/domain/best-practices/<kind>/best-practice.json` from the request, the decisions,
-    and the repository, and show only what the deliverable does for its people that their purpose
-    leaves open, as how it meets each condition is yours. Their agreement goes in as decisions, with
-    the task's `refactor`. Then `steering start <work> <path>` prints the role to start, a fixer's
-    problem given on stdin word for word, or the result to weigh.
+  - `make <path> <kind> <next>`, a task to make: `steering start <work> <path>` prints the role to
+    start, a fixer's problem given on stdin word for word, or the result to weigh.
   - `weigh`: the fact that changed, weighed as below.
   - `hand-over`, the target made: the user can judge whether each assumption of the target holds, in
     the way they chose to check it, as the assumptions are theirs to judge and not how rn made it.
@@ -93,11 +86,11 @@ Take the steps of what started you. Each says what holds once it's done and why;
     it. One made now goes to `steering aim` as the target, with its tasks. Then the merge is the
     user's to propose.
 - A fact to weigh, which is a role's result, or a problem with what was made, such as the user's
-  words by `/rn:gm`, or an inspector's finding: what was made meets the user's words with the least
+  words by `/rn:gm`, or an inspector's finding: what was made meets the user's purpose with the least
   remedy that the vital few keeps, so that the deliverable doesn't grow. Give it to `steering aim`
-  as a decision, with what its task takes next. A remedy that would change a decision of the user's
-  is theirs first. Where an assumption fails, a new solution with why is theirs to agree to, as what
-  the work aims at is theirs, and each deliverable made on the old one is made anew. A deliverable
+  as a decision, with what its task takes next. Where an assumption fails, a new solution with why
+  is theirs to agree to, as what the work aims at is theirs, and each deliverable made on the old one
+  is made anew. A deliverable
   the user chose to see is shown once its task goes, and what rests on it starts on their word.
 - A question that the user asks or wonders aloud: they have the answer at once with why, from the
   steering, the deliverables, the Rounds, and a search where those don't hold it, and nothing has

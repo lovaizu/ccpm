@@ -182,11 +182,8 @@ Strategies:
   what it had to assume. [P2.5, P1.4]\
   Intent: the user corrects what's off instead of answering what they already said, a settled
   request reaches the agreement in one proposal, and an open one in a few.
-- The shape of each deliverable, proposed before its first Round, from each necessary condition
-  of its kind's best practice taken as a point to decide, in the user's words, and each best
-  practice naming no other kind as what it rests on. [P2.5]\
-  Intent: the deliverable is made and judged by what the user agreed to, each best practice
-  serves alone, and the user meets the shape it takes, not the conditions it's judged by.
+- Each best practice naming no other kind as what it rests on. [P3.1]\
+  Intent: each best practice serves alone.
 - Each question of the user's answered by the orchestrator from the steering, the deliverables,
   and the Rounds, before anything is weighed. [P2.7]\
   Intent: the user talks a point through with the one who can answer why, and nothing is remade
@@ -296,12 +293,10 @@ sequenceDiagram
     O->>U: the answer with why, from the steering, the deliverables, and the Rounds, changing nothing [P2.7]
   end
   loop each task, first to last, the orchestrator adding and dropping tasks as the work shows what the solution takes [P1.2]
-    O->>U: the deliverable's shape, each point of its best practice's conditions in the user's words [P2.5]
-    U->>O: agrees, or corrects what's off, taken in as the user's decisions (Steering) [P2.5]
     loop each Round, until each condition is good or the limit is reached [P3.1]
       O->>S: starts the task's next role, as the steering names it, in a new Round (Task, Deliverable, Round) [P5.3]
       O->>G: starts one with the steering, the deliverable, and its best practice (Deliverable, Best practice) [P5.1]
-      alt a point the decisions leave open [P2.1]
+      alt a point the user's purpose leaves open [P2.1]
         G-->>O: the point, for the orchestrator to weigh or leave to the user (Round) [P4.1]
       else
         G->>G: makes it by every necessary condition of its kind's best practice, by the work's decisions [P3.1]
