@@ -30,7 +30,6 @@
         "solutions": [
           {
             "solution": "The user adds each work from Claude Code by `overnight` with its folder, its prompt, and the tools it may use, as now, and the works wait in a queue that lives in a file; one runner in the background runs them one after another, each retrying as now, and starts the next once one ends, done or failed, so that by morning each work is done or recorded as failed, with its log.",
-            "target": true,
             "assumptions": [
               "A work whose retries run out lets the queue move on, so one failure doesn't stop the night.",
               "A work added while the runner runs joins the queue, and no second runner starts.",
@@ -41,7 +40,17 @@
         ]
       },
       {
-        "opportunity": "Put any number of works in the queue."
+        "opportunity": "Put any number of works in the queue.",
+        "solutions": [
+          {
+            "solution": "The queue takes as many works as the user adds, with no limit, as each waits in its own folder, and the runner runs each of them in the order they were added.",
+            "target": true,
+            "assumptions": [
+              "A night's worth of works, such as ten, all run in the order added, none dropped or run twice.",
+              "Unit tests with a stand-in for `claude` show that it works, so the user need not try it on a real night."
+            ]
+          }
+        ]
       },
       {
         "opportunity": "Start at a given time, or start right away."
@@ -51,7 +60,14 @@
       }
     ]
   },
-  "tasks": [],
+  "tasks": [
+    {
+      "task": "Show by a unit test that ten works added run in the order added, each once, as the queue sets no limit.",
+      "path": "plugins/overnight",
+      "kind": "code",
+      "refactor": "refactor-code"
+    }
+  ],
   "decisions": [
     "The user gives the purpose and intent; how the work goes on is the orchestrator's to decide.",
     "The work runs from outside Claude Code: a command starts `claude -p` and retries it, as Claude Code's own continue at the usage limit is unstable; no keys are sent into an interactive session.",
