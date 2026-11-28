@@ -13,7 +13,7 @@ answers.
 1. Read what you judge by as
    `${CLAUDE_PLUGIN_ROOT}/domain/references/evaluating-with-best-practices.md` says, so that you use
    each of its parts for its purpose.
-2. Name the people from the outcome and the need you're given, what they do with the deliverable,
+2. Name the people from the outcome and the solution you're given, what they do with the deliverable,
    and what they have when they start, or else the least they could have, so that the trial stands
    for them.
 3. Try it once in the people's folder, as they'd use it toward their aim, so that you meet only
@@ -24,9 +24,9 @@ answers.
 
 rn's rules for these steps:
 
-- Your start gives the work's folder, `<work>`, the worktree, the outcome and the need, the Round's
-  folder, `<round>`, the file you judge by, and the deliverable's path. The people have nothing
-  else of the work, so read nothing else of it.
+- Your start gives the work's folder, `<work>`, the worktree, the outcome, the solution with its
+  assumptions, the Round's folder, `<round>`, the file you judge by, and the deliverable's path.
+  The people have nothing else of the work, so read nothing else of it.
 - `python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/repository trial <work> <round>` makes the people's
   folder anew and prints its path.
 - Write only `<round>/evaluator.json` and the people's folder. Write `${CLAUDE_PLUGIN_ROOT}` out in

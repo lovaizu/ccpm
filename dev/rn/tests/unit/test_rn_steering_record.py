@@ -56,6 +56,18 @@ def test_a_later_aim_keeps_where_each_task_is_and_the_stage() -> None:
     assert (made["tasks"][2], made["stage"]) == (aim["tasks"][2], "trying")
 
 
+def test_an_aim_with_a_new_target_takes_it_to_its_own_hand_over() -> None:
+    """Given a steering whose target the user said is enough, and an aim that aims at the rules
+    with a solution of their own.
+    When the aim is taken in.
+    Then the steering holds no stage, as the new target is handed over anew."""
+    aim = rn_files.aim(target=False)
+    aim["ost"]["opportunities"][1]["solutions"] = [
+        {"solution": "The command checks each rule.", "target": True, "assumptions": ["x"]}
+    ]
+    assert "stage" not in taken_in(rn_files.steering(paths=(), stage="enough"), aim)
+
+
 @pytest.mark.parametrize(
     ("next_", "fields", "kept"),
     [

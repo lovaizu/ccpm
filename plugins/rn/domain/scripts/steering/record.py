@@ -2,7 +2,7 @@
 the tasks, and the decisions whole, each task that the steering already holds at the same path
 keeping where it is on its way, unless the aim says what it takes next; each task moved on by the
 result of its next role, where nothing is to weigh, and gone once it's done; and the stage that the
-work reaches once no task is left."""
+work reaches once no task is left, which belongs to the target."""
 
 from __future__ import annotations
 
@@ -31,20 +31,37 @@ def taken_in(steering: Steering | None, aim: dict[str, Any]) -> Steering:
     at the same path, the first not yet taken, keeping where it is on its way; each task whose next
     the aim says taking it with no entry, as its next role starts its own: generator and the judged
     Rounds kept, anew as generator from its first Round, fixer, or refactorer; and the steering's
-    stage kept.
+    stage kept where the aim keeps its target, as a new target is handed over anew.
     Changes: nothing.
     Refuses: Wrong where it would make a task again past LIMIT judged Rounds, as the user confirms
     what they leave, naming it.
     """
     held = list(steering["tasks"]) if steering else []
     tasks = [_task(each, _taken(held, each["path"])) for each in aim["tasks"]]
-    stage = {"stage": steering["stage"]} if steering and "stage" in steering else {}
+    kept = steering and "stage" in steering and _same_target(steering["ost"], aim["ost"])
+    stage = {"stage": steering["stage"]} if kept else {}
     return {
         "ost": copy.deepcopy(aim["ost"]),
         "tasks": tasks,
         "decisions": list(aim["decisions"]),
         **stage,
     }
+
+
+def target(opportunities: list[dict[str, Any]]) -> str | None:
+    """The words of the solution that the work aims at, found anywhere in the tree, else None."""
+    for each in opportunities:
+        for solution in each.get("solutions", []):
+            if solution.get("target"):
+                return str(solution["solution"])
+        found = target(each.get("children", []))
+        if found is not None:
+            return found
+    return None
+
+
+def _same_target(held: dict[str, Any], told: dict[str, Any]) -> bool:
+    return target(held["opportunities"]) == target(told["opportunities"])
 
 
 def _taken(held: list[dict[str, Any]], path: str) -> dict[str, Any] | None:

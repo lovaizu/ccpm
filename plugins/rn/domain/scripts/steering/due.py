@@ -5,9 +5,7 @@ the work's end, by the stage that the work reached."""
 
 from __future__ import annotations
 
-from typing import Any
-
-from steering.record import Steering
+from steering.record import Steering, target
 
 # What's due once no task is left, by the stage that the work reached, absent before the hand-over.
 _AFTER = {None: "hand-over", "trying": "trying", "enough": "inspect", "inspected": "ended"}
@@ -25,23 +23,11 @@ def due(steering: Steering) -> list[str]:
     Changes: nothing.
     Refuses: nothing.
     """
-    target = _target(steering["ost"]["opportunities"])
-    if target is None:
+    aimed = target(steering["ost"]["opportunities"])
+    if aimed is None:
         return ["weigh"]
     if steering["tasks"]:
         each = steering["tasks"][0]
         return [f"make\t{each['path']}\t{each['kind']}\t{each.get('next', 'generator')}"]
     after = _AFTER[steering.get("stage")]
-    return [f"{after}\t{target}" if after in ("hand-over", "trying") else after]
-
-
-def _target(opportunities: list[dict[str, Any]]) -> str | None:
-    """The words of the solution that the work aims at, found anywhere in the tree, else None."""
-    for each in opportunities:
-        for solution in each.get("solutions", []):
-            if solution.get("target"):
-                return str(solution["solution"])
-        found = _target(each.get("children", []))
-        if found is not None:
-            return found
-    return None
+    return [f"{after}\t{aimed}" if after in ("hand-over", "trying") else after]

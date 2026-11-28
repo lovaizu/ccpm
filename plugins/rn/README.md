@@ -78,6 +78,8 @@ rn reads your repository, then shows what it would make, in one message:
   3. 発行者の情報を毎回入れなくて済む
   4. ガイドだけで使い始められる
   2から4は、1を試したあとに、今作るかissueに残すかをご相談します
+  1の作り方：明細ファイルを渡すと、請求書を1枚印刷する invoice コマンド
+  試して確かめること：経理チームの方が、説明だけを見て、明細から請求書を印刷できる
 
 作るもの：新しく作るので、おおまかに次の3つです
   1. 請求書の型
@@ -95,7 +97,7 @@ You type `OK`. rn makes the invoice's template first, and shows it to you before
 on it:
 
 ```text
-請求書の型ができました（1/3）
+請求書の型ができました。
 
 見本の請求書で、見た目を確かめてください：
 
@@ -104,19 +106,28 @@ on it:
 これで足りれば /rn:ty、変えたい点があれば /rn:gm に続けてその内容を入力してください。
 ```
 
-You type `/rn:ty`. Each time one more is done, rn tells you, so you can say at once what's off:
+You type `/rn:ty`. Each time a task is done, rn tells you what's left, and each change to the plan
+with why, so you can say at once what's off:
 
 ```text
-invoice コマンドができました（2/3）
+invoice コマンドができました。
+
+残り：
+- 使い方の説明を書く
+
+計画の変更：明細の列が空のときのタスクを足しました。見本の明細に空の列があったためです。
+
+お願いすることはありません。
 ```
 
 Once AI evaluators have tried it as your accounting team would, rn hands it to you:
 
 ```text
-試せるようになりました（3/3）
+試せるようになりました。
 
 できること：明細ファイル1つから、請求書を1枚印刷する
 まだしないこと：2から4
+確かめること：説明だけを見て、明細から請求書を印刷できる
 
   invoice 見本の明細.csv
 
@@ -187,8 +198,8 @@ Yes. rn talks in your language and writes in your repository's, asking only wher
 
 ### "Does it show how far it has come?"
 
-Yes. The proposal lists what rn makes before you can try it, and rn tells you each time one is
-done, such as `（1/3）`.
+Yes. Each time a task is done, rn tells you what's left before you can try it, and each change to
+the plan with why. It shows no count, as the tasks change while rn finds what the work takes.
 
 ### "Its output misses what this kind of work needs."
 
