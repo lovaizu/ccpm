@@ -63,9 +63,13 @@ In the morning, the work's log shows it done, and your repository holds its comm
 $ cat ~/.local/state/overnight/20261128-231502/log
 23:15 run 1 started
 01:42 run 1 stopped: 5-hour limit reached ∙ resets 4am. Retry 1 of 7 at 01:47.
+01:47 run 2 started
 01:47 run 2 stopped: 5-hour limit reached ∙ resets 4am. Retry 2 of 7 at 01:57.
+01:57 run 3 started
 01:57 run 3 stopped: 5-hour limit reached ∙ resets 4am. Retry 3 of 7 at 02:17.
+02:17 run 4 started
 02:17 run 4 stopped: 5-hour limit reached ∙ resets 4am. Retry 4 of 7 at 03:17.
+03:17 run 5 started
 03:17 run 5 stopped: 5-hour limit reached ∙ resets 4am. Retry 5 of 7 at 04:17.
 04:17 run 6 started
 05:03 run 6 done
@@ -89,12 +93,12 @@ limit lifted.
 overnight runs your work in Claude Code without you, and each time a run stops short, it waits and
 asks Claude to go on in the same conversation, until the work is done or the retries run out.
 
-### "Can I close Claude Code once the work starts?"
+### "Does the work go on after you close Claude Code?"
 
 Yes. overnight runs the work apart from the Claude Code session that you start it from, and
 returns at once, so the work goes on after you close Claude Code.
 
-### "At the limit, my work waits until I'm back to type 'continue'."
+### "At the limit, the work waits until you're back to type 'continue'."
 
 overnight types it for you. It runs the work with `claude -p`, Claude Code's non-interactive
 mode. When a run stops, overnight waits, then asks Claude again to go on. The waits before the
@@ -122,7 +126,7 @@ After 7 retries, which wait 4 hours and 35 minutes in all, overnight records the
 `state.json` and stops. The work's folder keeps `state.json` beside the log of each run.
 `--retries <count>` sets another count, such as `--retries 10`.
 
-### "Will it stop at night to ask my permission?"
+### "Does it stop at night to ask your permission?"
 
 No. Claude uses only the tools that `--allowed-tools` names. Claude Code refuses any other tool
 without asking, so no question waits for you.

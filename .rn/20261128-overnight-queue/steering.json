@@ -40,14 +40,7 @@
       }
     ]
   },
-  "tasks": [
-    {
-      "task": "Mend the README so that its doubts in How it works pass the English check as it stands.",
-      "path": "plugins/overnight/README.md",
-      "kind": "readme",
-      "next": "fixer"
-    }
-  ],
+  "tasks": [],
   "decisions": [
     "The user gives the purpose and intent; how the work goes on is the orchestrator's to decide.",
     "The work runs from outside Claude Code: a command starts `claude -p` and retries it, as Claude Code's own continue at the usage limit is unstable; no keys are sent into an interactive session.",
