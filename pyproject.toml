@@ -61,7 +61,8 @@ max-statements = 50
 # shlex's whitespace_split. So does the sample product that the tests make a run in, whose code
 # the tests only hold as files.
 [tool.vulture]
-paths = ["plugins", "dev/scripts", "dev/rn/tests"]
+# Each plugin's code and its tests, and the checks' own code, wherever a plugin adds them.
+paths = ["plugins", "dev"]
 exclude = ["dev/scripts/node_modules/", "dev/rn/tests/invoicer/"]
 ignore_decorators = ["@pytest.fixture"]
 ignore_names = ["whitespace_split"]
