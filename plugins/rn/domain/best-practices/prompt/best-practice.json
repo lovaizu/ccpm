@@ -408,37 +408,5 @@
    }
   ]
  },
- "template": "template.md",
- "inputs": [
-  {
-   "kind": "architecture",
-   "takes": [
-    "User stories",
-    "Components",
-    "Concept model",
-    "Sequences",
-    "Directory structure",
-    "Test strategy"
-   ]
-  },
-  {
-   "kind": "readme",
-   "takes": [
-    "Walkthrough",
-    "How it works"
-   ]
-  },
-  {
-   "kind": "test-design",
-   "takes": [
-    "Unit cases"
-   ]
-  },
-  {
-   "kind": "software-design",
-   "takes": [
-    "Interface"
-   ]
-  }
- ]
+ "template": "template.md"
 }

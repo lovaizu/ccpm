@@ -150,33 +150,5 @@
    }
   ]
  },
- "template": "template.md",
- "inputs": [
-  {
-   "kind": "product-vision",
-   "takes": [
-    "Objectives and key results"
-   ]
-  },
-  {
-   "kind": "architecture",
-   "takes": [
-    "Test strategy"
-   ]
-  },
-  {
-   "kind": "test-design",
-   "takes": [
-    "E2E cases"
-   ]
-  },
-  {
-   "kind": "code",
-   "takes": []
-  },
-  {
-   "kind": "prompt",
-   "takes": []
-  }
- ]
+ "template": "template.md"
 }

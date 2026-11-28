@@ -238,29 +238,5 @@
    }
   ]
  },
- "template": "template.md",
- "inputs": [
-  {
-   "kind": "architecture",
-   "takes": [
-    "Solution strategy",
-    "Components",
-    "Sequences",
-    "Test strategy"
-   ]
-  },
-  {
-   "kind": "software-design",
-   "takes": [
-    "Module opening",
-    "Interface"
-   ]
-  },
-  {
-   "kind": "test-design",
-   "takes": [
-    "Unit cases"
-   ]
-  }
- ]
+ "template": "template.md"
 }

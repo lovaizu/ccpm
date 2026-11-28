@@ -188,36 +188,5 @@
       }
     ]
   },
-  "template": "template.md",
-  "inputs": [
-    {
-      "kind": "product-vision",
-      "takes": [
-        "Objectives and key results"
-      ]
-    },
-    {
-      "kind": "readme",
-      "takes": [
-        "Walkthrough"
-      ]
-    },
-    {
-      "kind": "architecture",
-      "takes": [
-        "Solution strategy",
-        "Components",
-        "Concept model",
-        "Sequences",
-        "Test strategy"
-      ]
-    },
-    {
-      "kind": "software-design",
-      "takes": [
-        "Interface",
-        "Prompt"
-      ]
-    }
-  ]
+  "template": "template.md"
 }

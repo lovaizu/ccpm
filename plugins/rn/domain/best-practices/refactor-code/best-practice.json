@@ -243,16 +243,5 @@
     ]
    }
   ]
- },
- "inputs": [
-  {
-   "kind": "architecture",
-   "takes": [
-    "Components",
-    "Concept model",
-    "Sequences",
-    "Test strategy"
-   ]
-  }
- ]
+ }
 }

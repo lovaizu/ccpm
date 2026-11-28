@@ -450,25 +450,5 @@
    }
   ]
  },
- "template": "template.md",
- "inputs": [
-  {
-   "kind": "product-vision",
-   "takes": [
-    "Roles",
-    "Objectives and key results",
-    "Concept"
-   ]
-  },
-  {
-   "kind": "readme",
-   "takes": [
-    "the opening",
-    "Non-goals",
-    "Requirements",
-    "Walkthrough",
-    "How it works"
-   ]
-  }
- ]
+ "template": "template.md"
 }

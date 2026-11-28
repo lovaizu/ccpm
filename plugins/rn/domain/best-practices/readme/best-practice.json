@@ -380,15 +380,5 @@
    }
   ]
  },
- "template": "template.md",
- "inputs": [
-  {
-   "kind": "product-vision",
-   "takes": [
-    "Roles",
-    "Objectives and key results",
-    "Concept"
-   ]
-  }
- ]
+ "template": "template.md"
 }

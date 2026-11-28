@@ -114,17 +114,5 @@
    }
   ]
  },
- "template": "template.md",
- "inputs": [
-  {
-   "kind": "architecture",
-   "takes": [
-    "Components",
-    "Concept model",
-    "Sequences",
-    "Directory structure",
-    "Test strategy"
-   ]
-  }
- ]
+ "template": "template.md"
 }
