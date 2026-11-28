@@ -14,7 +14,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Find the job that the product exists to do in the steering's outcome and decisions, and, where the repository already holds the product, in what it already says the product does. Write it in one sentence as what the product gets done for the people who come to it, such as `turns a request into a deliverable that the people it's for can use`. Where none of these says it, ask the user what the product gets done, and for whom."
+        "text": "Find the job that the product exists to do in the steering's outcome and decisions, and, where the repository already holds the product, in its README. Write it in one sentence as what the product gets done for the people who come to it, such as `turns a request into a deliverable that the people it's for can use`. Where none of these says it, ask the user what the product gets done, and for whom."
        },
        {
         "at": "decide",
@@ -70,7 +70,7 @@
       "id": "N3",
       "about": "the whole",
       "what": "Does the vision describe only what the users do and get, not how the product works inside?",
-      "why": "The vision must stay true while the inside of the product changes, so it describes only what the users do and get, and says nothing of how the product does it.",
+      "why": "The vision must stay true while the inside of the product changes, so it describes only what the users do and get, and leaves how the product does it to the architecture.",
       "items": [
        {
         "at": "make",
@@ -124,7 +124,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Once each role has its objectives, and before you write any key result, list each piece of work the product plans that the steering's decisions name. Where the repository already holds the product, add each of its open issues and each feature it already gives its users."
+        "text": "Once each role has its objectives, and before you write any key result, list each piece of work the product plans that the steering's decisions name. Where the repository already holds the product, add each of its open issues and each feature its README names."
        },
        {
         "at": "decide",
@@ -158,7 +158,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "To find the one way that the user means, read what they gave of the product's purpose and intent: the steering's outcome and decisions, the user's words in the request and in their answers, and, where the repository already holds the product, what it already says of the product's purpose, and its open issues. List each way these say or imply that the product brings the roles to their objectives, such as a rule the user gave for when rn asks them, since the one way comes from whoever conceived the product, and an analysis of what goes wrong today yields only a list of fixes with no center."
+        "text": "To find the one way that the user means, read what they gave of the product's purpose and intent: the steering's outcome and decisions, the user's words in the request and in their answers, and, where the repository already holds the product, its README, and its open issues. List each way these say or imply that the product brings the roles to their objectives, such as a rule the user gave for when rn asks them, since the one way comes from whoever conceived the product, and an analysis of what goes wrong today yields only a list of fixes with no center."
        },
        {
         "at": "decide",
@@ -170,7 +170,7 @@
        },
        {
         "at": "decide",
-        "text": "To find where the one way must hold, list the moments of the users' use, from the moment they first meet the product to the moment they reach the objective, as a [customer journey map](https://www.nngroup.com/articles/journey-mapping-101/) does, such as the request, the goal confirmed, the questions answered, how each deliverable will be agreed, and each deliverable signed off."
+        "text": "To find where the one way must hold, list the moments of the users' use, from the moment they first meet the product to the moment they reach the objective, as a [customer journey map](https://www.nngroup.com/articles/journey-mapping-101/) does, such as the request, the goal confirmed, the questions answered, the plan signed off, and each deliverable signed off."
        },
        {
         "at": "decide",
@@ -182,7 +182,7 @@
        },
        {
         "at": "decide",
-        "text": "Keep only the ideas on which the one way stands, as the developers hold the concept in mind at every choice, and a list too long to hold leans no choice. Move an idea that carries out another, such as how a fix is made, out of the concept, to where the people who carry it out need it. Drop each idea where taking it out leaves the one way holding at every moment."
+        "text": "Keep only the ideas on which the one way stands, as the developers hold the concept in mind at every choice, and a list too long to hold leans no choice. Move an idea that carries out another, such as how a fix is made, to the README's How it works or the architecture, where its people need it. Drop each idea where taking it out leaves the one way holding at every moment."
        },
        {
         "at": "make",
@@ -194,5 +194,6 @@
    }
   ]
  },
- "template": "template.md"
+ "template": "template.md",
+ "inputs": []
 }

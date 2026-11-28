@@ -74,7 +74,7 @@ At the end, you have `<result>`.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
-> - `<the one way>`: the one way that the product puts first, as agreed, in the reader's
+> - `<the one way>`: the one way that the product vision's concept puts first, in the reader's
 >   words, as what they see the product do in their work, in one sentence.
 > - The figure: the deliverable's own, at images/how-it-works.svg, with the product named in its alt
 >   text. It shows the product's mechanism as one flow below the one way, with each problem and

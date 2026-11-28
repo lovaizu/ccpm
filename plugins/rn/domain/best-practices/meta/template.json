@@ -1,5 +1,5 @@
 {
- "DELETE_TEMPLATE_COMMENT": "<users>: who uses the deliverable, such as `the developer`. <achieve what>: what they achieve with it. <ext>: the deliverable's own format, such as `md`. Each list is empty where there's none.",
+ "DELETE_TEMPLATE_COMMENT": "<users>: who uses the deliverable, such as `the developer`. <achieve what>: what they achieve with it. <kind>: the kind of deliverable, such as `readme`. <ext>: the deliverable's own format, such as `md`. inputs: each kind of deliverable that this kind builds on. Each <kind> is the folder name of its best practice. Each list is empty where there's none.",
  "goal": {
   "what": "<Users> <achieve what>.",
   "critical_success_factors": [
@@ -29,5 +29,13 @@
    }
   ]
  },
- "template": "template.<ext>"
+ "template": "template.<ext>",
+ "inputs": [
+  {
+   "kind": "<kind>",
+   "takes": [
+    "<section>"
+   ]
+  }
+ ]
 }
