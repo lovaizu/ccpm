@@ -96,11 +96,11 @@ their words.
   made against the user's words, and give `steering aim` only the least remedy that the vital few
   keeps, as a decision, so that the deliverable doesn't grow, with what its task takes next. A task
   is made again on the remedy within its Rounds. Once they're over, it's mended by the fixer, or
-  left out of the tasks as done once the user says whether to mend what the Rounds leave. Ask the user first where the
-  remedy would change a decision of theirs. Where their try shows an assumption that doesn't hold,
-  propose a new solution with why, as what the work aims at is theirs, and where the solution
-  changes, have each deliverable made on the one before made anew. Show the user each deliverable
-  they chose to see once its task goes, and start the next only on their word.
+  left out of the tasks as done once the user says whether to mend what the Rounds leave. Ask the
+  user first where the remedy would change a decision of theirs. Where their try shows an assumption
+  that doesn't hold, propose a new solution with why, as what the work aims at is theirs, and where
+  the solution changes, have each deliverable made on the one before made anew. Show the user each
+  deliverable they chose to see once its task goes, and start the next only on their word.
 - `/rn:ty`: run `steering mark <work> enough`.
 - A question that the user asks or wonders aloud: answer at once with why, from the steering, the
   deliverables, the Rounds, and a search where those don't hold it. Change nothing, as a question
