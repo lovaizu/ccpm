@@ -1,7 +1,8 @@
 """The unit cases of repository/trial.py, the folder of the people's starting state in which an
 evaluator tries a deliverable: where it lies by its Round, a folder outside the work's Rounds
-refused, the work's worktree as it stands cloned there without rn's folder or what git ignores,
-one left there made anew, the trials removed, and git that can't clone."""
+refused, the work's worktree as it stands cloned there without rn's folder or what git ignores, a
+file renamed or deleted in the index left out by its old name, one left there made anew, the trials
+removed, and git that can't clone."""
 
 from __future__ import annotations
 
@@ -75,6 +76,18 @@ def test_the_starting_state_holds_the_worktree_as_it_stands_without_rns_folder(
         assert f.read() == "# Invoices\n"
     with open(os.path.join(made_at, rn_files.COMMAND), encoding="utf-8") as f:
         assert f.read() == "print('invoice')\n"
+
+
+def test_a_file_renamed_or_deleted_in_the_index_is_gone_by_its_old_name(made: WorkPlace) -> None:
+    """Given the command renamed by `git mv`, and the ignore list removed by `git rm`, neither
+    committed.
+    When the starting state is made.
+    Then it holds the command by its new name alone, and no ignore list, as the worktree holds."""
+    git(made.worktree, "mv", rn_files.COMMAND, "invoice/print.py")
+    git(made.worktree, "rm", "-q", ".gitignore")
+    made_at = starting_state(made, round_of(made), run)
+    assert sorted(os.listdir(os.path.join(made_at, "invoice"))) == ["print.py"]
+    assert not os.path.exists(os.path.join(made_at, ".gitignore"))
 
 
 def test_the_trials_of_the_work_are_removed_and_no_others(made: WorkPlace, temp: str) -> None:

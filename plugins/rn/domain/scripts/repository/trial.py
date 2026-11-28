@@ -53,15 +53,16 @@ def starting_state(work: WorkPlace, round_: str, host: Host) -> str:
 
 def _changes_copied(work: WorkPlace, made: str, host: Host) -> None:
     """Copies each file of the worktree that changed or is new since its last commit into the
-    clone, and removes each that was deleted, leaving out what git ignores."""
+    clone, and removes each that's gone from it since, staged or not, as a rename staged by
+    `git mv` is, leaving out what git ignores."""
     what = "git can't list the worktree's changes"
-    listed = ["git", "ls-files", "-z", "--modified", "--others", "--exclude-standard"]
-    changed = checked(host, listed, work.worktree, CantRun, what).out.split("\0")
-    deleted = ["git", "ls-files", "-z", "--deleted"]
-    gone = set(checked(host, deleted, work.worktree, CantRun, what).out.split("\0"))
+    since = ["git", "diff", "-z", "--name-only", "--no-renames", "HEAD"]
+    others = ["git", "ls-files", "-z", "--others", "--exclude-standard"]
+    changed = checked(host, since, work.worktree, CantRun, what).out.split("\0")
+    changed += checked(host, others, work.worktree, CantRun, what).out.split("\0")
     for each in filter(None, changed):
         target = os.path.join(made, each)
-        if each in gone:
+        if not os.path.lexists(os.path.join(work.worktree, each)):
             with contextlib.suppress(FileNotFoundError):
                 os.remove(target)
         else:
