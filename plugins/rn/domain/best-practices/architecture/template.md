@@ -6,11 +6,12 @@
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
-> - `<role>`: a role of the product vision, as the product vision names it, or the product's
->   developer or operator for a need of development or operation.
+> - `<role>`: a role of the product's users, by the name they have, or the product's developer or
+>   operator for a need of development or operation.
 > - `<want>`: a value that the story brings its role on its own, such as the deliverable they're
 >   after, or a pause and a pick-up, in the role's words and without the product's means.
-> - The stories together cover each objective of the product vision and each promise of the README.
+> - The stories together cover each objective of the users and each promise that the product makes
+>   them.
 
 ## Solution strategy
 
@@ -23,8 +24,8 @@
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
-> - `<idea>`: the one idea by which the product delivers what the README promises, from the
->   sentence that opens the product vision's Concept, in one sentence.
+> - `<idea>`: the one idea by which the product delivers what it promises its users, from the one
+>   way by which it brings them to their objectives, in one sentence.
 > - `<value>`: what the principle values, in a few words.
 > - `<decision>`: one decision that carries out the principle, in one sentence, with no name that a
 >   later section decides, such as a component, a data, a tool, or a count.

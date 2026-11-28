@@ -47,8 +47,8 @@ guide links them and copies nothing:
   scripts drift apart, and each change must keep them. A script gives one right result for each
   input, so its unit tests check it whole.
   The user runs a real request through the product as it ships, and answers it as they would. The
-  run uses the model and the host that the product's people use. The developer watches the run, reads each reply against the
-  product vision, and takes each place where the product fails its people back to its cause, which
+  run uses the model and the host that the product's people use. The developer watches the run, reads each reply against what
+  the product promises its people, and takes each place where the product fails its people back to its cause, which
   the developer proposes to mend with that cause. Only this run shows where the product and its
   host differ, and the run's record becomes the README's walkthrough.
 - Timing\
@@ -95,7 +95,7 @@ Integration tests test the joined parts against each element of the architecture
 
 ## Product
 
-End-to-end (E2E) tests test the product in real use against each key result of the product vision.
+End-to-end (E2E) tests test the product in real use against each key result of the users' objectives.
 
 | Check | Kind | When to pick | What it checks or measures | Recommended criterion | Sources |
 |---|---|---|---|---|---|
