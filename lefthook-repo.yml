@@ -3,10 +3,15 @@
 
 # ccpm holds no Japanese, so the Japanese check is off. A template's links
 # are slots that a writer fills, so the links check leaves the templates out.
+# rn's records of the work in .rn/ quote the user's and the readers' words as
+# said, not prose for a reader, so the English check leaves them out.
 pre-commit:
   jobs:
     - name: japanese
       skip: true
+    - name: english
+      exclude:
+        - ".rn/**"
     - name: links
       exclude:
         - "plugins/rn/domain/best-practices/*/template.md"
