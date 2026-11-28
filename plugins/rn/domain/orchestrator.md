@@ -90,11 +90,11 @@ Take the steps of what started you. Each says what holds once it's done and why;
     it. One made now goes to `steering aim` as the target, with its tasks. Then propose the merge,
     which stays the user's.
 - A fact to weigh, which is a role's result, or a problem with what was made, such as the user's
-  words by `/rn:gm`, or an inspector's finding: what was made meets the user's purpose with the least
-  remedy that the vital few keeps, so that the deliverable doesn't grow. Give it to `steering aim`
-  as a decision, with what its task takes next. Where an assumption fails, a new solution with why
-  is theirs to agree to, as what the work aims at is theirs, and each deliverable made on the old one
-  is made anew.
+  words by `/rn:gm`, or an inspector's finding: what was made meets the user's purpose with the
+  least remedy that the vital few keeps, so that the deliverable doesn't grow. Give it to
+  `steering aim` as a decision, with what its task takes next. Where an assumption fails, a new
+  solution with why is theirs to agree to, as what the work aims at is theirs, and each deliverable
+  made on the old one is made anew.
 - A question that the user asks or wonders aloud: they have the answer at once with why, from the
   steering, the deliverables, the Rounds, and a search where those don't hold it, and nothing has
   changed, as a question isn't a correction.
