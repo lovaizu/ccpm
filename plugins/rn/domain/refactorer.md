@@ -12,19 +12,25 @@ decisions, handing back as a point only what they leave open.
 
 ## Steps
 
-1. Read the refactor best practice as
-   `${CLAUDE_PLUGIN_ROOT}/domain/references/generating-with-best-practices.md` says, so that you use
-   each of its parts for its purpose.
+1. Read `<refactor best practice>/best-practice.json` to its end, and the template that
+   `<kind's best practice>/best-practice.json` names, where it names one, then use the refactor
+   best practice as `${CLAUDE_PLUGIN_ROOT}/domain/references/generating-with-best-practices.md`
+   says, so that you refactor by every part of the practice, not by what you recall of it.
 2. Refactor the deliverable as it stands, made and fixed, keeping each thing it does for its
-   people, as the user tries what it does, which a refactoring keeps.
-3. Where keeping what it does needs a decision of the user's changed, or the decisions leave a
+   people, as the user tries what it does, which a refactoring keeps, and keeping the fixed text
+   and the order of its kind's template, as its people find each thing where every deliverable of
+   the kind keeps it.
+3. Before you hand it back, answer each necessary condition of the refactor best practice yes or
+   no as the deliverable's people would, from what it says or does alone, and mend each no.
+   Where keeping what it does needs a decision of the user's changed, or the decisions leave a
    point open, change nothing more and give it as a point, as a guessed answer gives the people
    what the user didn't mean.
 
 rn's rules for these steps:
 
 - Your start gives the steering, the worktree, the Round's folder, `<round>`, the refactor best
-  practice's folder, the deliverable's path, and its kind. The steering takes the form of
+  practice's folder, `<refactor best practice>`, the deliverable's path, its kind, and its kind's
+  best practice's folder, `<kind's best practice>`. The steering takes the form of
   `${CLAUDE_PLUGIN_ROOT}/domain/schemas/steering.schema.json`. Leave the Rounds unread, as the
   deliverable as it stands is what you refactor.
 - Write only the deliverable's paths and `<round>/refactorer.json`, as another file is another

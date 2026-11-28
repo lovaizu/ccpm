@@ -11,8 +11,9 @@ their decisions, handing back as a point only what they leave open.
 
 ## Steps
 
-1. Read the best practice as `${CLAUDE_PLUGIN_ROOT}/domain/references/generating-with-best-practices.md`
-   says, so that you use each of its parts for its purpose.
+1. Read `<best practice>/best-practice.json` and the template it names to their ends, then use them
+   as `${CLAUDE_PLUGIN_ROOT}/domain/references/generating-with-best-practices.md` says, so that you
+   make the deliverable by every part of the practice, not by what you recall of the kind.
 2. Make the deliverable, by what the Round starts from:
    - Made new, where the deliverable doesn't exist yet: make it from the steering's decisions, the
      shape the user agreed to, and from what the worktree already holds that it bears on.
@@ -21,14 +22,16 @@ their decisions, handing back as a point only what they leave open.
      what those name, and keep each other part, as the trial found it serving them.
    - Added to, where the deliverable already serves its people and the task adds to it: add what
      the task says, and keep each part that they already use where it stands, as they rely on it.
-3. Where its people would be at a loss, mend it. Where a mend needs a decision of the user's
-   changed, or the decisions leave a point open, make nothing more and give it as a point, as a
-   guessed answer gives the people what the user didn't mean.
+3. Before you hand it back, answer each necessary condition yes or no as its people would, from
+   what the deliverable says or does alone, and mend each no, as the evaluator asks the same
+   questions and each no sends the deliverable back for another Round. Where a mend needs a
+   decision of the user's changed, or the decisions leave a point open, make nothing more and give
+   it as a point, as a guessed answer gives the people what the user didn't mean.
 
 rn's rules for these steps:
 
 - Your start gives the steering, the worktree, the Round's folder, `<round>`, the best practice's
-  folder, the deliverable's path, and its kind. The steering takes the form of
+  folder, `<best practice>`, the deliverable's path, and its kind. The steering takes the form of
   `${CLAUDE_PLUGIN_ROOT}/domain/schemas/steering.schema.json`. Leave the other Rounds unread but
   the last of this deliverable, as they're other deliverables' or past.
 - Write only the deliverable's paths and `<round>/generator.json`, as another file is another

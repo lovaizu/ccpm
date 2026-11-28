@@ -258,12 +258,13 @@ def test_a_fix_starts_with_the_problem_in_its_words(made: WorkPlace) -> None:
 def test_a_refactoring_takes_its_kinds_refactor_best_practice(made: WorkPlace) -> None:
     """Given a command whose Rounds are good, its refactorer next.
     When its next role is started.
-    Then it gives the refactorer, refactor-1, and refactor-code."""
+    Then it gives the refactorer, refactor-1, refactor-code, and the code best practice, whose
+    template's form the refactoring keeps."""
     at(made, next="refactorer")
     folder = os.path.join(rounds_of(made), "refactor-1")
     assert call(made, "start", rn_files.COMMAND) == (
         0,
-        f"refactorer\t{folder}\t{practice_of('refactor-code')}\n",
+        f"refactorer\t{folder}\t{practice_of('refactor-code')}\t{practice_of('code')}\n",
         "",
     )
 

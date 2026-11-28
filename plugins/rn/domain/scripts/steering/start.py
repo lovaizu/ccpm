@@ -34,7 +34,9 @@ def started(
     what `practice.judged` gives; for each other role, the steering with its entry, and
     `<role>\\t<folder>\\t<best practice>`, the folder made one past the deliverable's last
     entry, or its entry where a stop left the role there with no result, a Fix's with `problem.md`
-    holding the words, and the best practice of its kind, or of its refactoring's.
+    holding the words, and the best practice of its kind, or for its refactorer, that of its
+    refactoring then that of its kind, as a refactoring keeps the form that its kind's template
+    gives.
     Changes: makes the folder, and writes judges-by.json or problem.md in it.
     Refuses: Wrong where no task has the path, where its evaluator has no Round to
     judge, where a Fix's words are empty, or where rn has no best practice of the kind.
@@ -57,6 +59,8 @@ def started(
     if role == "fixer":
         with open(os.path.join(folder, "problem.md"), "w", encoding="utf-8") as f:
             f.write(words if words.endswith("\n") else words + "\n")
+    if role == "refactorer":
+        found += "\t" + _practice(work, plugin_root, each["kind"])
     marked = json.loads(json.dumps(steering))
     _task(marked, path)["entry"] = os.path.basename(folder)
     return marked, f"{role}\t{folder}\t{found}\n"
