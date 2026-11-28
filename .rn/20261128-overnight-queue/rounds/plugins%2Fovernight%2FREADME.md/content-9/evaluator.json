@@ -1,0 +1,54 @@
+{
+  "result": "judged",
+  "good": [
+    {"condition": "N1", "lines": [
+      "overnight is a Claude Code plugin with a command that runs the pieces of work, or works, that you",
+      "give it in Claude Code while you're away, one after another, and resumes each work by itself after",
+      "the usage limit or an error stops it.",
+      "overnight is for you when you hand Claude Code work that runs for hours and leave it running at",
+      "night. With it, you find each work done by morning, or recorded as failed with its log, without",
+      "getting up to type \"continue\" once the limit lifts or to start the next work."
+    ]},
+    {"condition": "N2", "lines": [
+      "- overnight doesn't resume a conversation that you have open in Claude Code: it runs work that it",
+      "- overnight doesn't run from a terminal outside Claude Code: Claude Code puts the command on the",
+      "- overnight doesn't keep your computer awake: before you leave, set the computer not to sleep while",
+      "once. overnight doesn't yet run more than one work at"
+    ]},
+    {"condition": "N4", "lines": ["[MIT](LICENSE)"]},
+    {"condition": "N5", "lines": [
+      "## Non-goals", "## Requirements", "## Installation", "## Walkthrough", "## How it works", "## Documentation", "## License"
+    ]},
+    {"condition": "N7", "lines": [
+      "overnight runs your works in Claude Code without you, one after another, and each time a run",
+      "stops short, it waits and asks Claude to go on in the same conversation, until the work is done",
+      "or the retries run out, then starts the next."
+    ]},
+    {"condition": "N8", "lines": [
+      "### \"Do the works go on after you close Claude Code?\"",
+      "### \"At the limit, the work waits until you're back to type 'continue'.\"",
+      "### \"Does it start the work over after a stop?\"",
+      "### \"Claude Code can exit with 0 at the limit. How does it know a run stopped short?\"",
+      "### \"What if the limit lifts late, or an error keeps coming?\"",
+      "### \"What if the time given to `--at` has already passed today?\"",
+      "### \"If the computer restarts or overnight stops in the night, what becomes of the works?\"",
+      "### \"Does it stop at night to ask your permission?\""
+    ]},
+    {"condition": "N9", "lines": [
+      "- macOS or Linux: `uname` shows it.",
+      "- Python 3.9 or later, run as `python3`: `python3 --version` shows it.",
+      "- Claude Code, logged in: `claude auth status` shows `\"loggedIn\": true`.",
+      "claude plugin marketplace add lovaizu/ccpm",
+      "claude plugin install overnight@ccpm",
+      "In Claude Code, `! overnight --version` shows `overnight 0.1.0`."
+    ]},
+    {"condition": "N10", "lines": [
+      "- [Changelog](CHANGELOG.md): for you after an update, the changes in each version.",
+      "- [Issues](https://github.com/lovaizu/ccpm/issues): where you ask for help or report a fault."
+    ]}
+  ],
+  "more": [
+    {"condition": "N3", "good_when": "A reader who installs overnight 0.1.0 learns from the top only what that version does: the top says the works start \"at the time you give with `--at`\", yet `overnight --at 23:30 ...` on the installed 0.1.0 stops with \"overnight: error: unrecognized arguments: --at\", and `overnight --help` lists no `--at`, so the reader counts on a start time the version they have doesn't give."},
+    {"condition": "N6", "good_when": "A reader who types the walkthrough's first command gets the line it shows, \"overnight: work ... waits until 23:30\", and sees what a night with a start time gives them as a run that took place; now that command fails with \"unrecognized arguments: --at\" on 0.1.0, and the walkthrough says it \"shows what overnight aims to do, not a night that someone recorded\". The command without `--at` gave the start lines, log, and state.json in the form the walkthrough shows."}
+  ]
+}

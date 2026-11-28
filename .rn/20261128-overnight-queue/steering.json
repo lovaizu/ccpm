@@ -76,7 +76,10 @@
       "task": "Add to the README that a work starts at a given time by `--at`, or right away without it, with its top status and its walkthrough saying so.",
       "path": "plugins/overnight/README.md",
       "kind": "readme",
-      "refactor": "refactor-doc"
+      "refactor": "refactor-doc",
+      "judged": 1,
+      "next": "refactorer",
+      "entry": "refactor-10"
     },
     {
       "task": "Make `--at` by TDD, in Python's standard library alone: a work waits until its time, the runner runs each work whose time has come in the order added, and a runner started again keeps each work's time.",
@@ -115,6 +118,7 @@
     "A work that fails to start or crashes the runner, such as one whose folder is gone, is recorded as failed with why in its log, and the queue moves on to the next.",
     "The command's test of --retries 0 stays beside the work's test of 0 retries, as one shows the command accepts 0 and the other what the work does with it.",
     "The code's unit tests under dev/overnight/tests are part of the overnight deliverable, as the decisions put them there.",
-    "A work's start time is given as `--at <HH:MM>` in the computer's local time; without it the work starts as soon as its turn comes."
+    "A work's start time is given as `--at <HH:MM>` in the computer's local time; without it the work starts as soon as its turn comes.",
+    "The README leads the code: what it says of --at that the code doesn't do yet takes no remedy in the README, as the next task makes the code meet it."
   ]
 }

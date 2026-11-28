@@ -4,9 +4,10 @@ overnight is a Claude Code plugin with a command that runs the pieces of work, o
 give it in Claude Code while you're away, one after another, and resumes each work by itself after
 the usage limit or an error stops it.
 
-In development, at 0.1.0: overnight runs the works one at a time, in the order you add them, and
-starts the next when one ends. No work has yet run through a real night on this version.
-overnight doesn't yet run more than one work at once or start a work at a given time.
+In development, at 0.1.0: overnight runs the works one at a time, in the order you add them, each
+once its turn comes or at the time you give with `--at`, and starts the next when one ends. No work
+has yet run through a real night on this version. overnight doesn't yet run more than one work at
+once.
 
 overnight is for you when you hand Claude Code work that runs for hours and leave it running at
 night. With it, you find each work done by morning, or recorded as failed with its log, without
@@ -41,38 +42,52 @@ In Claude Code, `! overnight --version` shows `overnight 0.1.0`.
 
 ## Walkthrough
 
-At the end, you have your tests moved to pytest and your blog's broken links fixed, each committed
-by morning, from two commands that you typed the night before.
+At the end, you have your blog's broken links fixed and your tests moved to pytest, each
+committed by morning, from two commands that you typed in the evening, and the tests' work kept
+out of your shop's folder until you finished there.
 
 This run shows what overnight aims to do, not a night that someone recorded.
 
-At 23:15, before you leave, you start the first work in Claude Code:
+At 22:00, you're still at work in `~/work/shop`, so you add its work to start at 23:30, once you're
+done there. `--at` takes the time in your computer's local time:
 
 ```console
-! overnight --dir ~/work/shop \
+! overnight --at 23:30 --dir ~/work/shop \
     --allowed-tools "Read,Edit,Write,Bash(pytest:*),Bash(git add:*),Bash(git commit:*)" \
     "Move the tests in tests/unittest_old/ to pytest, run them until they pass, and commit"
-overnight: work 20261128-231502 started in /home/you/work/shop
-overnight: state and log in /home/you/.local/state/overnight/20261128-231502/
+overnight: work 20261128-220012 waits until 23:30, to run in /home/you/work/shop
+overnight: state and log in /home/you/.local/state/overnight/20261128-220012/
 ```
 
-A minute later, you add the second work. It waits in the queue while the first runs:
+A minute later, you add the second work, with no `--at`. The first work waits for its time, so the
+second starts at once:
 
 ```console
 ! overnight --dir ~/work/blog \
     --allowed-tools "Read,Edit,Bash(make linkcheck:*),Bash(git add:*),Bash(git commit:*)" \
     "Fix each broken link that make linkcheck reports, and commit"
-overnight: work 20261128-231610 waits in the queue after 1 work, to run in /home/you/work/blog
-overnight: state and log in /home/you/.local/state/overnight/20261128-231610/
+overnight: work 20261128-220115 started in /home/you/work/blog
+overnight: state and log in /home/you/.local/state/overnight/20261128-220115/
 ```
 
-Once overnight prints these lines, you close Claude Code.
+When you're done in `~/work/shop`, you close Claude Code.
 
-In the morning, the first work's log shows it done, and your repository holds its commit:
+In the morning, the second work's log shows it done before the first started:
 
 ```console
-$ cat ~/.local/state/overnight/20261128-231502/log
-23:15 run 1 started
+$ cat ~/.local/state/overnight/20261128-220115/log
+22:01 run 1 started
+22:36 run 1 done
+work 20261128-220115 done after 1 run
+$ git -C ~/work/blog log --oneline -1
+b72e04d Fix the broken links that make linkcheck reports
+```
+
+The first work started at 23:30. Its log shows it done too, and your repository holds its commit:
+
+```console
+$ cat ~/.local/state/overnight/20261128-220012/log
+23:30 run 1 started
 01:42 run 1 stopped: 5-hour limit reached ∙ resets 4am. Retry 1 of 7 at 01:47.
 01:47 run 2 started
 01:47 run 2 stopped: 5-hour limit reached ∙ resets 4am. Retry 2 of 7 at 01:57.
@@ -84,8 +99,8 @@ $ cat ~/.local/state/overnight/20261128-231502/log
 03:17 run 5 stopped: 5-hour limit reached ∙ resets 4am. Retry 5 of 7 at 04:17.
 04:17 run 6 started
 05:03 run 6 done
-work 20261128-231502 done after 6 runs
-$ cat ~/.local/state/overnight/20261128-231502/state.json
+work 20261128-220012 done after 6 runs
+$ cat ~/.local/state/overnight/20261128-220012/state.json
 {
   "status": "done",
   "dir": "/home/you/work/shop",
@@ -96,19 +111,8 @@ $ git -C ~/work/shop log --oneline -1
 3f9c2a1 Move the tests in tests/unittest_old to pytest
 ```
 
-The second work started as the first ended, and its log shows it done too:
-
-```console
-$ cat ~/.local/state/overnight/20261128-231610/log
-05:03 run 1 started
-05:38 run 1 done
-work 20261128-231610 done after 1 run
-$ git -C ~/work/blog log --oneline -1
-b72e04d Fix the broken links that make linkcheck reports
-```
-
-You typed two commands. The first work went on from where the limit stopped it, 17 minutes after
-the limit lifted.
+You typed two commands. The first work started at the time you gave, and went on from where the
+limit stopped it, 17 minutes after the limit lifted.
 
 ## How it works
 
@@ -150,12 +154,16 @@ After 7 retries, which wait 4 hours and 35 minutes in all, overnight records the
 work's folder keeps `state.json` beside the log of each run. `--retries <count>` sets another
 count, such as `--retries 10`.
 
+### "What if the time given to `--at` has already passed today?"
+
+The work starts at that time tomorrow, so `--at 01:00` given at 23:00 starts at 01:00 that night.
+
 ### "If the computer restarts or overnight stops in the night, what becomes of the works?"
 
 They wait for you, as the queue lives in a file. In Claude Code, `! overnight` with no work given
-starts again on the works still waiting, in their order, and runs none that already ended. The work
-that was running when overnight stopped goes on in its conversation, as a retry. Adding a work
-with `overnight` starts the waiting works again too.
+starts again on the works still waiting, in their order, each at its time, and runs none that
+already ended. The work that was running when overnight stopped goes on in its conversation, as a
+retry. Adding a work with `overnight` starts the waiting works again too.
 
 ### "Does it stop at night to ask your permission?"
 
