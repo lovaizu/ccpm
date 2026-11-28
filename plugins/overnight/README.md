@@ -4,14 +4,18 @@ overnight is a Claude Code plugin with a command that runs a piece of work, or a
 give it in Claude Code while you're away, and resumes it by itself after the usage limit or an
 error stops it.
 
-In development, at 0.1.0: overnight runs one work at a time, and resumes it after the usage limit
-or an error. No work has yet run through a real night on this version. overnight doesn't yet keep
-a queue of works, start the next work when one ends, start a work at a time you give, or run more
-than one work at once.
+<!-- TODO: the queue and the next work's start: the first sentence says that overnight runs the
+works you give it one after another, starting the next work when one ends. -->
+
+In development, at 0.1.0: what overnight does may still change, and no work has yet run through a
+real night on this version.
 
 overnight is for you when you hand Claude Code work that runs for hours and leave it running at
 night. With it, you find the work done by morning, or recorded as failed with its log, without
 getting up to type "continue" once the limit lifts.
+
+<!-- TODO: the queue and the next work's start: the benefit says that you find each work that you
+gave overnight carried through by morning, not only the first. -->
 
 ## Non-goals
 
@@ -95,12 +99,19 @@ $ git -C ~/work/shop log --oneline -1
 You typed one command. The work went on from where the limit stopped it, 17 minutes after the
 limit lifted.
 
+<!-- TODO: the queue, the next work's start, a start time, and how many run at once: the
+walkthrough puts the night's works in the queue with a start time, three of them run at once, and
+each next work starts when one ends, so the morning's log shows each work done. -->
+
 ## How it works
 
 <!-- TODO: the `overnight` command of bin/overnight works as this section says. -->
 
 overnight runs your work in Claude Code without you, and each time a run stops short, it waits and
 asks Claude to go on in the same conversation, until the work is done or the retries run out.
+
+<!-- TODO: the queue and the next work's start: the one way says too that once a work ends,
+overnight starts the next work in its queue. -->
 
 ### "Does the work go on after you close Claude Code?"
 
@@ -140,6 +151,18 @@ as `--retries 10`.
 
 No. Claude uses only the tools that `--allowed-tools` names. Claude Code refuses any other tool
 without asking, so no question waits for you.
+
+<!-- TODO: the next work's start: a doubt such as "When one work ends, does the next start without
+me?", and how overnight starts it. -->
+
+<!-- TODO: the queue: a doubt such as "Can I give it more works than one night's limit lets run?",
+and how the queue holds any number of works. -->
+
+<!-- TODO: a start time: a doubt such as "Can it wait to start until I've gone to bed?", and how a
+work starts at the time you give, or right away. -->
+
+<!-- TODO: how many run at once: a doubt such as "Do several works at once use up the limit
+sooner?", and how overnight runs three at once by default, or as many as you give. -->
 
 ## Documentation
 

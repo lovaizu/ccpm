@@ -46,7 +46,7 @@
       "path": "plugins/overnight/README.md",
       "kind": "readme",
       "refactor": "refactor-doc",
-      "next": "generator",
+      "next": "evaluator",
       "entry": "content-2"
     },
     {
