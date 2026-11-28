@@ -1,0 +1,10 @@
+{
+  "name": "overnight",
+  "description": "overnight runs a piece of work in Claude Code while you're away, and resumes it by itself after the usage limit or an error stops it.",
+  "version": "0.1.0",
+  "author": {
+    "name": "lovaizu"
+  },
+  "homepage": "https://github.com/lovaizu/ccpm/blob/main/plugins/overnight/README.md",
+  "repository": "https://github.com/lovaizu/ccpm"
+}

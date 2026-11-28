@@ -1,0 +1,12 @@
+{
+  "result": "made",
+  "files": [
+    "plugins/overnight/README.md",
+    "plugins/overnight/CHANGELOG.md",
+    "plugins/overnight/LICENSE",
+    "plugins/overnight/.claude-plugin/plugin.json",
+    "plugins/overnight/bin/overnight",
+    ".claude-plugin/marketplace.json",
+    "README.md"
+  ]
+}

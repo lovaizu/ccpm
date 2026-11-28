@@ -1,0 +1,7 @@
+#!/bin/sh
+# The `overnight` command, which Claude Code puts on the PATH of its own shell from the plugin's
+# bin/.
+# TODO: run one work through `claude -p` and retry it in the same conversation after growing
+# waits, as ../README.md says.
+echo "overnight: not made yet" >&2
+exit 1
