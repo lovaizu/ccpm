@@ -14,8 +14,8 @@ their decisions, handing back as a point only what they leave open.
 1. Read the best practice as `${CLAUDE_PLUGIN_ROOT}/domain/references/generating-with-best-practices.md`
    says, so that you use each of its parts for its purpose.
 2. Make the deliverable, by what the Round starts from:
-   - Made new, where the deliverable doesn't exist yet: make it from the steering's decisions and
-     the deliverables it rests on.
+   - Made new, where the deliverable doesn't exist yet: make it from the steering's decisions, the
+     shape the user agreed to, and from what the worktree already holds that it bears on.
    - Made again, in a Round after the first: the last Round's `evaluator.json` holds what its
      people would meet short, and the steering the remedies that the orchestrator weighed. Change
      what those name, and keep each other part, as the trial found it serving them.

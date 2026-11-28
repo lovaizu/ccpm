@@ -19,8 +19,10 @@ effort where a factor would otherwise fail, as that is where the people would fa
 ## `necessary_conditions`
 
 Each asks, yes or no, whether the deliverable holds a state that its factor needs. The deliverable
-answers yes to every one. An evaluator asks the same questions of the deliverable alone, so meet
-each in what the deliverable says or does, not in how you made it.
+answers yes to every one. Before the deliverable was made, the user agreed how it meets each, and
+the steering holds that as its decisions, so make it as they say. An evaluator asks the same
+questions of the deliverable alone, so meet each in what the deliverable says or does, not in how
+you made it.
 
 - `about` names the section of the template where the people need the state. Meet the condition
   there, as that is where they look for it.
@@ -36,8 +38,3 @@ each in what the deliverable says or does, not in how you made it.
 It is the form that every deliverable of the kind takes, so that the people find each thing where
 every other deliverable of the kind keeps it. Keep its fixed text as it stands, fill each slot in
 the form its note gives, and remove each note once its slot is filled.
-
-## `inputs`
-
-Each names a kind of deliverable that this one rests on, and the sections it takes from it. Read
-those sections of those deliverables before you write, as this deliverable carries them out.

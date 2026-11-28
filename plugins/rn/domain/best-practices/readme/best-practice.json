@@ -14,15 +14,15 @@
       "items": [
        {
         "at": "decide",
-        "text": "Open the product vision and take from Roles the people the product is for, named by the work they want done, narrowly enough that a reader outside the role can tell it isn't for them, such as `you keep a Python library that others install` in place of `you write Python`."
+        "text": "Take from the decisions the user agreed to for the README the people the product is for, named by the work they want done, narrowly enough that a reader outside the role can tell it isn't for them, such as `you keep a Python library that others install` in place of `you write Python`."
        },
        {
         "at": "decide",
-        "text": "Take from that role's objective what they achieve with the product, as an end they reach in their own work, not a feature, such as `release without breaking the code of those who use your library` in place of `checks for semantic versioning`."
+        "text": "Take from those decisions what those people achieve with the product, as an end they reach in their own work, not a feature, such as `release without breaking the code of those who use your library` in place of `checks for semantic versioning`."
        },
        {
         "at": "decide",
-        "text": "Take from the concept's one way the one thing the product gives the reader, in words the reader already uses, such as `finds each change in a release that breaks code that calls it`."
+        "text": "Take from those decisions the one thing the product gives the reader, by the way of working that the product values most, in words the reader already uses, such as `finds each change in a release that breaks code that calls it`."
        },
        {
         "at": "decide",
@@ -74,11 +74,11 @@
        },
        {
         "at": "decide",
-        "text": "For each expectation kept that the product vision neither has the users do or get nor rules out, ask the user `Should <Product> <expectation>?`, and name what each answer does, such as `Should it undo its changes? No lists it in Non-goals; yes adds it to the product vision, and the README says at the top that it doesn't undo them yet.`"
+        "text": "For each expectation kept that the agreed decisions neither have the users do or get nor rule out, ask the user `Should <Product> <expectation>?`, and name what each answer does, such as `Should it undo its changes? No lists it in Non-goals; yes adds it to what the product promises, and the README says at the top that it doesn't undo them yet.`"
        },
        {
         "at": "decide",
-        "text": "Keep each expectation that the product vision rules out or the user answers no to for Non-goals. Take each that the user answers yes to out of Non-goals, as what doesn't work yet for the opening's status."
+        "text": "Keep each expectation that the agreed decisions rule out or the user answers no to for Non-goals. Take each that the user answers yes to out of Non-goals, as what doesn't work yet for the opening's status."
        },
        {
         "at": "make",
@@ -102,7 +102,7 @@
        },
        {
         "at": "decide",
-        "text": "For each objective of the product vision, find the product's test of its role's use toward it, such as an end-to-end test, and check that it passes, or try the use where there's no test."
+        "text": "For each use that the product promises its users, as agreed, find the product's test of that use, such as an end-to-end test, and check that it passes, or try the use where there's no test."
        },
        {
         "at": "decide",
@@ -110,7 +110,7 @@
        },
        {
         "at": "decide",
-        "text": "Decide that the product is ready where it has a release of 1.0 or later, the use toward each objective works, it meets each expectation that the user said it should, and someone keeps it up. Otherwise, take what works now and what doesn't."
+        "text": "Decide that the product is ready where it has a release of 1.0 or later, each promised use works, it meets each expectation that the user said it should, and someone keeps it up. Otherwise, take what works now and what doesn't."
        },
        {
         "at": "make",
@@ -162,7 +162,7 @@
        },
        {
         "at": "make",
-        "text": "Read the README from the top as a newcomer in the product vision's role, and after each section, write down the question you have next."
+        "text": "Read the README from the top as a newcomer among the people the product is for, and after each section, write down the question you have next."
        },
        {
         "at": "make",
@@ -183,20 +183,20 @@
      {
       "id": "N6",
       "about": "Walkthrough",
-      "what": "Does the walkthrough show a real run on typical work that delivers what the product vision's key results promise, in a form the reader can see?",
+      "what": "Does the walkthrough show a run on typical work that delivers what the product promises its users, as agreed, in a form the reader can see: the use as agreed until the product runs, and a real run once it does?",
       "why": "A reader trusts a benefit they've seen happen in work like their own more than one they only read about, so the walkthrough shows it happen.",
       "items": [
        {
         "at": "decide",
-        "text": "Open the product vision and take as the use the objective of the role that the opening names, or, where the role has several, the one whose use most readers come for, by the issues they open where the product has a tracker, and else the first."
+        "text": "Take as the use the one agreed for the people that the opening names, or, where they have several, the one whose use most readers come for, by the issues they open where the product has a tracker, and else the first."
        },
        {
         "at": "decide",
-        "text": "Choose the task from the work that readers bring to that use: the issues and questions they open, where the product has a tracker, or else the role's job in the product vision. Take one like most of theirs, small enough to show from start to end, and whose result shows the benefit the opening promises, such as, for a release checker, one release of a small library with one change that breaks its callers."
+        "text": "Choose the task from the work that readers bring to that use: the issues and questions they open, where the product has a tracker, or else the work that the agreed decisions give those people. Take one like most of theirs, small enough to show from start to end, and whose result shows the benefit the opening promises, such as, for a release checker, one release of a small library with one change that breaks its callers."
        },
        {
         "at": "decide",
-        "text": "For each key result of that objective, decide what in the run shows it. For how well, show the result in use as its users would use it, such as the caller's test that fails on the broken release. For how fast, show what the reader spent, such as the questions they answered."
+        "text": "For each measure of that use that was agreed, decide what in the run shows it. For how well, show the result in use as its users would use it, such as the caller's test that fails on the broken release. For how fast, show what the reader spent, such as the questions they answered."
        },
        {
         "at": "decide",
@@ -204,7 +204,7 @@
        },
        {
         "at": "make",
-        "text": "Take a recorded run where one ran the same task on the version that the manifest names, such as an end-to-end test's record, as it shows what readers get today. Otherwise run the task with the product from a fresh start, such as in a throwaway copy of the repository with an empty home folder. Keep each input and output as it came. Where the product doesn't run yet, write the run that its architecture's sequences give, as the image that the work builds toward, and take it again from a recorded run once the product runs."
+        "text": "Take a recorded run where one ran the same task on the version that the manifest names, such as an end-to-end test's record, as it shows what readers get today. Otherwise run the task with the product from a fresh start, such as in a throwaway copy of the repository with an empty home folder. Keep each input and output as it came. Where the product doesn't run yet, write the run step by step as the agreed use gives it, as the image that the work builds toward, and take it again from a recorded run once the product runs."
        },
        {
         "at": "make",
@@ -229,12 +229,12 @@
      {
       "id": "N7",
       "about": "How it works",
-      "what": "Does How it works state first, in the reader's words, the one way that the product vision's concept puts first, and build the rest of its explanation from it?",
+      "what": "Does How it works state first, in the reader's words, the one way of working that the product values most, as agreed, and build the rest of its explanation from it?",
       "why": "A reader trusts a product they can explain to themselves, and they explain it from one idea, not from a list of parts.",
       "items": [
        {
         "at": "decide",
-        "text": "Open the product vision's Concept and take the one way it states first, which is what the product values most."
+        "text": "Take from the decisions the user agreed to for the README the one way of working that the product values most."
        },
        {
         "at": "make",
@@ -258,15 +258,15 @@
       "items": [
        {
         "at": "decide",
-        "text": "Open the product vision, and for each objective, write the problem its role has in that work today, in their words, such as, for a backup tool, `my backups fail without warning`."
+        "text": "For each use that the product promises, as agreed, write the problem its people have in that work today, in their words, such as, for a backup tool, `my backups fail without warning`."
        },
        {
         "at": "decide",
-        "text": "For each key result, write the doubt a reader would raise about whether the product gives it, in their words, such as `does it work with my network drive?`"
+        "text": "For each agreed measure of a use, write the doubt a reader would raise about whether the product gives it, in their words, such as `does it work with my network drive?`"
        },
        {
         "at": "decide",
-        "text": "Where the product has an issue tracker or discussions, read there what people raised before they used the product, and add a problem or doubt only where it bears on an objective or a key result and the list doesn't hold it yet."
+        "text": "Where the product has an issue tracker or discussions, read there what people raised before they used the product, and add a problem or doubt only where it bears on a promised use or its measure and the list doesn't hold it yet."
        },
        {
         "at": "decide",
@@ -274,19 +274,19 @@
        },
        {
         "at": "decide",
-        "text": "For each one left, take from the concept the idea that answers it."
+        "text": "For each one left, take from the agreed decisions the idea that answers it."
        },
        {
         "at": "decide",
-        "text": "Where the concept has none, tell what's missing: an idea that matters to the users, where the answer would change what they do or get, or only the way to make it work, where they'd do and get the same."
+        "text": "Where they hold none, tell what's missing: an idea that matters to the users, where the answer would change what they do or get, or only the way to make it work, where they'd do and get the same."
        },
        {
         "at": "decide",
-        "text": "Where an idea that matters to the users is missing, ask the user to add it to the product vision."
+        "text": "Where an idea that matters to the users is missing, ask the user to decide it."
        },
        {
         "at": "decide",
-        "text": "Where only the way to make it work is missing, hand it back as a requirement that the architecture meets, such as with rn's `point`."
+        "text": "Where only the way to make it work is missing, hand it back as a requirement that the making of the product meets, such as with rn's `point`."
        },
        {
         "at": "make",
@@ -380,15 +380,5 @@
    }
   ]
  },
- "template": "template.md",
- "inputs": [
-  {
-   "kind": "product-vision",
-   "takes": [
-    "Roles",
-    "Objectives and key results",
-    "Concept"
-   ]
-  }
- ]
+ "template": "template.md"
 }

@@ -36,7 +36,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Find the readers: open the work's goal and its inputs, such as the users that a product vision names, and the document's opening where it names its audience, and list each kind of reader named there with the purpose they come with, such as `a developer who installs the plugin and wants its first command to run`. Where none of these names the readers, or two name different ones, ask the person who owns the document, since a document written for a guessed reader serves someone it wasn't meant for."
+        "text": "Find the readers: open the work's goal and the decisions agreed for the document, such as the readers that the user agreed it serves, and the document's opening where it names its audience, and list each kind of reader named there with the purpose they come with, such as `a developer who installs the plugin and wants its first command to run`. Where none of these names the readers, or two name different ones, ask the person who owns the document, since a document written for a guessed reader serves someone it wasn't meant for."
        },
        {
         "at": "decide",
@@ -264,7 +264,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Find the words the readers use: open the documentation of the product the readers work in, such as Claude Code's documentation for the readers of a Claude Code plugin, and what the readers wrote for the work themselves, such as the issues they opened and their words in the work's inputs."
+        "text": "Find the words the readers use: open the documentation of the product the readers work in, such as Claude Code's documentation for the readers of a Claude Code plugin, and what the readers wrote for the work themselves, such as the issues they opened and their words in the request and in the decisions they agreed to."
        },
        {
         "at": "decide",
@@ -331,6 +331,5 @@
     ]
    }
   ]
- },
- "inputs": []
+ }
 }

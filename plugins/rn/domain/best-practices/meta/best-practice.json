@@ -14,7 +14,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Open the steering, the product vision where the product has one, and each best practice whose `inputs` name this kind, and list each kind of person who reads or runs a deliverable of the kind, with what they're trying to get done when they do, such as a developer who opens a README to decide whether a plugin solves their problem."
+        "text": "Open the steering and what the repository already holds about the people that the kind serves, and list each kind of person who reads or runs a deliverable of the kind, with what they're trying to get done when they do, such as a developer who opens a README to decide whether a plugin solves their problem."
        },
        {
         "at": "decide",
@@ -192,19 +192,19 @@
        },
        {
         "at": "make",
-        "text": "Write each item in positive form, as what to do toward the condition's state, such as `Name the problem that the product vision's objective holds` in place of `Don't list every problem`, since a maker aims at what a step names, and a ban names nothing to aim at."
+        "text": "Write each item in positive form, as what to do toward the condition's state, such as `Name the problem that the user agreed the product solves` in place of `Don't list every problem`, since a maker aims at what a step names, and a ban names nothing to aim at."
        },
        {
         "at": "make",
-        "text": "Write each item as what it's for, then an act on something that the generator has, such as a file, a list, or a command, with the question to think through toward the condition's state and, where there are options, the criterion that picks the one bringing the people closer, such as `To name what the readers come for, open the product vision and list its key results` in place of `Consider the quality characteristics`, since a maker who knows what an act is for judges a case that the act doesn't name."
+        "text": "Write each item as what it's for, then an act on something that the generator has, such as a file, a list, or a command, with the question to think through toward the condition's state and, where there are options, the criterion that picks the one bringing the people closer, such as `To name what the readers come for, list each end that the decisions agreed for the deliverable name` in place of `Consider the quality characteristics`, since a maker who knows what an act is for judges a case that the act doesn't name."
        },
        {
         "at": "make",
-        "text": "Give an example from the deliverable's kind only where the act alone would leave the generator unsure what to open or what to write, such as the form of a sentence it must write, since an example beside a plain act is one more line to read past. Name a language or a tool only as such an example, so that each deliverable's plan chooses its own."
+        "text": "Give an example from the deliverable's kind only where the act alone would leave the generator unsure what to open or what to write, such as the form of a sentence it must write, since an example beside a plain act is one more line to read past. Name a language or a tool only as such an example, so that the decisions agreed for each deliverable choose their own."
        },
        {
         "at": "make",
-        "text": "Ask of each item whether the maker of this kind takes it while making a deliverable of the kind, with what that deliverable's inputs give it. Where another kind's maker takes it, such as an item on trusting a test's judge in the best practice of an architecture, whose maker has no run to judge, move it to that kind's best practice, since a maker opens no best practice of another kind."
+        "text": "Ask of each item whether the maker of this kind takes it while making a deliverable of the kind, with the decisions agreed for it. Where another kind's maker takes it, such as an item on trusting a test's judge in the best practice of an architecture, whose maker has no run to judge, move it to that kind's best practice, since a maker opens no best practice of another kind."
        },
        {
         "at": "make",
@@ -220,7 +220,7 @@
       "items": [
        {
         "at": "make",
-        "text": "Read each item by which the generator finds the content it writes, such as the item by which a README's generator finds the problems it names, and ask what the item starts from. Where it gathers every thing of a kind and then keeps some, such as every problem that readers have, rewrite it to take the things from the part of an input or of the goal that its condition serves, such as the problems from the product vision's objectives and their key results, since gathering first fills the deliverable with the many."
+        "text": "Read each item by which the generator finds the content it writes, such as the item by which a README's generator finds the problems it names, and ask what the item starts from. Where it gathers every thing of a kind and then keeps some, such as every problem that readers have, rewrite it to take the things from the part of the decisions agreed for the deliverable or of the goal that its condition serves, such as the problems from what the user agreed the product solves for its readers, since gathering first fills the deliverable with the many."
        },
        {
         "at": "make",
@@ -244,45 +244,33 @@
    },
    {
     "id": "C3",
-    "what": "Each deliverable stays consistent with the deliverables it builds on and the deliverables built on it.",
+    "what": "Each deliverable stays true to the decisions agreed for it and to what the repository already holds.",
     "necessary_conditions": [
      {
       "id": "N6",
-      "about": "inputs",
-      "what": "Does the best practice name each kind of deliverable that this kind rests on, with the sections of it that this kind takes, and a condition that carries each of their vital few that its users need?",
-      "why": "A deliverable must say what the deliverables it builds on say, and the deliverables built on it must follow it, so that the users never meet two deliverables that disagree. The list follows the inputs of a process kernel in [ETVX](https://msdbok.github.io/content/proc/basics/etvx.html), the work products a task takes, here named by the sections taken, so that the maker of a deliverable whose input has no file in the product still knows which decisions it rests on.",
+      "about": "goal",
+      "what": "Does each necessary condition name one thing to decide about the deliverable, from which the orchestrator proposes how the deliverable will be, while the best practice names no other kind of deliverable as what it takes?",
+      "why": "Before the deliverable is made, rn's orchestrator turns the conditions into a proposal of how the deliverable will be, the user agrees to it, and the steering records the agreement as decisions. The maker makes the deliverable from those decisions and from what the repository already holds that bears on it, and the evaluator judges it by the same conditions, so the users get the deliverable that was agreed. The decisions work as the entry criteria of a process kernel in [ETVX](https://msdbok.github.io/content/proc/basics/etvx.html), what must hold before a task starts, and a best practice that names another kind's deliverable as what it takes leaves its maker unable to start where that deliverable doesn't exist.",
       "items": [
        {
         "at": "decide",
-        "text": "Go through each section of the template and ask where its content comes from. Each kind of deliverable that supplies content is an input, such as the product vision for a README, and so is each kind whose deliverable this one runs, such as the code that an E2E test runs."
+        "text": "Go through each section of the template and ask what must be decided about it for the users to reach the goal, such as which problem a README names first."
        },
        {
         "at": "decide",
-        "text": "Go the other way, from each input to the deliverable, since a deliverable that drops what it rests on fails its users while every part it holds is sound: take the input's vital few, such as the concept and the key results of a product vision, and ask which of them the deliverable's users need."
+        "text": "Go the other way, from the users to the deliverable, since a deliverable can hold every part soundly and still miss what its users need: list each thing that the users can't reach the goal without, such as the problem that the product solves, and ask which condition decides it. Where none does, add one."
        },
        {
         "at": "decide",
-        "text": "For each of those vital few that the users need, decide which part of the deliverable carries it."
-       },
-       {
-        "at": "decide",
-        "text": "Make sure a condition asks for each of those vital few, such as a README showing what the key results promise."
+        "text": "Write each condition so that it names one thing to decide, such as which problem the first paragraph names, in terms of what the users get, so that the orchestrator can propose how the deliverable will be on it, and the user can agree or change that point alone, without seeing the condition."
        },
        {
         "at": "make",
-        "text": "List in `inputs` each kind that N6.1 found, by the folder name of its best practice, with in `takes` each section of its template that a condition here carries, by its heading, such as `Walkthrough` of a README, and none for a kind that this one only runs. List the kinds alone, since the kinds built on this kind name it in their own `inputs`, and the plan holds the paths of each deliverable's inputs and orders the deliverable after them."
+        "text": "Where a condition, a why, or an item names another kind's deliverable or a section of its template as what it takes, such as `open the product vision`, rewrite it to name the knowledge itself, taken from the decisions agreed for the deliverable or from what the repository already holds, such as `the problems that the user agreed the product solves`, so that the maker can make the deliverable where no such deliverable exists."
        },
        {
         "at": "make",
-        "text": "Have the first practice read the sections that `inputs` takes, and say what it gets from each without naming the sections again, since a section named in two places drifts apart."
-       },
-       {
-        "at": "make",
-        "text": "Where you change a best practice that exists, search the other best practices for this kind's folder name in their `inputs`, and, in the same change, update each of their conditions that carries what you changed, such as a README's condition on the key results when the product vision's key results change."
-       },
-       {
-        "at": "make",
-        "text": "Where an input's best practice changed since this one last changed, open it, and check each condition here that carries its vital few against what it holds now."
+        "text": "Where the maker needs what the repository already holds, such as the commands that a plugin already has, have the item name the knowledge it looks for, not the kind of document that holds it, since the repository holds it wherever it is."
        }
       ]
      }
@@ -290,6 +278,5 @@
    }
   ]
  },
- "template": "template.json",
- "inputs": []
+ "template": "template.json"
 }

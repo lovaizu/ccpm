@@ -1,6 +1,6 @@
 {
  "goal": {
-  "what": "The developers build and change the parts of the product so that together they deliver what the README promises the users, each part putting its work on what brings the users there.",
+  "what": "The developers build and change the parts of the product so that together they deliver what the product promises its users, each part putting its work on what brings the users there.",
   "critical_success_factors": [
    {
     "id": "C1",
@@ -9,16 +9,16 @@
      {
       "id": "N1",
       "about": "Solution strategy, Principles",
-      "what": "Does Principles state first, in one sentence, the one idea by which the product delivers what its README promises?",
+      "what": "Does Principles state first, in one sentence, the one idea by which the product delivers what it promises its users?",
       "why": "Each view carries out one idea, and a developer who knows the idea builds a part that serves it. The [solution strategy](https://docs.arc42.org/section-4/) of arc42 sums up first the few decisions that shape the whole.",
       "items": [
        {
         "at": "decide",
-        "text": "Open the steering, and read the sections that `inputs` takes of each input it names: the product vision and the README, and, where the product builds on another's rules, the architecture it builds on, such as a guide to building a plugin of the host it runs in, to its end."
+        "text": "Gather what the product's users aim at and what the product promises them, from the decisions agreed for this deliverable and from what the repository already holds, and, where the product builds on another's rules, read the architecture it builds on, such as a guide to building a plugin of the host it runs in, to its end."
        },
        {
         "at": "decide",
-        "text": "Take the sentence that opens the product vision's Concept, the one idea by which the product brings its users to their objectives, such as piling up the vital few that bring a deliverable's people to their aim."
+        "text": "Take the one idea by which the product brings its users to their objectives, as agreed, such as piling up the vital few that bring a deliverable's people to their aim."
        },
        {
         "at": "make",
@@ -33,12 +33,12 @@
      {
       "id": "N2",
       "about": "User stories",
-      "what": "Does each user story state a value that it brings its role on its own, in the role's words and without the product's means, and do the stories together cover each objective of the product vision and each promise of the README?",
+      "what": "Does each user story state a value that it brings its role on its own, in the role's words and without the product's means, and do the stories together cover each objective of the product's users and each promise the product makes them?",
       "why": "The stories are the product's requirements: what each role wants, which the views then meet. A story that names a means, such as a command, states a design as a want, so no one asks whether the design serves the want. A [user story](https://www.mountaingoatsoftware.com/agile/user-stories) doesn't prescribe the solution, which the conversation and the acceptance criteria settle, and a want that brings no value on its own, such as answering a question, is a step toward one, which the views draw.",
       "items": [
        {
         "at": "decide",
-        "text": "Open the product vision and the README, and list each objective and each promise that the README makes its users."
+        "text": "List each objective of the product's users and each promise the product makes them, from the decisions agreed for this deliverable."
        },
        {
         "at": "decide",
@@ -57,16 +57,16 @@
      {
       "id": "N3",
       "about": "Principles, User stories, Components, Concept model, Sequences",
-      "what": "Does each principle item, user story, component, and concept trace to what the README promises the users, or to a need of the product's development or operation?",
+      "what": "Does each principle item, user story, component, and concept trace to what the product promises its users, or to a need of the product's development or operation?",
       "why": "A part that nothing needs costs effort to build and to keep, and gives no one anything.",
       "items": [
        {
         "at": "decide",
-        "text": "For each story, ask which activity, doubt, or need it carries, from three sources. The README and the product vision carry what the users get: the objectives and the promises that N2 lists, and the doubts that the README's How it works answers. Development adds what the developers need to build, test, and change the parts. Operation adds what keeps the product working across runs and updates, such as where its work outlives a run."
+        "text": "For each story, ask which activity, doubt, or need it carries, from three sources. The decisions agreed for this deliverable carry what the users get: the objectives and the promises that N2 lists, and the doubts about how the product works that it answers for them. Development adds what the developers need to build, test, and change the parts. Operation adds what keeps the product working across runs and updates, such as where its work outlives a run."
        },
        {
         "at": "make",
-        "text": "Once you have written Principles, for each principle item, name the doubt of the README's How it works, or the need of development or operation, that it carries."
+        "text": "Once you have written Principles, for each principle item, name the users' doubt about how the product works, or the need of development or operation, that it carries."
        },
        {
         "at": "make",
@@ -78,7 +78,7 @@
        },
        {
         "at": "make",
-        "text": "Where the product already exists, follow each story's path through its code, and where a behavior that the users meet there doesn't serve them as the README promises, such as how an invoice shows its amounts, write it as a decision of the component that changes it, since a behavior kept unasked becomes the specification, and every case built on it fixes its faults in place."
+        "text": "Where the product already exists, follow each story's path through its code, and where a behavior that the users meet there doesn't serve them as the product promises, such as how an invoice shows its amounts, write it as a decision of the component that changes it, since a behavior kept unasked becomes the specification, and every case built on it fixes its faults in place."
        }
       ]
      }
@@ -96,7 +96,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Take each idea of the product vision's Concept, each key result, each user story that spans parts, and each constraint of the host, of development, or of operation, such as how much one conversation holds, and ask what every part must value for the one idea to keep holding there, such as nothing lost on a stop."
+        "text": "Take each idea by which the product brings its users to their objectives, each key result, each user story that spans parts, and each constraint of the host, of development, or of operation, such as how much one conversation holds, as agreed, and ask what every part must value for the one idea to keep holding there, such as nothing lost on a stop."
        },
        {
         "at": "decide",
@@ -104,15 +104,15 @@
        },
        {
         "at": "decide",
-        "text": "Under each value, ask what every part must hold alike for it to come true, such as where the work's state lives. Take each from a doubt of the README's How it works whose answer the value keeps. For a value that comes from a story or a constraint and keeps no doubt's answer, take each from what that story or constraint needs. A part that held it otherwise would break a key result. Each is a decision of the principle."
+        "text": "Under each value, ask what every part must hold alike for it to come true, such as where the work's state lives. Take each from a users' doubt about how the product works whose answer the value keeps. For a value that comes from a story or a constraint and keeps no doubt's answer, take each from what that story or constraint needs. A part that held it otherwise would break a key result. Each is a decision of the principle."
        },
        {
         "at": "make",
-        "text": "Write each decision under its principle as `P<n>.<m>`, one decision in one sentence that says what happens by it, in the words of the README, without any name that a later section decides, such as a component, a data, a tool, or a count, since Principles comes before the sections that decide them. Read each as a developer who has read only the README, and rewrite each they can't follow, such as one that names what the product keeps without saying what."
+        "text": "Write each decision under its principle as `P<n>.<m>`, one decision in one sentence that says what happens by it, in the users' words, without any name that a later section decides, such as a component, a data, a tool, or a count, since Principles comes before the sections that decide them. Read each as a developer who knows only what the product promises its users, and rewrite each they can't follow, such as one that names what the product keeps without saying what."
        },
        {
         "at": "make",
-        "text": "Check that each doubt of the README's How it works lands in a value, and derive again the value it keeps where it lands in none. Remove each value that holds no decision, as it gives a developer nothing to hold to."
+        "text": "Check that each users' doubt about how the product works lands in a value, and derive again the value it keeps where it lands in none. Remove each value that holds no decision, as it gives a developer nothing to hold to."
        },
        {
         "at": "make",
@@ -184,7 +184,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Walk each story and each principle item, and list each concept that the product keeps or hands on, by the name the README gives it where it gives one, such as the work's record."
+        "text": "Walk each story and each principle item, and list each concept that the product keeps or hands on, by the name the users know it by where they have one, such as the work's record."
        },
        {
         "at": "decide",
@@ -216,7 +216,7 @@
        },
        {
         "at": "make",
-        "text": "At each handoff, ask what can go otherwise there that changes what the role meets or gets, from the README's walkthrough and from what each component alone decides: an input that a component refuses, a check that fails, or a choice that only the role can make, such as a question that the walkthrough shows the role answering."
+        "text": "At each handoff, ask what can go otherwise there that changes what the role meets or gets, from how the role uses the product, as agreed, and from what each component alone decides: an input that a component refuses, a check that fails, or a choice that only the role can make, such as a question that the role answers in that use."
        },
        {
         "at": "make",
@@ -310,7 +310,7 @@
    },
    {
     "id": "C4",
-    "what": "The developers find each gap between the parts before they build any part, and know, as they build, that the product does what the document and the product vision say.",
+    "what": "The developers find each gap between the parts before they build any part, and know, as they build, that the product does what the document says and what it promises its users.",
     "necessary_conditions": [
      {
       "id": "N12",
@@ -324,7 +324,7 @@
        },
        {
         "at": "decide",
-        "text": "Take each check's test target from the guide. Unit tests try the parts against their contracts. Integration tests try the parts joined against each element of this document. End-to-end (E2E) tests try the product in real use against each key result of the product vision. Use no other name for a test, so that each case's level tells which target it checks."
+        "text": "Take each check's test target from the guide. Unit tests try the parts against their contracts. Integration tests try the parts joined against each element of this document. End-to-end (E2E) tests try the product in real use against each key result of the users' objectives. Use no other name for a test, so that each case's level tells which target it checks."
        },
        {
         "at": "decide",
@@ -359,20 +359,16 @@
      {
       "id": "N13",
       "about": "the whole",
-      "what": "Is each gap that the software design and the test design found from the document mended in it, so that the two designs, made again from it, find none?",
-      "why": "A skeleton of the parts and test cases through it, made from the document before any body is built, show each gap between the parts while it's still cheap to mend: a case that no part can hold, or a handoff that no interface carries. Each gap mended in the document, not in the code around it, keeps the document true for each developer who builds on it.",
+      "what": "Is each gap between the parts that a case walked through them shows mended in the document, so that the cases, walked again through it, show none?",
+      "why": "Cases walked through the parts, before any body is built, show each gap between the parts while it's still cheap to mend: a case that no part can hold, or a handoff that no interface carries. Each gap mended in the document, not in the code around it, keeps the document true for each developer who builds on it.",
       "items": [
        {
         "at": "make",
-        "text": "Once Test strategy is written, have the skeleton made from the document by [the software design best practice](../software-design/best-practice.json), and then the test cases by [the test design best practice](../test-design/best-practice.json), each with its list of gaps."
+        "text": "Once Test strategy is written, walk each case of the product's use through the parts, and for each gap it shows, change the document: give a case a part, or a decision a component; remove a part that no case reaches, as N3 says; split a component by its decisions or its reasons to change; and give a handoff an arrow and a data."
        },
        {
         "at": "make",
-        "text": "For each gap that the lists name, change the document: give a case a part, or a decision a component; remove a part that no case reaches, as N3 says; split a component by its decisions or its reasons to change; and give a handoff an arrow and a data."
-       },
-       {
-        "at": "make",
-        "text": "Have the two designs follow the changed document as their practices say, and mend each gap they list again, until they list none."
+        "text": "Walk the cases through the changed document again, and mend each gap they show, until they show none."
        }
       ]
      },
@@ -429,12 +425,12 @@
      {
       "id": "N16",
       "about": "the whole",
-      "what": "Does the document hold only what stays true while the product vision and Principles stay, with no name of the implementation outside Directory structure?",
+      "what": "Does the document hold only what stays true while the users' objectives, the product's promises, and Principles stay, with no name of the implementation outside Directory structure?",
       "why": "A line about how a component works inside becomes untrue at the next change to that component, and the developer then can't trust the document. David Parnas's [information hiding](https://doi.org/10.1145/361598.361623) keeps such details inside the module.",
       "items": [
        {
         "at": "make",
-        "text": "For each line, ask whether it would become untrue if a component's internals changed while the product vision and Principles stayed."
+        "text": "For each line, ask whether it would become untrue if a component's internals changed while the users' objectives, the product's promises, and Principles stayed."
        },
        {
         "at": "make",
@@ -450,25 +446,5 @@
    }
   ]
  },
- "template": "template.md",
- "inputs": [
-  {
-   "kind": "product-vision",
-   "takes": [
-    "Roles",
-    "Objectives and key results",
-    "Concept"
-   ]
-  },
-  {
-   "kind": "readme",
-   "takes": [
-    "the opening",
-    "Non-goals",
-    "Requirements",
-    "Walkthrough",
-    "How it works"
-   ]
-  }
- ]
+ "template": "template.md"
 }

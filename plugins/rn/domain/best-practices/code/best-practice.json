@@ -1,6 +1,6 @@
 {
  "goal": {
-  "what": "Maintainers, people or AI agents, change what the code does and know that every behavior its specification asks for still holds, as the code holds only those behaviors, and whoever runs the code can fix a wrong input from outside.",
+  "what": "Maintainers, people or AI agents, change what the code does and know that every behavior agreed for it still holds, as the code holds only those behaviors, and whoever runs the code can fix a wrong input from outside.",
   "critical_success_factors": [
    {
     "id": "C1",
@@ -14,15 +14,15 @@
       "items": [
        {
         "at": "decide",
-        "text": "Open what the code must do, the sections that `inputs` takes, each from its file or, where its kind has no file in the product, from the decisions that the plan holds for it: the part's line in Components, the principles, each sequence that the part takes a step in, the part's skeleton, and its unit cases. The unit cases are the code's specification: each behavior of the code answers one of them, and the architecture's lines, where they exist, say only why a case asks what it does."
+        "text": "Take what the code must do from the decisions the user agreed to for the code, and from what the repository already holds that bears on it, such as the code that calls it: each behavior agreed for the code with its cases, the interfaces agreed for it, and the principles it follows. The agreed cases are the code's specification: each behavior of the code answers one of them."
        },
        {
         "at": "decide",
-        "text": "List the decisions that the specification leaves to the code: for each unit case, ask what the code could do in more than one way while the case still passes, such as the layout of a file that only the part reads, or the order in which it tries two sources. Each such choice is a decision left to the code, and a choice that a case, a principle, or the skeleton's interface already fixes isn't."
+        "text": "List the decisions that the specification leaves to the code: for each case, ask what the code could do in more than one way while the case still passes, such as the layout of a file that only the part reads, or the order in which it tries two sources. Each such choice is a decision left to the code, and a choice that a case, a principle, or an agreed interface already fixes isn't."
        },
        {
         "at": "decide",
-        "text": "Give each decision to one module. Keep the skeleton's modules, where one exists, which hold the decisions that the architecture gave the part, and add a module inside the part only for a decision that could change while the rest of the part stays, such as a file's layout that may change apart from the rules that read it. Keep two decisions in one module where a change of one always changes the other."
+        "text": "Give each decision to one module. Keep the modules that the agreed decisions or the repository already set, where there are any, and add a module only for a decision that could change while the rest of the code stays, such as a file's layout that may change apart from the rules that read it. Keep two decisions in one module where a change of one always changes the other."
        },
        {
         "at": "decide",
@@ -42,7 +42,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "List, for each module, the names that another module or a unit case calls, from the skeleton and the cases, and offer only those. Mark every other name as internal in the language's way, such as a leading underscore in Python, since a name that nothing outside calls is one the maintainer can change freely."
+        "text": "List, for each module, the names that another module or a case calls, from the agreed interfaces, the cases, and the code that calls it, and offer only those. Mark every other name as internal in the language's way, such as a leading underscore in Python, since a name that nothing outside calls is one the maintainer can change freely."
        },
        {
         "at": "make",
@@ -61,12 +61,12 @@
      {
       "id": "N3",
       "about": "Interface, Body",
-      "what": "Does each behavior of the code trace to a case of its specification, which is what the architecture asks of its part?",
+      "what": "Does each behavior of the code trace to a behavior that was agreed for the code?",
       "why": "Every behavior that no case asks for is code the maintainer must carry and keep working, while no test tells them whether it still holds.",
       "items": [
        {
         "at": "decide",
-        "text": "For each option, mode, parameter, and branch that you plan for a module, name the unit case that calls for it, and drop it from the plan where none does, such as a `--dry-run` flag that no case runs, or a second file format that no case reads."
+        "text": "For each option, mode, parameter, and branch that you plan for a module, name the case that calls for it, and drop it from the plan where none does, such as a `--dry-run` flag that no case runs, or a second file format that no case reads."
        },
        {
         "at": "make",
@@ -120,15 +120,15 @@
       "items": [
        {
         "at": "decide",
-        "text": "For each module that N1.3 adds inside the part, design its cases before its code, each as a test's name with its Given, When, and Then, naming the unit case of the part that it supports where Test strategy names traceability, as [the test design best practice](../test-design/best-practice.json) designs unit cases: one for each variation that its requirements name, each class, refusal, and bound among them. For example, `test_reads_back_an_entry_whose_text_holds_a_newline` supports `test_add_then_check_accepts_the_record`."
+        "text": "For each module that N1.3 adds, design its cases before its code, each as a test's name with its Given, When, and Then, naming the agreed case that it supports where the agreed decisions ask for traceability: one case for each class of what the module takes and gives that its requirements treat apart, one for each refusal, and for each bound one case at the bound and one just past it. For example, `test_reads_back_an_entry_whose_text_holds_a_newline` supports `test_add_then_check_accepts_the_record`."
        },
        {
         "at": "decide",
-        "text": "Where the code seems to need a case that no unit case of the part asks for, such as a mode that the part's tests never reach, end with `point` to take it back to whoever set the unit cases, such as the architecture's maker, and write it once a unit case asks for it, since until then it tests what no element asks for."
+        "text": "Where the code seems to need a case that no agreed case asks for, such as a mode that no agreed behavior reaches, end with `point` to take it back to the user, and write it once they agree to it, since until then it tests what no one asks for."
        },
        {
         "at": "make",
-        "text": "Write one test for each case that N5.1 designs, in the test code beside the part's unit tests, in the form that the note of Tests in the template gives. Where its name needs `and`, split it into two tests."
+        "text": "Write one test for each case that N5.1 designs, in the test code beside the code's other tests, in the form that the note of Tests in the template gives. Where its name needs `and`, split it into two tests."
        },
        {
         "at": "make",
@@ -156,11 +156,11 @@
       "items": [
        {
         "at": "make",
-        "text": "Use in each test the real modules that run fast and wholly inside the test, such as a file in the test's own temporary folder, and a test double only for what's slow or outside the test, such as a network service or a model, as Test strategy sets for the unit level."
+        "text": "Use in each test the real modules that run fast and wholly inside the test, such as a file in the test's own temporary folder, and a test double only for what's slow or outside the test, such as a network service or a model, as agreed for the code's tests."
        },
        {
         "at": "make",
-        "text": "Read each test and ask whether it reaches anything that a caller can't, such as an internal name, a field of an object, or a file that the part keeps for itself. Where it does, rewrite it to call the interface, such as `store.entries()` in place of `store._lines`."
+        "text": "Read each test and ask whether it reaches anything that a caller can't, such as an internal name, a field of an object, or a file that the code keeps for itself. Where it does, rewrite it to call the interface, such as `store.entries()` in place of `store._lines`."
        },
        {
         "at": "make",
@@ -180,15 +180,15 @@
        },
        {
         "at": "make",
-        "text": "Once the tests pass, run them with line and branch coverage measured by the tool that Test strategy names, such as coverage.py, and list each line and branch that no test runs."
+        "text": "Once the tests pass, run them with line and branch coverage measured by the tool that the agreed decisions or the code's setup name, such as coverage.py, and list each line and branch that no test runs."
        },
        {
         "at": "make",
-        "text": "For each line or branch that no test runs, name the case that calls for it. Where none does, remove it, as N3 says. Where a case that the tests name does, make that case's test reach it through the interface. Where only a case that no test names would, take that case back to whoever designs the cases, such as with `point`, and write its test once they add it."
+        "text": "For each line or branch that no test runs, name the case that calls for it. Where none does, remove it, as N3 says. Where a case that the tests name does, make that case's test reach it through the interface. Where only a case that no test names would, take that case back to the user, such as with `point`, and write its test once they agree to it."
        },
        {
         "at": "make",
-        "text": "Where two tests run the same branches for the same case, merge them into one, as N3 of the test design best practice says."
+        "text": "Where two tests run the same branches for the same case, merge them into one, since a second test on the same branch for the same case catches no fault more and only asks the maintainer to read and mend both."
        }
       ]
      }
@@ -206,7 +206,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "List each input that comes into the part from outside, from its interface and its unit cases, such as arguments, environment variables, files it reads, settings, and the replies of other programs, with the place in the code where each first comes in."
+        "text": "List each input that comes into the code from outside, from its interfaces and its cases, such as arguments, environment variables, files it reads, settings, and the replies of other programs, with the place in the code where each first comes in."
        },
        {
         "at": "make",
@@ -238,29 +238,5 @@
    }
   ]
  },
- "template": "template.md",
- "inputs": [
-  {
-   "kind": "architecture",
-   "takes": [
-    "Solution strategy",
-    "Components",
-    "Sequences",
-    "Test strategy"
-   ]
-  },
-  {
-   "kind": "software-design",
-   "takes": [
-    "Module opening",
-    "Interface"
-   ]
-  },
-  {
-   "kind": "test-design",
-   "takes": [
-    "Unit cases"
-   ]
-  }
- ]
+ "template": "template.md"
 }

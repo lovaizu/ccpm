@@ -14,7 +14,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Open the steering's decisions and each deliverable that its inputs name, and read each to its end."
+        "text": "Read to its end each decision that the user agreed to for this deliverable, and what the repository already holds that bears on it."
        },
        {
         "at": "decide",
@@ -49,18 +49,17 @@
      {
       "id": "N3",
       "about": "the whole",
-      "what": "Does the deliverable say what each deliverable it rests on says, wherever it carries it?",
-      "why": "A deliverable that says otherwise than what it rests on leaves its people to find which one holds.",
+      "what": "Does the deliverable say what the repository already holds, wherever it carries it?",
+      "why": "A deliverable that says otherwise than what the repository already holds leaves its people to find which one is right.",
       "items": [
        {
         "at": "make",
-        "text": "For each input whose content the deliverable carries, such as a README whose walkthrough the deliverable repeats, compare the two where they meet, and change the deliverable where they differ, since the input decides."
+        "text": "For each place where the deliverable carries what the repository already holds, such as a walkthrough that it repeats, compare the two where they meet, and change the deliverable where they differ, since what the repository holds decides."
        }
       ]
      }
     ]
    }
   ]
- },
- "inputs": []
+ }
 }

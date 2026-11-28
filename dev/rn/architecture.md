@@ -174,6 +174,11 @@ Strategies:
   what it had to assume. [P2.5, P1.4]\
   Intent: the user corrects what's off instead of answering what they already said, a settled
   request reaches the agreement in one proposal, and an open one in a few.
+- The shape of each deliverable, proposed before its first Round, from each necessary condition
+  of its kind's best practice taken as a point to decide, in the user's words, and each best
+  practice naming no other kind as what it rests on. [P2.5]\
+  Intent: the deliverable is made and judged by what the user agreed to, each best practice
+  serves alone, and the user meets the shape it takes, not the conditions it's judged by.
 - Each question of the user's answered by the orchestrator from the steering, the deliverables,
   and the Rounds, before anything is weighed. [P2.7]\
   Intent: the user talks a point through with the one who can answer why, and nothing is remade
@@ -274,6 +279,8 @@ sequenceDiagram
     O->>U: the answer with why, from the steering, the deliverables, and the Rounds, changing nothing [P2.7]
   end
   loop each deliverable of the step, each after those it rests on [P1.2]
+    O->>U: the deliverable's shape, each point of its best practice's conditions in the user's words [P2.5]
+    U->>O: agrees, or corrects what's off, taken in as the user's decisions (Steering) [P2.5]
     loop each Round, until each condition is good or the limit is reached [P3.1]
       O->>S: starts the deliverable's next role, as the steering names it, in a new Round (Deliverable, Round) [P5.3]
       O->>G: starts one with the steering, the deliverable, and its best practice (Deliverable, Best practice) [P5.1]

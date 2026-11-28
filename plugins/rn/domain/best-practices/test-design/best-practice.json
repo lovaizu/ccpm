@@ -1,51 +1,51 @@
 {
   "goal": {
-    "what": "The developers see, before anyone builds a part, whether the parts joined as the architecture draws give each key result, and the architecture's maker mends each place where they can't.",
+    "what": "The developers see, before anyone builds a part, whether the parts joined as agreed give each key result, and the user mends each place where they can't.",
     "critical_success_factors": [
       {
         "id": "C1",
-        "what": "Each level that Test strategy names has the cases that check what its target promises.",
+        "what": "Each level of testing agreed for the product has the cases that check what its target promises.",
         "necessary_conditions": [
           {
             "id": "N1",
             "about": "E2E cases",
-            "what": "Where Test strategy runs the product whole, does each key result have an E2E case that runs an objective's main use at the size of a real request, and names the key result?",
-            "why": "The developers know that the product does what its product vision promises only where a case runs it as its users do, and a case written before any part is built fixes what the parts together must give. ISTQB's test analysis takes each test condition from the test basis, here each key result. For a product that holds a prompt, Test strategy runs the product whole as the user's E2E run, in which the user runs a real request and a developer watches each reply, so no E2E test code is written.",
+            "what": "Where the agreed testing runs the product whole, does each key result have an E2E case that runs an objective's main use at the size of a real request, and names the key result?",
+            "why": "The developers know that the product does what it promises its users only where a case runs it as its users do, and a case written before any part is built fixes what the parts together must give. ISTQB's test analysis takes each test condition from the test basis, here each key result. A product that holds a prompt runs whole as the user's E2E run, in which the user runs a real request and a developer watches each reply, so no E2E test code is written.",
             "items": [
               {
                 "at": "decide",
-                "text": "Open the product vision, the README, the architecture, and the skeleton, and read the sections that `inputs` takes from each: the key results, the walkthrough, each principle item, decision, and handoff of the architecture, Test strategy with its checks and levels, and each interface that the skeleton offers, such as the one through which a test puts a double of the host in its place."
+                "text": "Gather from the decisions agreed for this deliverable and from what the repository already holds the key results, how the users use the product, each principle, decision, and handoff of the parts, the checks and levels of testing, and each interface that the code offers, such as the one through which a test puts a double of the host in its place."
               },
               {
                 "at": "make",
-                "text": "Where Test strategy names the E2E level, for each key result write a case that runs the main use of its objective, as the README's walkthrough shows it, at the size of a real request, and names the key result, such as `KR1.1`. Where the product holds a prompt, write no E2E case, as the user's E2E run is its E2E test."
+                "text": "Where the agreed testing names the E2E level, for each key result write a case that runs the main use of its objective, as the users use it, at the size of a real request, and names the key result, such as `KR1.1`. Where the product holds a prompt, write no E2E case, as the user's E2E run is its E2E test."
               }
             ]
           },
           {
             "id": "N2",
             "about": "Integration cases",
-            "what": "Where Test strategy names integration testing, does each element of the architecture, each path through each sequence, each principle item of Principles, each decision of a component, and each handoff with its data, have an integration case that names it?",
-            "why": "An element that no case reaches is one whose parts no one has seen fit together, and a case written through the skeleton before any body shows a gap between the parts while it's still cheap to mend. Steve Freeman and Nat Pryce's outside-in test-driven development, in [Growing Object-Oriented Software, Guided by Tests](http://www.growing-object-oriented-software.com/), finds each part's roles by first writing the tests one level up.",
+            "what": "Where the agreed testing names integration testing, does each agreed element of the parts, each path through each use, each principle that every part holds, each decision of a component, and each handoff with its data, have an integration case that names it?",
+            "why": "An element that no case reaches is one whose parts no one has seen fit together, and a case written through the interfaces before any body shows a gap between the parts while it's still cheap to mend. Steve Freeman and Nat Pryce's outside-in test-driven development, in [Growing Object-Oriented Software, Guided by Tests](http://www.growing-object-oriented-software.com/), finds each part's roles by first writing the tests one level up.",
             "items": [
               {
                 "at": "make",
-                "text": "For each story's sequence, write a case for each path through it: the main flow, each branch, each step that sends work back, and each question put to the role, until every move from one step to the next lies on some path."
+                "text": "For each use of the product, as agreed, write a case for each path through it: the main flow, each branch, each step that sends work back, and each question put to the role, until every move from one step to the next lies on some path."
               },
               {
                 "at": "make",
-                "text": "For each principle item of Principles, write a case where the parts keep it, which can be run again with the part that holds it taken out, to see it fail, such as by the script that checks the trace."
+                "text": "For each principle that every part holds, as agreed, write a case where the parts keep it, which can be run again with the part that holds it taken out, to see it fail, such as by the script that checks the trace."
               },
               {
                 "at": "make",
-                "text": "For each decision that a component alone makes, write a case that shows it, and for each handoff between parts, a case with the data it passes as Concept model names it."
+                "text": "For each decision that a component alone makes, write a case that shows it, and for each handoff between parts, a case with the data it passes by the name the product gives it."
               }
             ]
           },
           {
             "id": "N3",
             "about": "Unit cases",
-            "what": "Does each interface of the skeleton have a unit case for each variation that its requirements name: each class of what it takes and gives, each refusal, each bound, and each transition that the product's use brings about, with no two cases left on the same branch for the same requirement once the body is built?",
+            "what": "Does each interface of the code have a unit case for each variation that its requirements name: each class of what it takes and gives, each refusal, each bound, and each transition that the product's use brings about, with no two cases left on the same branch for the same requirement once the body is built?",
             "why": "Variations drawn from the requirements before the body is written find the inputs that the part must treat apart, so the cases say what the part must do rather than what its code does. Once the body is built, coverage shows each line that no case runs, which either does what no requirement asks or lacks its case, and two cases on the same branch for the same requirement catch no fault more and only ask the maintainer to read and mend both. The techniques are the black-box techniques of the [ISTQB Foundation Level syllabus](https://www.istqb.org/certifications/certified-tester-foundation-level-ctfl-v4-0/): equivalence partitioning, boundary value analysis, and state transition testing.",
             "items": [
               {
@@ -66,7 +66,7 @@
               },
               {
                 "at": "make",
-                "text": "Where an interface's result depends on what came before, write one case for each transition that the architecture's sequences and the host's records show the use bringing about, with the state it moves to or the refusal it gives."
+                "text": "Where an interface's result depends on what came before, write one case for each transition that the agreed uses and the host's records show the use bringing about, with the state it moves to or the refusal it gives."
               },
               {
                 "at": "make",
@@ -81,12 +81,12 @@
           {
             "id": "N7",
             "about": "Properties",
-            "what": "Where Test strategy names property-based testing, does each invariant that the requirements state, each that must hold for every input the product's use can bring, have a property that names the element it rests on?",
-            "why": "A case shows a part right for the inputs its maker foresaw, while a property states what must hold for every input the use can bring, such as each form in which an AI names a file, and a tool then searches for one that breaks it. John Hughes's [How to Specify It!](https://research.chalmers.se/publication/517894) gives five kinds of property: invariant, postcondition, metamorphic, inductive, and model-based. In his trial, model-based and metamorphic properties caught the most faults, and he warns that a test that copies the code keeps the code's faults. So the maker takes each property from the requirements alone, the product vision, the README, and the architecture, before any body is written, and never from the skeleton or the code, since a property exists to check that the requirements hold, not that the code is robust.",
+            "what": "Where the agreed testing names property-based testing, does each invariant that the requirements state, each that must hold for every input the product's use can bring, have a property that names the element it rests on?",
+            "why": "A case shows a part right for the inputs its maker foresaw, while a property states what must hold for every input the use can bring, such as each form in which an AI names a file, and a tool then searches for one that breaks it. John Hughes's [How to Specify It!](https://research.chalmers.se/publication/517894) gives five kinds of property: invariant, postcondition, metamorphic, inductive, and model-based. In his trial, model-based and metamorphic properties caught the most faults, and he warns that a test that copies the code keeps the code's faults. So the maker takes each property from the requirements alone, the decisions agreed for the product, before any body is written, and never from the code, empty or built, since a property exists to check that the requirements hold, not that the code is robust.",
             "items": [
               {
                 "at": "make",
-                "text": "Take each key result, each step of the README's walkthrough, each rule of Concept model, each principle item, and each decision of a component. Ask of each whether it must hold for every input that the product's use can bring, and whether its break keeps the people from their aim, such as a steering that leaves its schema after a change, which stops the work. List each that meets both, with the element it rests on, since a property of an invariant that no person meets finds inputs whose mends bring them nothing."
+                "text": "Take each key result, each step of the users' use of the product, each rule of the agreed kinds of data, each principle, and each decision of a component, as agreed. Ask of each whether it must hold for every input that the product's use can bring, and whether its break keeps the people from their aim, such as a steering that leaves its schema after a change, which stops the work. List each that meets both, with the element it rests on, since a property of an invariant that no person meets finds inputs whose mends bring them nothing."
               },
               {
                 "at": "make",
@@ -94,11 +94,11 @@
               },
               {
                 "at": "make",
-                "text": "Write for each property a generator of the inputs that the product's use can bring, from the concepts and rules of Concept model and the forms that the walkthrough names: the forms that an AI or a person writes, which no developer foresees, and the refused ones among them. Never shape a generator by the branches of the code, as it then reaches only what the code already treats."
+                "text": "Write for each property a generator of the inputs that the product's use can bring, from the agreed kinds of data and their rules and the forms that the users' use names: the forms that an AI or a person writes, which no developer foresees, and the refused ones among them. Never shape a generator by the branches of the code, as it then reaches only what the code already treats."
               },
               {
                 "at": "make",
-                "text": "Write each property as a test in the place that Directory structure names for properties, with `Given any` and its inputs, When, and Then stated, naming the element it rests on, and see it fail at the empty bodies, as N4 says of a case."
+                "text": "Write each property as a test in the place agreed for properties, with `Given any` and its inputs, When, and Then stated, naming the element it rests on, and see it fail at the empty bodies, as N4 says of a case."
               }
             ]
           }
@@ -111,12 +111,12 @@
           {
             "id": "N4",
             "about": "E2E cases, Integration cases, Unit cases, Properties",
-            "what": "Is each case a test in the test code, with its Given, When, and Then stated, that calls the skeleton only through its interfaces and fails on the empty bodies?",
+            "what": "Is each case a test in the test code, with its Given, When, and Then stated, that calls the code only through its interfaces and fails on the empty bodies?",
             "why": "A case kept as a test is the one statement of what a part must do, and a case that passes on an empty body tests nothing. Dan North's [behaviour-driven development](https://dannorth.net/introducing-bdd/) writes each scenario as Given, When, and Then.",
             "items": [
               {
                 "at": "make",
-                "text": "Write each case as a test in the place that Directory structure names for its level, in the form that the note of its section in the template gives, and keep the cases in the test code alone, since a list beside the code says each case twice."
+                "text": "Write each case as a test in the place agreed for its level, in the form that the note of its section in the template gives, and keep the cases in the test code alone, since a list beside the code says each case twice."
               },
               {
                 "at": "make",
@@ -128,7 +128,7 @@
               },
               {
                 "at": "make",
-                "text": "Run the tests and the type checker that Test strategy names, and see every case fail at an empty body, not at a fault of the test or a file that the skeleton lacks: a type that doesn't fit across a handoff is a gap that N6 lists, and a case that passes on an empty body tests nothing. Leave unrun a case that runs the real host or a model, which only the type checker reads at this point."
+                "text": "Run the tests and the type checker agreed for the product, and see every case fail at an empty body, not at a fault of the test or a file that the code lacks: a type that doesn't fit across a handoff is a gap that N6 lists, and a case that passes on an empty body tests nothing. Leave unrun a case that runs the real host or a model, which only the type checker reads at this point."
               }
             ]
           }
@@ -141,12 +141,12 @@
           {
             "id": "N5",
             "about": "Trace",
-            "what": "Where Test strategy names traceability, does the script that checks the trace give 0, finding that every element of the architecture has an integration case and every case names something one level up that exists?",
+            "what": "Where the agreed testing names traceability, does the script that checks the trace give 0, finding that every agreed element of the parts has an integration case and every case names something one level up that exists?",
             "why": "Only a check by name finds each element that no case reaches among many, while the reading that N6 asks for judges whether the cases are enough.",
             "items": [
               {
                 "at": "make",
-                "text": "Where the architecture the product builds on keeps a script that checks the trace, such as one that a guide to building plugins runs on every plugin, take that one, and add only the checks it lacks. Elsewhere, make the script where Directory structure places it, so that it finds each element by where the architecture's template puts its name, such as each story by its `S<n>` and each key result by its `KR<n>.<m>`, and each case by the name it gives of what it supports."
+                "text": "Where the architecture the product builds on keeps a script that checks the trace, such as one that a guide to building plugins runs on every plugin, take that one, and add only the checks it lacks. Elsewhere, make the script where the agreed layout places it, so that it finds each element by the ID it has where the repository holds it, such as each story by its `S<n>` and each key result by its `KR<n>.<m>`, and each case by the name it gives of what it supports."
               },
               {
                 "at": "make",
@@ -158,17 +158,17 @@
       },
       {
         "id": "C4",
-        "what": "Each place where the cases show the architecture can't give a key result reaches its maker before anyone builds around it.",
+        "what": "Each place where the cases show the agreed parts can't give a key result reaches the user before anyone builds around it.",
         "necessary_conditions": [
           {
             "id": "N6",
             "about": "Gaps",
-            "what": "Does the list of gaps name each place where the cases can't follow the architecture, each with the element of the architecture that it bears on?",
-            "why": "A gap that the cases show is mended in the architecture while nothing rests on it, and a case bent around it leaves the document wrong for every developer after.",
+            "what": "Does the list of gaps name each place where the cases can't follow the decisions agreed, each with the decision that it bears on?",
+            "why": "A gap that the cases show is mended in the agreed decisions while nothing rests on it, and a case bent around it leaves those decisions wrong for every developer after.",
             "items": [
               {
                 "at": "make",
-                "text": "Read the cases against the architecture and the skeleton, and list each gap: a case that no part can hold; a part that no case reaches; a part whose cases change for more than one reason, such as a file's form and a remote's commands; and a handoff that no interface carries."
+                "text": "Read the cases against the decisions agreed and the code's interfaces, and list each gap: a case that no part can hold; a part that no case reaches; a part whose cases change for more than one reason, such as a file's form and a remote's commands; and a handoff that no interface carries."
               },
               {
                 "at": "make",
@@ -176,11 +176,11 @@
               },
               {
                 "at": "make",
-                "text": "Write each gap in the form that the note of Gaps in the template gives, and write the case that meets the gap as the architecture draws it, with only the parts, interfaces, and behaviors that the architecture draws, since a case built on a part invented around the gap fixes that part in place before the architecture's maker decides the mend."
+                "text": "Write each gap in the form that the note of Gaps in the template gives, and write the case that meets the gap as the decisions agreed draw it, with only the parts, interfaces, and behaviors they name, since a case built on a part invented around the gap fixes that part in place before the user decides the mend."
               },
               {
                 "at": "make",
-                "text": "Where the architecture or the skeleton changes, change the cases to it as N1 to N4 say, and read them again for gaps, until you list none."
+                "text": "Where the decisions agreed or the code's interfaces change, change the cases to it as N1 to N4 say, and read them again for gaps, until you list none."
               }
             ]
           }
@@ -188,36 +188,5 @@
       }
     ]
   },
-  "template": "template.md",
-  "inputs": [
-    {
-      "kind": "product-vision",
-      "takes": [
-        "Objectives and key results"
-      ]
-    },
-    {
-      "kind": "readme",
-      "takes": [
-        "Walkthrough"
-      ]
-    },
-    {
-      "kind": "architecture",
-      "takes": [
-        "Solution strategy",
-        "Components",
-        "Concept model",
-        "Sequences",
-        "Test strategy"
-      ]
-    },
-    {
-      "kind": "software-design",
-      "takes": [
-        "Interface",
-        "Prompt"
-      ]
-    }
-  ]
+  "template": "template.md"
 }

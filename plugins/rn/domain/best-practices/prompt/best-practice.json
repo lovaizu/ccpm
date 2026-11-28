@@ -14,19 +14,19 @@
       "items": [
        {
         "at": "decide",
-        "text": "Open the architecture, and find the component that the prompt carries out: its line in Components, and its file in Directory structure, such as `agents/planner.md`. This best practice calls it the prompt's component, and the person of a user story the story's role, as the architecture does."
+        "text": "Take from the decisions agreed for this deliverable the part of the product that the prompt carries out, the one job it's accountable for, and its file, such as `agents/planner.md`. This best practice calls it the prompt's component, and each person whose need it serves a role."
        },
        {
         "at": "decide",
-        "text": "Open the user stories whose sequences the prompt's component takes part in, and write down several requests that the prompt is for, each in a user's own words, from the way the story's role meets the product, such as `turn issue 12 into a plan`."
+        "text": "Take each need of the users that the prompt's component serves, as agreed, and write down several requests that the prompt is for, each in a user's own words, from the way the role meets the product, such as `turn issue 12 into a plan`."
        },
        {
         "at": "decide",
-        "text": "Write down several near requests that the prompt isn't for, each from a user story that another component carries, in a user's own words."
+        "text": "Write down several near requests that the prompt isn't for, each from a need that another part of the product serves, in a user's own words."
        },
        {
         "at": "make",
-        "text": "Write the prompt's name: the name of its file in Directory structure without the extension, such as `planner` for `agents/planner.md`. Where Directory structure gives no file, name it by what it does, in lowercase words joined by hyphens, such as `processing-pdfs`."
+        "text": "Write the prompt's name: the name of its file, as agreed, without the extension, such as `planner` for `agents/planner.md`. Where no file is agreed, name it by what it does, in lowercase words joined by hyphens, such as `processing-pdfs`."
        },
        {
         "at": "make",
@@ -34,7 +34,7 @@
        },
        {
         "at": "make",
-        "text": "Open the description of each other prompt that the host chooses among for the near requests: each skill and agent of the product, in the folders that the architecture's Directory structure gives, and each of the host's own that a near request names, such as a built-in command. Where a near request fits the prompt's description as well as another's, add what sets the prompt apart, such as the kind of input it takes."
+        "text": "Open the description of each other prompt that the host chooses among for the near requests: each skill and agent of the product, in the folders where the repository holds them, and each of the host's own that a near request names, such as a built-in command. Where a near request fits the prompt's description as well as another's, add what sets the prompt apart, such as the kind of input it takes."
        },
        {
         "at": "make",
@@ -45,12 +45,12 @@
      {
       "id": "N2",
       "about": "the whole",
-      "what": "Does the body do exactly the task that the entry's description says, which the architecture gives the prompt's component?",
-      "why": "The caller gets what the description promised, and the product gets what the architecture gives the prompt's component, only if the body does that same task.",
+      "what": "Does the body do exactly the task that the entry's description says, which is the job agreed for the prompt's component?",
+      "why": "The caller gets what the description promised, and the product gets the job agreed for the prompt's component, only if the body does that same task.",
       "items": [
        {
         "at": "decide",
-        "text": "Take the task from the architecture: the line in Components of the prompt's component, the role that this question names, which says what the component alone decides, and each arrow from or to the component in Sequences, which says each step it takes and the data it hands on."
+        "text": "Take the task from the decisions agreed for this deliverable: the one job the prompt's AI is accountable for, which says what the component alone decides, and each handoff from or to the component, which says each step it takes and the data it hands on."
        },
        {
         "at": "make",
@@ -72,15 +72,15 @@
       "items": [
        {
         "at": "decide",
-        "text": "Take the line of the prompt's component in the architecture's Components, and write who the AI is and the one job it's accountable for in one sentence, such as `You're rn's evaluator, accountable for the deliverable as its people meet it.`"
+        "text": "Take the one job the prompt's AI is accountable for, as agreed, and write who the AI is and the one job it's accountable for in one sentence, such as `You're rn's evaluator, accountable for the deliverable as its people meet it.`"
        },
        {
         "at": "decide",
-        "text": "Take the components whose arrows meet the prompt's component in the architecture's Sequences, and write what lies on their side, so that the AI neither does their work nor leaves a gap, such as `Making or mending it is the generator's.`"
+        "text": "Take the parts of the product that hand work to or from the prompt's component, as agreed, and write what lies on their side, so that the AI neither does their work nor leaves a gap, such as `Making or mending it is the generator's.`"
        },
        {
         "at": "decide",
-        "text": "Take the intent of the strategy that gives the component its job in the architecture, and write what breaks without the role, so that the AI judges by it where a step doesn't fit, such as `Its maker can't see where the people would stumble, as it knows what was meant.`"
+        "text": "Take the intent agreed for the component's job, and write what breaks without the role, so that the AI judges by it where a step doesn't fit, such as `Its maker can't see where the people would stumble, as it knows what was meant.`"
        },
        {
         "at": "make",
@@ -96,11 +96,11 @@
       "items": [
        {
         "at": "decide",
-        "text": "For each step, list the facts it needs. Take its inputs and where they lie from the arrows to the prompt's component in the architecture's Sequences and from its Directory structure, and the terms it uses from the concept model. Take the rules of the place that the step's work could break from the architecture's Principles and the rules they build on, such as the one folder a component writes in."
+        "text": "For each step, list the facts it needs. Take its inputs, where they lie, and the terms it uses from the decisions agreed for this deliverable and from what the repository already holds. Take the rules of the place that the step's work could break from the principles that the product's parts follow and the rules they build on, as agreed or as the repository holds them, such as the one folder a component writes in."
        },
        {
         "at": "decide",
-        "text": "Add each decision of the steering that the steps turn on and the architecture doesn't hold, such as a limit that the user set on what the prompt may change. Where a step needs a fact that neither the architecture, the steering, nor the repository gives, such as which branch the prompt may push to, end with `point`, naming the fact and your recommendation, since a fact only the user holds becomes a guess when the prompt leaves it out."
+        "text": "Add each other decision of the steering that the steps turn on, such as a limit that the user set on what the prompt may change. Where a step needs a fact that neither the steering nor the repository gives, such as which branch the prompt may push to, end with `point`, naming the fact and your recommendation, since a fact only the user holds becomes a guess when the prompt leaves it out."
        },
        {
         "at": "decide",
@@ -122,7 +122,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Go through the steps that the arrows of the prompt's component in the architecture's Sequences give it, and ask of each whether an AI that holds the job that the role names, as N3.1 wrote it, would know how to reach the step's result. Write a step only where it wouldn't, such as a check to run or a form to keep, and leave the rest to the AI."
+        "text": "Go through the steps that the agreed handoffs of the prompt's component give it, and ask of each whether an AI that holds the job that the role names, as N3.1 wrote it, would know how to reach the step's result. Write a step only where it wouldn't, such as a check to run or a form to keep, and leave the rest to the AI."
        },
        {
         "at": "decide",
@@ -130,7 +130,7 @@
        },
        {
         "at": "decide",
-        "text": "List what holds once the AI has done the task: each thing it hands on at its last arrow in Sequences, and each file or state it leaves, such as a plan written in its form."
+        "text": "List what holds once the AI has done the task: each thing it hands on at its last handoff, and each file or state it leaves, such as a plan written in its form."
        },
        {
         "at": "decide",
@@ -198,7 +198,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "To find what the task takes from the user, read the user stories whose sequences the prompt's component takes part in, and each question put to the story's role in the architecture's Sequences, and write what the story's role gives the task, its purpose and intent, and what the AI judges from them, such as `The developer says what the change is for, and the AI chooses how to reach it`."
+        "text": "To find what the task takes from the user, take each need of the users that the prompt's component serves, and each question put to the role in that use, as agreed, and write what the role gives the task, its purpose and intent, and what the AI judges from them, such as `The developer says what the change is for, and the AI chooses how to reach it`."
        },
        {
         "at": "decide",
@@ -210,7 +210,7 @@
        },
        {
         "at": "make",
-        "text": "Write how what's the user's reaches them. A prompt that runs as a subagent can't talk to the person, so it ends with the result that Sequences give for a question to its caller, with the point, the options, and its recommendation. A prompt that runs in the main conversation asks the person in a message, as N14 says, one choice at a time, so that the person decides each from its first lines."
+        "text": "Write how what's the user's reaches them. A prompt that runs as a subagent can't talk to the person, so it ends with the result agreed for a question to its caller, with the point, the options, and its recommendation. A prompt that runs in the main conversation asks the person in a message, as N14 says, one choice at a time, so that the person decides each from its first lines."
        }
       ]
      },
@@ -244,11 +244,11 @@
       "items": [
        {
         "at": "decide",
-        "text": "Read each step and ask whether it has one right result, such as a check or a file's form. For each that does, look in the architecture's Components for a program that gives that result, such as the product's own check, and take its path from Directory structure."
+        "text": "Read each step and ask whether it has one right result, such as a check or a file's form. For each that does, look in the decisions agreed and in the repository for a program that gives that result, such as the product's own check, and take its path."
        },
        {
         "at": "make",
-        "text": "Have each such step run its program by that path. Where Components holds no program for it and the deliverable is a folder that holds scripts, such as a skill's, write one there that gives the result on every run and handles its own errors, such as `scripts/validate.py`. Where the deliverable can't hold it, end with `point`, naming the step and the program it needs, since a part that the architecture lacks is a decision of the architecture."
+        "text": "Have each such step run its program by that path. Where no program for it is agreed or held and the deliverable is a folder that holds scripts, such as a skill's, write one there that gives the result on every run and handles its own errors, such as `scripts/validate.py`. Where the deliverable can't hold it, end with `point`, naming the step and the program it needs, since a part that the product lacks is a decision about the product's parts, not about the prompt."
        }
       ]
      },
@@ -292,11 +292,11 @@
        },
        {
         "at": "decide",
-        "text": "Hold each such rule with a deny rule where it limits what the AI may read, write, or run, and a permission pattern names it, such as `Read(./.env)`, since a deny rule holds in every permission mode. Write it in `permissions.deny` of the settings file that the architecture's Directory structure gives the host, such as `.claude/settings.json`. Hold it with a command [hook](https://code.claude.com/docs/en/hooks) where it's a step that must happen, where it turns on more than a pattern names, such as a write allowed only into the run's own file, or where the prompt ships in a plugin, since a plugin's files carry no permission rules."
+        "text": "Hold each such rule with a deny rule where it limits what the AI may read, write, or run, and a permission pattern names it, such as `Read(./.env)`, since a deny rule holds in every permission mode. Write it in `permissions.deny` of the host's settings file, as agreed or as the repository holds it, such as `.claude/settings.json`. Hold it with a command [hook](https://code.claude.com/docs/en/hooks) where it's a step that must happen, where it turns on more than a pattern names, such as a write allowed only into the run's own file, or where the prompt ships in a plugin, since a plugin's files carry no permission rules."
        },
        {
         "at": "make",
-        "text": "For each rule that a hook holds, look in the architecture's Components for a hook that holds such rules, such as a guard, and add the rule to it by the path Directory structure gives. Where Components holds none and the deliverable is a folder that holds a hooks file, such as a plugin's `hooks/hooks.json`, write the hook there. Where the deliverable can't hold it, end with `point`, naming the rule and the hook it needs, as for a program in N9.2."
+        "text": "For each rule that a hook holds, look in the decisions agreed and in the repository for a hook that holds such rules, such as a guard, and add the rule to it by its path. Where there's none and the deliverable is a folder that holds a hooks file, such as a plugin's `hooks/hooks.json`, write the hook there. Where the deliverable can't hold it, end with `point`, naming the rule and the hook it needs, as for a program in N9.2."
        },
        {
         "at": "make",
@@ -313,16 +313,16 @@
      {
       "id": "N13",
       "about": "Steps, Output",
-      "what": "Can the caller act on what comes back, in the form that the architecture's sequences hand on, without asking the AI anything further?",
+      "what": "Can the caller act on what comes back, in the form agreed for the handoff, without asking the AI anything further?",
       "why": "The caller gets only what comes back, so a result that needs a follow-up question costs a round trip, and a result in a form the caller doesn't read stops the sequence there.",
       "items": [
        {
         "at": "decide",
-        "text": "Open each sequence that the prompt's component takes part in, and name the caller: the one whose arrow starts the component and who gets its answer. Write what the caller does with the result at its next arrow."
+        "text": "For each use agreed of the prompt's component, name the caller: the one who starts the component and gets its answer. Write what the caller does with the result at its next handoff."
        },
        {
         "at": "decide",
-        "text": "Take what comes back from the arrow where the component answers the caller, with the data as the concept model names it."
+        "text": "Take what comes back where the component answers the caller, as agreed, with the data by the name the product gives it."
        },
        {
         "at": "decide",
@@ -354,7 +354,7 @@
        },
        {
         "at": "make",
-        "text": "In the Output section, give the terms of the person's that the messages use, from the user stories and the README, since the AI can't know them on its own, as N4 says."
+        "text": "In the Output section, give the terms of the person's that the messages use, from the decisions agreed and from what the repository already holds, since the AI can't know them on its own, as N4 says."
        },
        {
         "at": "make",
@@ -388,7 +388,7 @@
       "id": "N16",
       "about": "the whole",
       "what": "Does the user's E2E run try the product that the prompt is part of, once its unit tests pass, with each place where it fails its people taken back to its cause?",
-      "why": "The writer knows a prompt only by what the AI does with it, where the AI's variance and the faults of the design show. A test that runs the prompt on fixed scenes meets only the cases that its writer set up, and can't show whether the AI judges each new fact by the prompt's goal. The user's E2E run of the product as it ships, by the architecture's [test strategy guide](../architecture/test-strategy-guide.md), meets real facts one after another, so it shows how the AI judges.",
+      "why": "The writer knows a prompt only by what the AI does with it, where the AI's variance and the faults of the design show. A test that runs the prompt on fixed scenes meets only the cases that its writer set up, and can't show whether the AI judges each new fact by the prompt's goal. The user's E2E run of the product as it ships, by the [test strategy guide](../architecture/test-strategy-guide.md), meets real facts one after another, so it shows how the AI judges.",
       "items": [
        {
         "at": "make",
@@ -408,37 +408,5 @@
    }
   ]
  },
- "template": "template.md",
- "inputs": [
-  {
-   "kind": "architecture",
-   "takes": [
-    "User stories",
-    "Components",
-    "Concept model",
-    "Sequences",
-    "Directory structure",
-    "Test strategy"
-   ]
-  },
-  {
-   "kind": "readme",
-   "takes": [
-    "Walkthrough",
-    "How it works"
-   ]
-  },
-  {
-   "kind": "test-design",
-   "takes": [
-    "Unit cases"
-   ]
-  },
-  {
-   "kind": "software-design",
-   "takes": [
-    "Interface"
-   ]
-  }
- ]
+ "template": "template.md"
 }

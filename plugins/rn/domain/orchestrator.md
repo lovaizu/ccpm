@@ -124,6 +124,15 @@ rn's rules for these steps:
   `steering inspected` once nothing is left to mend; `ended`, the work's end by step 3 where a
   need is left, then an issue for each need the user keeps, by `gh issue create`, with the pull
   request's URL in its body.
+- Before a deliverable's first Round, propose to the user the shape it takes, so that it's made as
+  they mean and judged by what they agreed to. Read its kind's best practice,
+  `<rn's folder>/domain/best-practices/<kind>/best-practice.json`, whatever its kind, the light
+  kind too, and take each necessary condition as a point to decide. Settle each from the request,
+  the steering's decisions, and what the repository holds, and show the deliverable's shape
+  in the user's words, never the conditions, as they want to know what it does, not by what it's
+  judged. Say where you read a point that's already settled, such as the repository's license.
+  Take their agreement and each correction as decisions by `user`, by step 3, then run
+  `steering start`.
 - For a deliverable whose next role is its fixer, give `steering start` the problem's words on
   stdin, word for word.
 - Start `rn:generator`, `rn:refactorer`, `rn:evaluator`, `rn:fixer`, and `rn:inspector` in the

@@ -4,7 +4,7 @@
   "critical_success_factors": [
    {
     "id": "C1",
-    "what": "Each behavior and each decision of the architecture holds as before, as the tests show.",
+    "what": "Each behavior and each design decision that the code carries out holds as before, as the tests show.",
     "necessary_conditions": [
      {
       "id": "N1",
@@ -14,11 +14,11 @@
       "items": [
        {
         "at": "decide",
-        "text": "Open the deliverables that the inputs name, and note from the architecture each decision that the code carries out, such as a component's job or the data that one part hands another, and the command that runs the tests, since the refactoring keeps the first and runs the second."
+        "text": "Note each design decision that the code carries out, from the decisions the user agreed to for the code and from what the repository already holds on it, such as a component's job or the data that one part hands another, and the command that runs the tests, since the refactoring keeps the first and runs the second."
        },
        {
         "at": "decide",
-        "text": "Where the architecture gives no command, take the one that the code's manifest gives, such as pyproject.toml or a Makefile, else the runner that the test files import, such as `python -m pytest` for files that import pytest."
+        "text": "Where none of these gives a command, take the one that the code's manifest gives, such as pyproject.toml or a Makefile, else the runner that the test files import, such as `python -m pytest` for files that import pytest."
        },
        {
         "at": "decide",
@@ -49,16 +49,16 @@
      {
       "id": "N2",
       "about": "the whole",
-      "what": "Does the code still carry out each decision of the architecture: each component's job, the concept model, and each sequence?",
-      "why": "The developers read the architecture to know where a part belongs and what it hands to which, so code that a refactoring moved away from it sends each of them to the wrong place. A change of a component, of the concept model, or of a sequence is a change of the architecture, which its own best practice decides before any code follows, as a refactoring changes the code's structure within the design.",
+      "what": "Does the code still carry out each design decision that N1.1 notes: each component's job, each concept that the code handles, and what each part hands another?",
+      "why": "The developers rely on these decisions to know where a part belongs and what it hands to which, so code that a refactoring moved away from them sends each of them to the wrong place. A change of a component, of a concept, or of what one part hands another is a change of the design, which the user decides before any code follows, as a refactoring changes the code's structure within the design.",
       "items": [
        {
         "at": "decide",
-        "text": "For each change that you plan, ask whether it moves a job from one component to another, adds or removes a component or a concept of the concept model, or changes what one part hands another in a sequence, by the decisions that you noted from the architecture."
+        "text": "For each change that you plan, ask whether it moves a job from one component to another, adds or removes a component or a concept, or changes what one part hands another, by the design decisions that N1.1 notes."
        },
        {
         "at": "decide",
-        "text": "Where it does, take the change out of the plan, and name it in the `point` you end with: the smell it mends, the places it reaches, and the decision of the architecture that it changes, since the architecture is to decide it first."
+        "text": "Where it does, take the change out of the plan, and name it in the `point` you end with: the smell it mends, the places it reaches, and the design decision that it changes, since the user is to decide it first."
        }
       ]
      }
@@ -88,7 +88,7 @@
        },
        {
         "at": "decide",
-        "text": "For each rule that several places write, choose the module that keeps it: the one whose job, as its opening or the architecture's component says, the rule belongs to, else the one whose code reads or writes what the rule acts on, and of several, the one that the others already import, so that no two modules come to import each other."
+        "text": "For each rule that several places write, choose the module that keeps it: the one whose job, as its opening or the design decisions that N1.1 notes say, the rule belongs to, else the one whose code reads or writes what the rule acts on, and of several, the one that the others already import, so that no two modules come to import each other."
        },
        {
         "at": "make",
@@ -129,12 +129,12 @@
      {
       "id": "N5",
       "about": "the whole",
-      "what": "Does each module, class, function, parameter, and kind of data serve a behavior that a test or the architecture asks for, with none that only works around another or passes a call on?",
+      "what": "Does each module, class, function, parameter, and kind of data serve a behavior that a test or a design decision asks for, with none that only works around another or passes a call on?",
       "why": "Each element is one more thing that the maintainer holds in mind on each change, so the code is simplest with the fewest elements that pass the tests and reveal the intent, the last of Kent Beck's [rules of simple design](https://martinfowler.com/bliki/BeckDesignRules.html). An element that only works around another hides the design that the code could have, so the maintainer pays for both.",
       "items": [
        {
         "at": "decide",
-        "text": "For each module of the files that N3.1 lists, write its job in one sentence from its opening and the architecture's component, and for each element of it, ask which behavior that a test or the architecture asks for fails without it."
+        "text": "For each module of the files that N3.1 lists, write its job in one sentence from its opening and the design decisions that N1.1 notes, and for each element of it, ask which behavior that a test or a design decision asks for fails without it."
        },
        {
         "at": "decide",
@@ -142,7 +142,7 @@
        },
        {
         "at": "decide",
-        "text": "For each mechanism that only works around another, write the design without the cause, such as one record where the code keeps two in step, and plan the steps that reach it, as N2 holds each change within the architecture."
+        "text": "For each mechanism that only works around another, write the design without the cause, such as one record where the code keeps two in step, and plan the steps that reach it, as N2 holds each change within the design."
        },
        {
         "at": "make",
@@ -179,7 +179,7 @@
      {
       "id": "N7",
       "about": "the whole",
-      "what": "Does each thing have one name, the architecture's word for it, and does each name refer to one thing?",
+      "what": "Does each thing have one name, the design's word for it, and does each name refer to one thing?",
       "why": "A maintainer who meets two names takes them for two things, and one name used for two things merges them in their mind, so each change misses a place or reaches a wrong one.",
       "items": [
        {
@@ -188,7 +188,7 @@
        },
        {
         "at": "decide",
-        "text": "For each thing, keep the word that the architecture's concept model or components use for it, else the name that the code uses most, and where one name refers to two things, give the other thing the architecture's word for it, else a word that tells the two apart, such as `session_id`."
+        "text": "For each thing, keep the word that the design decisions that N1.1 notes use for it, else the name that the code uses most, and where one name refers to two things, give the other thing the design's word for it, else a word that tells the two apart, such as `session_id`."
        },
        {
         "at": "make",
@@ -228,7 +228,7 @@
        },
        {
         "at": "make",
-        "text": "For each mark, where a name of a few words can say the reason, extract the code into a function or a constant of that name, else find the reason in the commit that brought the line, such as by `git log -L 40,42:sync.py`, or in the deliverables that the inputs name, and write it in a comment right there."
+        "text": "For each mark, where a name of a few words can say the reason, extract the code into a function or a constant of that name, else find the reason in the commit that brought the line, such as by `git log -L 40,42:sync.py`, or in the decisions agreed for the code, and write it in a comment right there."
        },
        {
         "at": "make",
@@ -243,16 +243,5 @@
     ]
    }
   ]
- },
- "inputs": [
-  {
-   "kind": "architecture",
-   "takes": [
-    "Components",
-    "Concept model",
-    "Sequences",
-    "Test strategy"
-   ]
-  }
- ]
+ }
 }

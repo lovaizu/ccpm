@@ -14,15 +14,15 @@
       "items": [
        {
         "at": "decide",
-        "text": "Open the product vision, the architecture, and the test cases, and read the sections that `inputs` takes from each: the key results with what a run records for each, the row of Test strategy for this test with what it measures or its criterion, and the case with its Given, When, and Then."
+        "text": "Take from the decisions the user agreed to for the test, and from what the repository already holds that bears on it, such as the product's code and prompts: what the test measures or its criterion, what a run records for each value, and each case with its Given, When, and Then."
        },
        {
         "at": "decide",
-        "text": "Name the decision that the report serves, from the row of Test strategy, such as whether KR1.1 came closer for a benchmark, or whether a response time stays under its criterion for a quality."
+        "text": "Name the decision that the report serves, from what was agreed for the test, such as whether a key result came closer for a benchmark, or whether a response time stays under its criterion for a quality."
        },
        {
         "at": "decide",
-        "text": "For each value the decision takes, write how it's counted from one run, from what the product vision says a run records, such as the share of runs whose order differs from the design."
+        "text": "For each value the decision takes, write how it's counted from one run, from what was agreed that a run records, such as the share of runs whose order differs from the design."
        },
        {
         "at": "make",
@@ -68,7 +68,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "From the case, list what a run that runs as meant does: each step, its input, its order, and its end, such as the stand-in typing the walkthrough's commands in order and the product's run ending by its own result."
+        "text": "From the case, list what a run that runs as meant does: each step, its input, its order, and its end, such as the stand-in typing the case's commands in order and the product's run ending by its own result."
        },
        {
         "at": "make",
@@ -113,16 +113,16 @@
      {
       "id": "N5",
       "about": "Stages",
-      "what": "Did each stage, from one pilot run to the size that Test strategy sets, start only once the stage before showed each run running as meant and each value matching its records?",
+      "what": "Did each stage, from one pilot run to the size agreed for the test, start only once the stage before showed each run running as meant and each value matching its records?",
       "why": "A large run that goes wrong mixes the test's faults with the product's, and costs a whole run to find either. Load testers start with a smoke test that checks the script works under minimal load, then step up the load, as [k6's test types](https://grafana.com/docs/k6/latest/testing-guides/test-types/) do.",
       "items": [
        {
         "at": "decide",
-        "text": "Set the stages, each larger than the one before: one run of one case, then each case once, then the number of runs or the load that Test strategy sets, such as a performance test's steps of load."
+        "text": "Set the stages, each larger than the one before: one run of one case, then each case once, then the number of runs or the load agreed for the test, such as a performance test's steps of load."
        },
        {
         "at": "decide",
-        "text": "Where Test strategy gives the rule for the number of runs in place of a number, as it does before the product runs, take three runs of each case as the last stage, the fewest in which one run that differs from the others shows. Add runs only to a case whose runs differ, until one more changes no case's count, and write the number reached in Test strategy."
+        "text": "Where the agreed decisions give the rule for the number of runs in place of a number, as they do before the product runs, take three runs of each case as the last stage, the fewest in which one run that differs from the others shows. Add runs only to a case whose runs differ, until one more changes no case's count, and write the number reached as the size of the last stage in Stages."
        },
        {
         "at": "make",
@@ -150,33 +150,5 @@
    }
   ]
  },
- "template": "template.md",
- "inputs": [
-  {
-   "kind": "product-vision",
-   "takes": [
-    "Objectives and key results"
-   ]
-  },
-  {
-   "kind": "architecture",
-   "takes": [
-    "Test strategy"
-   ]
-  },
-  {
-   "kind": "test-design",
-   "takes": [
-    "E2E cases"
-   ]
-  },
-  {
-   "kind": "code",
-   "takes": []
-  },
-  {
-   "kind": "prompt",
-   "takes": []
-  }
- ]
+ "template": "template.md"
 }
