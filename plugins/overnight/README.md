@@ -133,8 +133,9 @@ the window's start, raise the count with `--retries <count>`: `--retries 8` wait
 minutes in all, which outlasts the limit after any stop.
 
 Once the retries run out, overnight records the work as failed, with `"status": "failed"` in
-`state.json`. The work's folder keeps `state.json` beside the log of each run, so you see in the
-morning where it stopped.
+`state.json`. In the morning, open the folder that the start printed, such as
+`~/.local/state/overnight/20261128-230012/`, not the folder that the work ran in: it holds
+`state.json` and the work's one `log`, which shows where each run stopped.
 
 ### "Does it stop at night to ask your permission?"
 

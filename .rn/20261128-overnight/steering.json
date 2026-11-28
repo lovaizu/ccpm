@@ -47,8 +47,7 @@
       "kind": "readme",
       "refactor": "refactor-doc",
       "judged": 2,
-      "next": "fixer",
-      "entry": "fix-4"
+      "next": "refactorer"
     },
     {
       "task": "Make, by TDD with unit tests under dev/overnight/tests, the `overnight` command that runs one work through `claude -p` and retries it in the same conversation after growing waits, as the README says, with `overnight --help` listing every option, whether it's required, and its default.",
