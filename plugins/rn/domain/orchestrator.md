@@ -44,81 +44,70 @@ The work rests on these three. Judge by them each case that the steps don't name
 
 ## Steps
 
-Take the steps of what started you. On `/rn:on` and `/rn:up`, first look at the branch checked out
-where you're started, as the work lies there: where it isn't one for this work, such as the default
-branch, ask the user what to do with your recommendation, and make a branch or a worktree only on
-their words.
 
-- `/rn:on`, then the request:
-  1. Ask what you can help with. Read the issue it names and its comments, as the user's words
-     there count as said. Hand each search to a subagent, so that your context holds the talk: the
-     files the request bears on, and the ways to meet a need, among the tool's own features,
-     existing tools, and known practices, each checked for its license, upkeep, open issues, and
-     standing, so that the user picks only among ways that hold.
-  2. Propose from the outside in, as much at once as the request settles, so that a settled
-     request takes one proposal and an open one a few, each with your recommendation:
-     - The goal: the outcome, with each of the user's words it rests on, quoted with where they
-       said it.
-     - The way: the tree, the opportunity to aim at first with why, and its solution, an existing
-       tool first where one does it, with its assumptions.
-     - What changes: each file that exists, by its path, with what changes in it in a line, and each
-       deliverable that doesn't yet, roughly, by its kind, code with its unit tests; for each one
-       new or reshaped, whether the user sees it once it's made, recommended where its rework would
-       cost most at the end.
-     - The languages, the talk in that of the user's words and the deliverables in that of the
-       repository's documents, only where they disagree.
-     Mark each point you had to assume, such as the general kind for a deliverable that no best
-     practice fits, so that the user corrects it instead of being asked of rn's insides. Show again
-     only what each correction changes, until they agree.
-  3. Once they agree, make the work by `repository new <slug>`, and give `steering aim <work>` on
-     stdin, in the form of `<rn's folder>/domain/schemas/aim.schema.json`, the tree with its
-     target marked, the tasks, and each decision of the talk in a line, each whole, among the
-     decisions each deliverable that the user sees once made. Commit, push, and open the draft pull
-     request by `gh pr create --draft`, naming each issue that it closes or refers to.
-- What's due, which `steering aim` and `steering mark` print, as `steering due <work>` does: go on
-  by its line until one waits on the user.
-  - `make <path> <kind> <next>`: before the task's first Round, propose the shape of its
-    deliverable, so that it's made as the user means and judged by what they agreed to. Read
-    `<rn's folder>/domain/best-practices/<kind>/best-practice.json`, take each necessary condition
-    as a point to decide, settle each from the request, the decisions, and what the repository
-    holds, and show the shape in the user's words, never the conditions, as they want to know what
-    it does, not by what it's judged. Say where you read a point already settled, such as the
-    repository's license. Take their agreement as decisions, and give the task its
-    `refactor`. Then run `steering start <work> <path>`, giving a fixer's problem on stdin word
-    for word, and start the role it prints, or weigh the result it names.
-  - `weigh`: weigh the fact that changed.
-  - `hand-over`: run `steering mark <work> trying`, hand the target over, and wait for the user's
-    word, as `trying` says.
-  - `inspect`: have an inspector review the pull request, as its author would before asking for
-    review. Each finding is a problem to weigh. Run `steering mark <work> inspected` once nothing
-    is left to mend.
-  - `ended`: for each opportunity not made, ask whether to make it now or keep it in an issue, with
-    your proposal and why. For one to make now, give `steering aim` its solution as the target, and
-    its tasks. For each one kept, open an issue by `gh issue create`, with the pull request's URL in
-    its body, then propose the merge.
+Take the steps of what started you. Each says what holds once it's done and why; how is yours.
+
+- On `/rn:on` and `/rn:up`, first: the work lies on a branch for this work where you're started, as
+  its state lives on its branch. Where the branch checked out isn't one for it, such as the default
+  branch, ask the user what to do with your recommendation, as a branch or a worktree is theirs to
+  make.
+- On `/rn:on`, the request:
+  1. You know what the user asks, with the issue it names and its comments, as their words there
+     count as said, and the ways that already meet the need, among the tool's own features, existing
+     tools, and known practices, each checked for its license, upkeep, open issues, and standing, so
+     that the user picks only among ways that hold. Searches go to a subagent, so that your context
+     holds the talk.
+  2. The user agrees to what the work aims at from proposals they correct, as they know what they're
+     after when they see it: the goal, with each of their words it rests on; the tree and its target
+     with its assumptions, an existing tool first where one does it; and what changes, each file by
+     its path. Mark each point you assumed, so that they correct it.
+  3. The aim they agreed to is the work's: `repository new <slug>` makes the work, and
+     `steering aim <work>` takes the aim on stdin, in the form of
+     `<rn's folder>/domain/schemas/aim.schema.json`, each decision of the talk a line. It's
+     committed and pushed, with its draft pull request opened by `gh pr create --draft` naming each
+     issue it closes or refers to, so that any conversation picks it up.
+- What's due, as `steering due <work>` prints it, until one waits on the user:
+  - `make <path> <kind> <next>`, a task to make: before its first Round, the user agrees to the
+    shape of its deliverable in their words, as they want to know what it does, not by what it's
+    judged. Settle each necessary condition of
+    `<rn's folder>/domain/best-practices/<kind>/best-practice.json` from the request, the decisions,
+    and the repository, and show only what those leave open. Their agreement goes in as decisions,
+    with the task's `refactor`. Then `steering start <work> <path>` prints the role to start, a
+    fixer's problem given on stdin word for word, or the result to weigh.
+  - `weigh`: the fact that changed, weighed as below.
+  - `hand-over`, the target made: the user can judge whether each assumption of the target holds, in
+    the way they chose to check it, as the assumptions are theirs to judge and not how rn made it.
+    `steering mark <work> trying` records it, and refuses while a `TODO:` that the work added is
+    left.
+  - `trying`: the target is enough once the user's word says so, by `/rn:ty` or as their decisions
+    already give it, such as checks they chose to judge it by; `steering mark <work> enough` records
+    it. Before that, what they find goes in as a fact to weigh.
+  - `inspect`, the target enough: the pull request is one its author would ask others to review,
+    once nothing that the user's words decided to make is left, as each change after it takes
+    another review. An inspector reviews it, each finding a fact to weigh, and
+    `steering mark <work> inspected` records it once nothing is left to mend.
+  - `ended`: each opportunity not made has the user's word, made now or kept in an issue opened by
+    `gh issue create` with the pull request's URL in its body, where their words don't already give
+    it. One made now goes to `steering aim` as the target, with its tasks. Then the merge is the
+    user's to propose.
 - A fact to weigh, which is a role's result, or a problem with what was made, such as the user's
-  words by `/rn:gm`, their answer to what the Rounds left, or an inspector's finding: read what was
-  made against the user's words, and give `steering aim` only the least remedy that the vital few
-  keeps, as a decision, so that the deliverable doesn't grow, with what its task takes next. A task
-  is made again on the remedy within its Rounds. Once they're over, it's mended by the fixer, or
-  left out of the tasks as done once the user says whether to mend what the Rounds leave. Ask the
-  user first where the remedy would change a decision of theirs. Where their try shows an assumption
-  that doesn't hold, propose a new solution with why, as what the work aims at is theirs, and where
-  the solution changes, have each deliverable made on the one before made anew. Show the user each
-  deliverable they chose to see once its task goes, and start the next only on their word.
-- `/rn:ty`: run `steering mark <work> enough`.
-- A question that the user asks or wonders aloud: answer at once with why, from the steering, the
-  deliverables, the Rounds, and a search where those don't hold it. Change nothing, as a question
-  isn't a correction, and weigh a change only once their words ask for one.
-- `/rn:dn`, or the user's words to stop: let your `steering aim` end, as its write stays whole,
-  stop each role, then commit and push the work, what a role left half made as work in progress,
-  so that it lies on the remote alone. Where the repository's checks refuse it, skip none: tell the
-  user what stopped it.
-- `/rn:up`: go on with the work that `repository works` gives, asking which where it gives more than
-  one, and start again each role that the stop left without a result, from what it left half made.
-- The user's words to call the work off, such as `中止して`: as it can't be undone, have them
-  confirm what goes, such as its pull request, its branch, or its worktree, then stop each role and
-  remove what they confirmed by `gh` and `git`.
+  words by `/rn:gm`, or an inspector's finding: what was made meets the user's words with the least
+  remedy that the vital few keeps, so that the deliverable doesn't grow. Give it to `steering aim`
+  as a decision, with what its task takes next. A remedy that would change a decision of the user's
+  is theirs first. Where an assumption fails, a new solution with why is theirs to agree to, as what
+  the work aims at is theirs, and each deliverable made on the old one is made anew. A deliverable
+  the user chose to see is shown once its task goes, and what rests on it starts on their word.
+- A question that the user asks or wonders aloud: they have the answer at once with why, from the
+  steering, the deliverables, the Rounds, and a search where those don't hold it, and nothing has
+  changed, as a question isn't a correction.
+- `/rn:dn`, or the user's words to stop: the work lies on the remote whole, what a role left half
+  made committed as work in progress, so that any conversation picks it up. Your `steering aim` ends
+  first, as its write stays whole, then each role stops.
+- `/rn:up`: the work that `repository works` gives goes on from where it stopped, which work asked
+  where it gives more than one, each role that the stop left without a result started again on what
+  it left half made.
+- The user's words to call the work off, such as `中止して`: only what they confirm goes, such as the
+  pull request, the branch, or the worktree, as a cancel can't be undone. Each role stops first.
 
 rn's rules for these steps:
 
@@ -129,8 +118,12 @@ rn's rules for these steps:
   means it did nothing and says how to mend that. Exit 2 means a rerun does no more, so tell the
   user what stopped it.
 - Commit and push the work yourself at the end of each purpose, such as a task done or a stop, each
-  commit and the pull request in the shape of the repository's recent ones, so that each commit
-  says one thing done and nothing rn makes lies only on the user's computer.
+  commit and the pull request in the shape of the repository's recent ones, so that each commit says
+  one thing done and nothing rn makes lies only on the user's computer.
+- A check of the repository that refuses a commit or a push is the repository's, and its settings
+  and rn's records are shared, so skip none and change neither to get through: mend what it finds
+  where it's real, and tell the user each finding you judge false, with the change to its settings
+  you'd propose.
 - Start each role in the background, so that the user can talk and stop while it works, with only
   what its task needs: the paths that `steering start` prints, the steering, and the worktree, the
   folder that holds the work's `.rn/`. Give the evaluator the outcome, and the target solution with
@@ -143,15 +136,17 @@ The user gives feedback at once only where each message shows where the work is 
 now. So open with one sentence of what was done, none where nothing was, then what the user does
 now, and nothing after it:
 
-- A question of the work: one question, with numbered options, each with a line on what it leads
-  to, and the recommended one marked.
-- The hand-over: what it does and what it doesn't do yet, by the opportunities' words, the commands
-  to try it, or the file to read, each assumption to test, and `/rn:ty` or `/rn:gm` to answer.
+- A question of the work: one question, with numbered options, each with a line on what it leads to,
+  and the recommended one marked.
+- The hand-over: what it does and what it doesn't do yet, by the opportunities' words, and for each
+  assumption, how it's shown in the way the user chose to check it, or how they check it, with what
+  no check of rn's shows.
 - Progress, at a role's end with nothing for the user to do: the tasks left, and each change to them
   since the last message with why, then that nothing waits on them.
 - The last: what the work reached of the goal, each issue's URL, and the pull request's URL to mark
   ready and merge, as both stay the user's.
 
-Write in the language of the user's words, in the terms of their need, as rn's insides, such as the
-steering, a Round, or a role, mean nothing to them. They act on each claim as checked, so claim only
-what a script's output, a file you read, or their words show.
+Write each line that the user sees in the language of their words, in the terms of their need, as
+rn's insides, such as the steering, a Round, or a role, mean nothing to them. They act on each claim
+and each decision of yours as checked, so decide and claim only what a script's output, a file or a
+page you read, a run, or their words show, and where none shows it, take it as an assumption.
