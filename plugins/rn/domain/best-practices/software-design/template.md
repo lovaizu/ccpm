@@ -15,9 +15,9 @@
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
-> - `<interface>`: for each arrow of Sequences that reaches the module, one name with the types it
->   takes and gives, and beside it what it takes, what it gives, what else it changes, and each way
->   it refuses, with a body that fails when called.
+> - `<interface>`: for each handoff of the parts' design that reaches the module, one name with the
+>   types it takes and gives, and beside it what it takes, what it gives, what else it changes, and
+>   each way it refuses, with a body that fails when called.
 
 ## Prompt
 
@@ -35,7 +35,7 @@
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
-> - `<gaps>`: a list, one gap a line, each naming the element of the architecture it bears on and
+> - `<gaps>`: a list, one gap a line, each naming the element of the parts' design it bears on and
 >   what the developers can't build because of it, such as `S3: the guard hands the record no kind
->   of data, so no interface carries it`. It goes to whoever makes the architecture, and holds only
->   the gaps that the architecture doesn't yet mend.
+>   of data, so no interface carries it`. It goes to whoever decided the design, and holds only the
+>   gaps that the design doesn't yet mend.

@@ -21,7 +21,7 @@ def schema(tmp_path: Any, value: dict[str, Any], name: str = "s.schema.json") ->
 
 
 def test_a_steering_that_holds_to_its_schema_has_no_fault() -> None:
-    """Given a steering in the schema's form, with an opportunity under another and a solution.
+    """Given a steering in the schema's form, with two opportunities and a solution.
     When it's checked against steering.schema.json.
     Then no fault is named."""
     assert faults(rn_files.steering(), STEERING) == []
@@ -29,25 +29,28 @@ def test_a_steering_that_holds_to_its_schema_has_no_fault() -> None:
 
 def test_each_keyword_names_its_fault_by_where_it_lies() -> None:
     """Given a steering with a field missing, one too many, a wrong type, a value outside its
-    enum, an empty string, an id out of its pattern, and a solution of neither form.
+    enum, an empty string, a list too short, a const it doesn't hold, and an entry out of its
+    pattern.
     When it's checked against steering.schema.json.
     Then each fault is named by its JSON Pointer and what it takes."""
     value = rn_files.steering()
-    del value["ost"]["questions"]
+    del value["decisions"]
     value["ost"]["extra"] = 1
-    value["ost"]["target"] = 3
-    value["state"]["steps"][0]["status"] = "waiting"
     value["ost"]["outcome"] = ""
-    value["ost"]["opportunities"][0]["id"] = "X1"
-    value["ost"]["opportunities"][0]["solution"] = {"solution": "s"}
+    value["ost"]["opportunities"][0]["solutions"][0]["assumptions"] = []
+    value["ost"]["opportunities"][0]["solutions"][0]["target"] = False
+    value["tasks"][0]["next"] = "waiting"
+    value["tasks"][0]["entry"] = "draft-1"
+    value["tasks"][1]["judged"] = "1"
     assert faults(value, STEERING) == [
-        "/ost/questions: is required",
+        "/decisions: is required",
         "/ost/outcome: takes at least 1 character",
-        "/ost/opportunities/0/id: takes the form ^O\\d+(\\.\\d+)*$",
-        "/ost/opportunities/0/solution: takes exactly one of its 2 forms, and holds 0",
-        "/ost/target: takes string or null",
+        "/ost/opportunities/0/solutions/0/assumptions: takes at least 1 item",
+        "/ost/opportunities/0/solutions/0/target: takes True",
         "/ost/extra: isn't a field of this form",
-        "/state/steps/0/status: takes one of open, trying, done",
+        "/tasks/0/next: takes one of generator, evaluator, weigh, fixer, refactorer",
+        "/tasks/0/entry: takes the form ^(content|refactor|fix)-[1-9][0-9]*$",
+        "/tasks/1/judged: takes integer",
     ]
 
 
@@ -59,12 +62,12 @@ def test_a_value_of_the_wrong_type_at_the_top_is_named_by_a_slash() -> None:
 
 
 def test_a_bool_is_no_integer() -> None:
-    """Given true where the steering's schema takes an issue's number.
+    """Given true where the steering's schema takes a count of judged Rounds.
     When it's checked.
     Then it's named, as JSON holds a bool apart from a number."""
-    issues = rn_files.steering()
-    issues["state"]["issues"]["closes"] = [True]
-    assert faults(issues, STEERING) == ["/state/issues/closes/0: takes integer"]
+    held = rn_files.steering()
+    held["tasks"][0]["judged"] = True
+    assert faults(held, STEERING) == ["/tasks/0/judged: takes integer"]
 
 
 def test_a_boolean_takes_a_bool(tmp_path: Any) -> None:

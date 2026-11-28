@@ -37,10 +37,9 @@ def test_each_path_of_the_work_follows_from_its_name() -> None:
     Then each lies where the architecture's Directory structure names it."""
     work = WorkPlace("/home/ada/invoices", NAME)
     folder = f"/home/ada/invoices/.rn/{NAME}"
-    assert (work.folder, work.steering, work.pruner, work.rounds) == (
+    assert (work.folder, work.steering, work.rounds) == (
         folder,
         f"{folder}/steering.json",
-        f"{folder}/pruner.json",
         f"{folder}/rounds",
     )
 

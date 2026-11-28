@@ -53,11 +53,8 @@
   <text class="name" x="410.0" y="71.0">orchestrator</text>
   <text class="kind" x="410.0" y="91.0">[prompt]</text>
   <rect class="box" x="640" y="40" width="180" height="70" rx="6"/>
-  <text class="name" x="730.0" y="71.0">pruner</text>
-  <text class="kind" x="730.0" y="91.0">[prompt]</text>
-  <rect class="box" x="900" y="40" width="160" height="70" rx="6"/>
-  <text class="name" x="980.0" y="71.0">references</text>
-  <text class="kind" x="980.0" y="91.0">[document]</text>
+  <text class="name" x="730.0" y="71.0">references</text>
+  <text class="kind" x="730.0" y="91.0">[document]</text>
   <rect class="box" x="40" y="220" width="160" height="70" rx="6"/>
   <text class="name" x="120.0" y="251.0">hook</text>
   <text class="kind" x="120.0" y="271.0">[hook]</text>
@@ -91,18 +88,12 @@
   <text class="data halo mid" x="250" y="56">request, answers</text>
   <path class="line" d="M300,95 L200,95" marker-end="url(#arrow)"/>
   <text class="data halo mid" x="250" y="114">points, what to try</text>
-  <path class="line" d="M520,60 L640,60" marker-end="url(#arrow)"/>
-  <text class="data halo mid" x="580" y="51">starts, with a fact</text>
-  <path class="line dashed" d="M640,95 L520,95" marker-end="url(#arrow)"/>
-  <text class="data halo mid" x="580" y="114">done, with the steps</text>
-  <path class="line" d="M820,75 L900,75" marker-end="url(#arrow)"/>
-  <text class="data halo mid" x="860" y="66">weighs by</text>
-  <path class="line" d="M730,110 L730,220" marker-end="url(#arrow)"/>
-  <text class="data halo start" x="738" y="170">writes what the work aims at</text>
+  <path class="line" d="M520,75 L640,75" marker-end="url(#arrow)"/>
+  <text class="data halo mid" x="580" y="66">weighs by</text>
   <path class="line" d="M520,255 L640,255" marker-end="url(#arrow)"/>
-  <text class="data halo mid" x="580" y="246">writes where it stands</text>
+  <text class="data halo mid" x="580" y="246">writes the aim and where it stands</text>
   <path class="line" d="M440,110 L440,220" marker-end="url(#arrow)"/>
-  <text class="data halo start" x="448" y="170">runs</text>
+  <text class="data halo start" x="448" y="170">runs, with the aim</text>
   <path class="line dashed" d="M380,220 L380,110" marker-end="url(#arrow)"/>
   <text class="data halo end" x="372" y="170">what&#x27;s due</text>
   <path class="line" d="M200,255 L330,255" marker-end="url(#arrow)"/>

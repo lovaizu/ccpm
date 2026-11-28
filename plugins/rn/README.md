@@ -3,8 +3,8 @@
 rn is a Claude Code plugin that makes what you ask for, ready for the people you make it for.
 
 rn is for you when you have Claude Code make something in a GitHub repository for other people to
-use. With it, you see what you asked for work early, and you decide only what's yours: which
-need to meet first, and how it works for you once you try it.
+use. With it, you see what you asked for work early, and you decide only what's yours: you
+correct one proposal of what it makes, and say how it works for you once you try it.
 
 rn makes the first working slice of a request, and once you've tried it, grows it one addition
 at a time, for each need you choose to make now.
@@ -35,8 +35,8 @@ claude plugin marketplace add lovaizu/ccpm
 claude plugin install rn@ccpm
 ```
 
-At your repository's root, or in a worktree of it, in Claude Code, `/rn:on` asks what it can help
-with.
+On the branch you want the work on, in Claude Code, `/rn:on` asks what it can help with. Where
+that branch isn't one for the work, such as the default branch, rn asks you what to do first.
 
 ## Walkthrough
 
@@ -63,84 +63,80 @@ You type:
 経理チームが、Pythonを書かずに、明細から請求書を印刷できるコマンドがほしい
 ```
 
-rn reads your repository, then asks whom it's for, and then what for, one at a time:
+rn reads your repository, then shows what it would make, in one message:
 
 ```text
-誰が使いますか？
+こう進めます。違うところだけ直してください。
 
-1. 経理チームの方（おすすめ）
-   依頼の「経理チームが」から読みました
-2. ほかの人
-   誰かを書いてください
+ゴール：経理チームの方が、開発者に頼まずに、月末に自分で請求書を出せる
+  ご依頼の「経理チームが、Pythonを書かずに、明細から請求書を印刷できるコマンドがほしい」から読みました
+
+進め方：まず1を作ります（おすすめ）
+  印刷できれば、経理チームの方が月末に自分で請求書を出せます
+  1. 明細ファイルから、請求書を1枚印刷できる
+  2. インボイス制度の記載事項を満たしている
+  3. 発行者の情報を毎回入れなくて済む
+  4. ガイドだけで使い始められる
+  2から4は、1を試したあとに、今作るかissueに残すかをご相談します
+  1の作り方：明細ファイルを渡すと、請求書を1枚印刷する invoice コマンド
+  試して確かめること：経理チームの方が、説明だけを見て、明細から請求書を印刷できる
+
+作るもの：新しく作るので、おおまかに次の3つです
+  1. 請求書の型
+  2. invoice コマンド
+  3. 使い方の説明
+  1はできた時点でお見せします（おすすめ）
+  請求書の見た目は経理チームの方が決めることなので、コマンドより先に見ると手戻りが少なくなります
+
+※仮に決めた点：使うのは経理チームの方（ご依頼の「経理チームが」から）
+
+これで進めてよければ「OK」、直すところがあればその内容を入力してください。
 ```
 
-You type `1`. rn asks:
+You type `OK`. rn makes the invoice's template first, and shows it to you before anything rests
+on it:
 
 ```text
-経理チームの方は、それで何をしたいですか？
+請求書の型ができました。
 
-1. 月末に、開発者の手を借りずに請求書を出したい（おすすめ）
-   依頼の「Pythonを書かずに」から読みました
-2. ほかのこと
-   その点を書いてください
+見本の請求書で、見た目を確かめてください：
+
+  見本の請求書.pdf
+
+これで足りれば /rn:ty、変えたい点があれば /rn:gm に続けてその内容を入力してください。
 ```
 
-You type `1`. rn asks where it works, apart from your own work:
+You type `/rn:ty`. Each time a task is done, rn tells you what's left, and each change to the plan
+with why, so you can say at once what's off:
 
 ```text
-どこで作業しますか？
+invoice コマンドができました。
 
-1. 新しい作業場所を .claude/worktrees/ に作る（おすすめ）
-   いまの場所はあなたの作業場所なので、そのままにします
-2. ほかの場所
-   使う作業場所を書いてください
-```
+残り：
+- 使い方の説明を書く
 
-You type `1`. rn asks which need to make first:
+計画の変更：明細の列が空のときのタスクを足しました。見本の明細に空の列があったためです。
 
-```text
-どれから作りますか？
-
-1. 明細ファイルから、請求書を1枚印刷できる（おすすめ）
-   印刷できれば、経理チームの方が月末に自分で請求書を出せます
-2. インボイス制度の記載事項を満たしている
-3. 発行者の情報を毎回入れなくて済む
-4. ガイドだけで使い始められる
-```
-
-You type `1`. rn shows what it makes before you can try it:
-
-```text
-試せるまでに、次の3つを作ります。
-
-1. invoice コマンド
-2. 請求書の型
-3. 使い方の説明
-```
-
-Each time one is done, rn tells you, so you can say at once what's off:
-
-```text
-invoice コマンドができました（1/3）
+お願いすることはありません。
 ```
 
 Once AI evaluators have tried it as your accounting team would, rn hands it to you:
 
 ```text
-試せるようになりました（3/3）
+試せるようになりました。
 
 できること：明細ファイル1つから、請求書を1枚印刷する
 まだしないこと：2から4
+確かめること：説明だけを見て、明細から請求書を印刷できる
 
-  cd .claude/worktrees/rn-20261126-invoice-from-statement
   invoice 見本の明細.csv
 
 これで足りれば /rn:ty、変えたい点があれば /rn:gm に続けてその内容を入力してください。
 ```
 
 You run it, and the printer gives one invoice with the customer, the lines, and the total. You
-type `/rn:ty`. rn checks the pull request whole, then asks what happens to the needs you didn't
-pick:
+type `/rn:ty`. rn checks the pull request whole, then asks what happens to the needs not made
+yet:
 
 ```text
 PRの点検が通り、1ができました。
@@ -169,8 +165,27 @@ rn puts in your hands, early, the least that runs for the one need you pick.
 
 ### "I can't spell out every detail up front, so it builds the wrong thing."
 
-You don't spell it out. rn lists the needs it found in your words and picks one with why, and
-you pick. You then try what runs, and say what's off.
+You don't spell it out. rn reads your words, your issue and its earlier work, and your
+repository, and proposes the goal it reads you're after, with the words of yours it rests on, the
+way to it, and what it makes, marking what it had to assume. You correct only what's off, then try
+what runs, and say what's off there.
+
+### "Does it ask a lot of questions before anything starts?"
+
+No. rn asks nothing that your request, your issue, or your repository already says. Where your
+issue already says what you want, one proposal comes first, and once you agree, rn starts. A
+request that leaves more open takes a few proposals, the goal first.
+
+### "A question to it turns into a change."
+
+No. rn answers a question with why, from what it planned and what it made, and changes nothing
+until you ask for a change.
+
+### "I see the parts only at the end, and the rework piles up."
+
+No. rn names each thing it makes, the files where they exist, and asks which ones you want to see
+as soon as they're made, recommending those whose rework would cost most later. rn waits for your
+word on each before it makes what rests on it.
 
 ### "It builds the whole request before anything runs."
 
@@ -183,8 +198,8 @@ Yes. rn talks in your language and writes in your repository's, asking only wher
 
 ### "Does it show how far it has come?"
 
-Yes. When making starts, rn lists what it makes before you can try it, and tells you each time
-one is done, such as `（1/3）`.
+Yes. Each time a task is done, rn tells you what's left before you can try it, and each change to
+the plan with why. It shows no count, as the tasks change while rn finds what the work takes.
 
 ### "Its output misses what this kind of work needs."
 
@@ -210,13 +225,13 @@ conversation.
 
 ### "Can rn's work be called off?"
 
-Yes. Say so, such as `中止して`. Once you confirm, rn removes the work's worktree, its branch, and its
-pull request.
+Yes. Say so, such as `中止して`. rn asks what goes, such as its pull request and its branch, and
+removes only what you confirm.
 
 ### "Does it change the repository's files, or merge on its own?"
 
-No. rn works in a worktree apart from your own work, one you agree to, and leaves the ready mark
-and the merge to you.
+No. rn works on the branch you start it on, makes a branch or a worktree only when you ask for one,
+and leaves the ready mark and the merge to you.
 
 ## Documentation
 

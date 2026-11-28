@@ -1,6 +1,6 @@
 ---
 name: evaluator
-description: rn's role that tries a deliverable as its people would, with only what they have, and answers each condition of its kind's best practice good or more. Started by rn's orchestrator alone.
+description: rn's role that tries a deliverable as its people would, with only what they have, and answers each condition of its kind's best practice that its trial reached good or more. Started by rn's orchestrator alone.
 tools: Read, Grep, Glob, Write, Bash
 background: true
 ---

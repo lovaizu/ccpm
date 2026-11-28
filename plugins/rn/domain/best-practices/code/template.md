@@ -45,5 +45,5 @@
 > DELETE_TEMPLATE_COMMENT:
 > - `<tests>`: tests of the specification's cases, one test for each case, so the maintainer can
 >   tell which test checks which case and which code. Each test has a name that says the behavior it
->   checks, names the case one level up that it supports where the architecture's Test strategy
->   names traceability, and shows the situation, the action, and what must be so.
+>   checks, names the case one level up that it supports where the agreed testing names
+>   traceability, and shows the situation, the action, and what must be so.

@@ -19,13 +19,13 @@
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
-> - `<steps>`: the steps, in the order the AI takes them. Each step gives its purpose and intent:
->   the result that holds when it ends, what it's for, and the question the AI thinks through
->   there. Beside them, a step holds only the plugin's own rules, each with its reason, such as the
->   script that does a step with one right result, and the facts the AI can't find on its own, such
->   as where its inputs lie, as N4, N6, and N9 say.
-> - Where some runs take steps that others don't, one step names each kind of run and gives each
->   its own steps, as N5 says.
+> - `<steps>`: the steps, in the order the AI takes them. Each step gives its purpose, what holds
+>   once it ends and for whom, and its intent, why that's needed, and leaves how to reach it to the
+>   AI, as N5 says. Beside them, a step holds only the plugin's own rules, each with its reason, such
+>   as the script that does a step with one right result, and the facts the AI can't find on its
+>   own, such as where its inputs lie, as N4, N6, and N9 say.
+> - Where some runs take steps that others don't, one step names each kind of run by what holds in
+>   it and gives each its own steps, written by their purpose and intent too, as N5 says.
 
 ## Output
 

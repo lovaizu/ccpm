@@ -1,0 +1,94 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "best practice",
+  "description": "A kind's best practice. Its goal holds the goal's sentence and the critical success factors, the few things that must go right for the deliverable's users to reach that goal. Each factor holds its necessary conditions, each a state of the deliverable that the factor needs, written as a question such a deliverable answers yes to, and each condition holds its practice: its why, which says what the condition gives the users and the method the items come from, and its items, in the order the maker takes them. It names the template beside it, which holds the form a good deliverable of the kind takes, and whose sections each condition's about names. Its conditions name what the deliverable rests on as what it is, never as another kind's document. An evaluator gets its goal, its factors, and its conditions, without their practices.",
+  "type": "object",
+  "required": [
+    "goal"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "goal": {
+      "type": "object",
+      "required": [
+        "what",
+        "critical_success_factors"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "what": {
+          "type": "string"
+        },
+        "critical_success_factors": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/factor"
+          }
+        }
+      }
+    },
+    "template": {
+      "type": "string"
+    }
+  },
+  "$defs": {
+    "factor": {
+      "type": "object",
+      "required": [
+        "what",
+        "necessary_conditions"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "what": {
+          "type": "string"
+        },
+        "necessary_conditions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/condition"
+          }
+        }
+      }
+    },
+    "condition": {
+      "description": "A necessary condition, with its practice.",
+      "type": "object",
+      "required": [
+        "id",
+        "about",
+        "what",
+        "why",
+        "items"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "about": {
+          "type": "string"
+        },
+        "what": {
+          "type": "string"
+        },
+        "why": {
+          "description": "What the condition gives the users, and the method the items come from, with its source.",
+          "type": "string",
+          "minLength": 1
+        },
+        "items": {
+          "description": "Each decision with its question and criterion, each step, and the check from the users' side, each with what it's for, in the order the maker takes them. An item's ID is its condition's ID and its place, such as N6.2, by which another item names it.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}

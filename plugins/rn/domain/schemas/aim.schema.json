@@ -1,0 +1,56 @@
+{
+ "$schema": "http://json-schema.org/draft-07/schema#",
+ "title": "aim",
+ "description": "What the orchestrator gives `steering aim` on stdin, for it to take into the steering: the work's opportunity solution tree, its tasks, and its decisions, each whole as the orchestrator weighed them. A task that the steering already holds at the same path keeps where it is on its way, unless the aim says what it takes next.",
+ "type": "object",
+ "required": [
+  "ost",
+  "tasks",
+  "decisions"
+ ],
+ "additionalProperties": false,
+ "properties": {
+  "ost": {
+   "$ref": "steering.schema.json#/properties/ost"
+  },
+  "tasks": {
+   "description": "What's left to do for the target solution, first to last.",
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "task",
+     "path",
+     "kind"
+    ],
+    "additionalProperties": false,
+    "properties": {
+     "task": {
+      "$ref": "steering.schema.json#/definitions/task/properties/task"
+     },
+     "path": {
+      "$ref": "steering.schema.json#/definitions/task/properties/path"
+     },
+     "kind": {
+      "$ref": "steering.schema.json#/definitions/task/properties/kind"
+     },
+     "refactor": {
+      "$ref": "steering.schema.json#/definitions/task/properties/refactor"
+     },
+     "next": {
+      "description": "Where the weighing decides what the task takes next: generator, to make it again on what was weighed, within LIMIT judged Rounds; anew, to make it again from its first Round, as the solution it was made on changed; fixer, to mend it; refactorer, to refactor it. Absent, it goes on as the steering holds it. A task that's done is left out of the aim.",
+      "enum": [
+       "generator",
+       "anew",
+       "fixer",
+       "refactorer"
+      ]
+     }
+    }
+   }
+  },
+  "decisions": {
+   "$ref": "steering.schema.json#/properties/decisions"
+  }
+ }
+}

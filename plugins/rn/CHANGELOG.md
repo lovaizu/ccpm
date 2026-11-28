@@ -1,5 +1,37 @@
 # Changelog
 
+## [0.13.0] - 2026-11-27
+
+### Changed
+
+- rn proposes the goal it reads you're after, with the words of yours it rests on, the way to it, and what it makes, marking what it assumed, so you correct only what's off instead of answering one question at a time.
+- rn asks nothing that your request, your issue, or your repository already says: a request whose result is settled takes one proposal, and one that leaves more open takes a few, the goal first.
+- rn names each file it changes with what changes in it, and asks which new things you want to see as soon as they're made, waiting for your word on each before it makes what rests on it.
+- rn answers your question with why, and changes nothing until you ask for a change.
+- rn keeps each decision of your talk in a line, so no conversation asks it again.
+- rn works on the branch you start it on, and asks you what to do where that branch isn't one for the work, such as the default branch. It makes a branch or a worktree only when you ask for one.
+- On a cancel, rn asks what goes, and removes only what you confirm.
+- A part that no best practice fits is made by the general kind, which holds what every part needs: who uses it and for what, nothing more than that needs, a check agreed before it's made, the form its reader takes, and no disagreement with your repository. It takes the place of the light kind.
+- rn makes each part from what you agreed to at the start, without asking you about each part's shape. Each best practice names what a part rests on as what it is, such as who it's for, never as another document, so a one-line fix needs no design document first.
+- rn commits and pushes once each purpose ends, such as a part made or a try handed over, each commit in the shape of your repository's, and opens its draft pull request in the shape of your recent ones.
+- rn keeps what you're after as an opportunity solution tree, a small request one branch and a large one many, with no means in it. The solution it aims at carries the assumptions that you test once it's in your hands, and rn names each one at the hand-over.
+- rn's first task puts each part of what you get in its place, in the shape it ends in, with each piece that a later task makes marked `TODO:`. Each task after it fills its pieces, so what you meet first, such as the README, leads what's built under it, each task's end passes your repository's checks, and the marks left show what's missing. rn hands nothing over while a `TODO:` that the work added is left.
+- On a stop, rn commits and pushes what a role left half made as work in progress, and goes on from it on `/rn:up`.
+- rn plans the tasks back from the solution it aims at, and adds and drops them as the work shows what that solution takes. Each time a task is done, it tells you what's left and each change to the plan with why, in place of a count such as `（1/3）`.
+- Where AI evaluators still find something after two tries, rn mends it or leaves it on its own, and asks you only where the mend would change something you decided.
+
+### Fixed
+
+- Where a mend can't be made as asked, such as a problem that lies in another part, rn's fixer says so for rn to weigh, in place of ending as if it mended it.
+- rn's review of its pull request names each finding where it lies, a line, the title or description, or what's missing, and says what it couldn't read.
+- A role's end moves on only the work of its own worktree, so work in another worktree never stops it or gets committed half written.
+- A role's end moves on only the work with something left to do, so a work ended, or one an earlier rn left in the repository, never stops it.
+- rn removes the folders it tries a deliverable in once the try is over, and on a cancel.
+
+### Removed
+
+- The work's own best practices in `.rn/best-practices/`, which nothing let you reach.
+
 ## [0.12.0] - 2026-11-27
 
 ### Changed

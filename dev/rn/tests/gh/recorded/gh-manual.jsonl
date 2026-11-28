@@ -1,1 +1,0 @@
-{"event": "gh pr create prints the URL of the pull request", "exit": 0, "stdout": "http://github.com/owner/repo/pull/1\n"}

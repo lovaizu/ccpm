@@ -1,6 +1,6 @@
 """Decides whether a JSON value holds to the form that one of rn's schemas gives, by the keywords
 of JSON Schema that rn's schemas use: `type`, `required`, `properties`, `additionalProperties`,
-`items`, `minItems`, `enum`, `const`, `minLength`, `pattern`, `oneOf`, and `$ref`, to a definition
+`items`, `minItems`, `enum`, `const`, `minLength`, `pattern`, and `$ref`, to a definition
 in the same schema or to a part of another schema beside it. A schema that uses another keyword is
 a fault of rn's own, so it refuses that schema rather than pass what it didn't check."""
 
@@ -36,7 +36,6 @@ _CHECKED = {
     "const",
     "minLength",
     "pattern",
-    "oneOf",
     "$ref",
 }
 _TOLD = {"$schema", "title", "description", "definitions", "$defs"}
@@ -99,8 +98,6 @@ class _Check:
             raise ValueError(f"the schema uses {sorted(unknown)}, which rn's form check doesn't")
         if "$ref" in schema:
             return self.referred(value, schema["$ref"], at)
-        if "oneOf" in schema:
-            return self.one_of(value, schema["oneOf"], at)
         if not _typed(value, schema.get("type")):
             return [f"{at or '/'}: takes {_said(schema['type'])}"]
         return self.within(value, schema, at)
@@ -112,14 +109,6 @@ class _Check:
         for key in pointer.strip("/").split("/"):
             part = part[key]
         return check.faults(value, part, at)
-
-    def one_of(self, value: Any, options: list[dict[str, Any]], at: str) -> list[str]:
-        held = [each for each in options if not self.faults(value, each, at)]
-        if len(held) == 1:
-            return []
-        return [
-            f"{at or '/'}: takes exactly one of its {len(options)} forms, and holds {len(held)}"
-        ]
 
     def within(self, value: Any, schema: dict[str, Any], at: str) -> list[str]:
         found = _scalar_faults(value, schema, at)

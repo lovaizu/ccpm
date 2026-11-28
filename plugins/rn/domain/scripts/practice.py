@@ -1,7 +1,6 @@
-"""Decides where the best practice of each kind lies and what of it each role gets: the work's own
-best practices in `.rn/best-practices/<kind>/` before rn's, each read from its
-`best-practice.json`, the goal and conditions alone that an evaluator judges by, and the kind by
-which a deliverable is refactored."""
+"""Decides where the best practice of each kind lies and what of it each role gets: rn's best
+practices, each read from its `best-practice.json`, the goal and conditions alone that an
+evaluator judges by."""
 
 from __future__ import annotations
 
@@ -13,34 +12,26 @@ from typing import Any
 from fault import Wrong
 
 _FILE = "best-practice.json"
-# The kinds whose deliverables are code, refactored by refactor-code.
-_CODE = {"code", "software-design", "test-design", "test-implementation"}
 
 # A best practice as its best-practice.json holds it, in the form of
-# domain/schemas/best-practice.schema.json.
+# dev/rn/best-practice.schema.json.
 Practice = dict[str, Any]
 
 
-def kinds(plugin_root: str, worktree: str) -> dict[str, str]:
+def kinds(plugin_root: str) -> dict[str, str]:
     """The folder of each kind's best practice.
 
-    Takes: rn's folder, and the work's worktree.
-    Gives: each kind by its folder's name, to the folder of its best practice: the worktree's
-    `.rn/best-practices/<kind>/` where it holds one, else rn's `domain/best-practices/<kind>/`.
+    Takes: rn's folder.
+    Gives: each kind by its folder's name, to rn's `domain/best-practices/<kind>/`.
     Changes: nothing.
     Refuses: nothing; a folder with no `best-practice.json` is no kind.
     """
+    top = os.path.join(plugin_root, "domain", "best-practices")
     found: dict[str, str] = {}
-    for top in (
-        os.path.join(plugin_root, "domain", "best-practices"),
-        os.path.join(worktree, ".rn", "best-practices"),
-    ):
-        if not os.path.isdir(top):
-            continue
-        for kind in os.listdir(top):
-            folder = os.path.join(top, kind)
-            if os.path.isfile(os.path.join(folder, _FILE)):
-                found[kind] = folder
+    for kind in os.listdir(top):
+        folder = os.path.join(top, kind)
+        if os.path.isfile(os.path.join(folder, _FILE)):
+            found[kind] = folder
     return found
 
 
@@ -78,21 +69,6 @@ def judged(practice: Practice) -> dict[str, Any]:
         # A condition's practice is its why and its items, which its form holds beside it.
         del condition["why"], condition["items"]
     return goal
-
-
-def refactoring(kind: str) -> str | None:
-    """The kind of the best practice by which a deliverable of the kind is refactored.
-
-    Takes: a deliverable's kind.
-    Gives: `refactor-code` for `code`, `software-design`, `test-design`, and
-    `test-implementation`; None for `light`, which its check alone makes; and `refactor-doc` for
-    each other kind.
-    Changes: nothing.
-    Refuses: nothing.
-    """
-    if kind == "light":
-        return None
-    return "refactor-code" if kind in _CODE else "refactor-doc"
 
 
 def conditions(goal: dict[str, Any]) -> list[dict[str, Any]]:

@@ -1,91 +1,50 @@
 {
  "goal": {
-  "what": "The developers build and change the parts of the product so that together they deliver what the README promises the users, each part putting its work on what brings the users there.",
+  "what": "The developers build and change the parts of the product so that together they deliver what the product promises its users, each part putting its work on what brings the users there.",
   "critical_success_factors": [
    {
-    "id": "C1",
     "what": "The developers know what each part must do, for the users or for the product's development and operation, and why.",
     "necessary_conditions": [
      {
       "id": "N1",
       "about": "Solution strategy, Principles",
-      "what": "Does Principles state first, in one sentence, the one idea by which the product delivers what its README promises?",
+      "what": "Does Principles state first, in one sentence, the one idea by which the product delivers what the product promises its users?",
       "why": "Each view carries out one idea, and a developer who knows the idea builds a part that serves it. The [solution strategy](https://docs.arc42.org/section-4/) of arc42 sums up first the few decisions that shape the whole.",
       "items": [
-       {
-        "at": "decide",
-        "text": "Open your cut, and read the sections that `inputs` takes of each input it names: the product vision and the README, and, where the product builds on another's rules, the architecture it builds on, such as a guide to building a plugin of the host it runs in, to its end."
-       },
-       {
-        "at": "decide",
-        "text": "Take the sentence that opens the product vision's Concept, the one idea by which the product brings its users to their objectives, such as piling up the vital few that bring a deliverable's people to their aim."
-       },
-       {
-        "at": "make",
-        "text": "Write it in one sentence that a developer can hold in mind while building any part, and put it first in Principles, before the principles that follow from it."
-       },
-       {
-        "at": "make",
-        "text": "After writing the rest, read each component's line as a developer who knows only the idea, and check that they can see which piece of the idea it carries out. Change the idea or the component where they can't."
-       }
+       "Read to its end each decision agreed for the document and what the repository already holds of what the product promises its users, of their objectives, and of the one way by which it brings them there, and, where the product builds on another's rules, the architecture it builds on, such as a guide to building a plugin of the host it runs in.",
+       "Take the one idea by which the product brings its users to their objectives, such as piling up the vital few that bring a deliverable's people to their aim.",
+       "Write it in one sentence that a developer can hold in mind while building any part, and put it first in Principles, before the principles that follow from it.",
+       "After writing the rest, read each component's line as a developer who knows only the idea, and check that they can see which piece of the idea it carries out. Change the idea or the component where they can't."
       ]
      },
      {
       "id": "N2",
       "about": "User stories",
-      "what": "Does each user story state a value that it brings its role on its own, in the role's words and without the product's means, and do the stories together cover each objective of the product vision and each promise of the README?",
+      "what": "Does each user story state a value that it brings its role on its own, in the role's words and without the product's means, and do the stories together cover each objective of the users and each promise that the product makes them?",
       "why": "The stories are the product's requirements: what each role wants, which the views then meet. A story that names a means, such as a command, states a design as a want, so no one asks whether the design serves the want. A [user story](https://www.mountaingoatsoftware.com/agile/user-stories) doesn't prescribe the solution, which the conversation and the acceptance criteria settle, and a want that brings no value on its own, such as answering a question, is a step toward one, which the views draw.",
       "items": [
-       {
-        "at": "decide",
-        "text": "Open the product vision and the README, and list each objective and each promise that the README makes its users."
-       },
-       {
-        "at": "decide",
-        "text": "For each objective, ask what value its role takes away on its own from a use of the product, such as the deliverable they're after, or a pause and a pick-up, and write each as a story in the role's words, without a command, a screen, or a part of the product."
-       },
-       {
-        "at": "decide",
-        "text": "Where a want is a means toward such a value, such as answering points or signing off, leave it to Principles and Sequences, unless the role wants that means itself, such as working within the tool they already use, since a story of a means states a design as a want."
-       },
-       {
-        "at": "make",
-        "text": "For each objective and each promise, name the stories that carry it, and add a story where none does. Leave an activity without a story of its own where another story already carries it."
-       }
+       "List each objective of the users and each promise that the product makes them, as agreed.",
+       "For each objective, ask what value its role takes away on its own from a use of the product, such as the deliverable they're after, or a pause and a pick-up, and write each as a story in the role's words, without a command, a screen, or a part of the product.",
+       "Where a want is a means toward such a value, such as answering points or signing off, leave it to Principles and Sequences, unless the role wants that means itself, such as working within the tool they already use, since a story of a means states a design as a want.",
+       "For each objective and each promise, name the stories that carry it, and add a story where none does. Leave an activity without a story of its own where another story already carries it."
       ]
      },
      {
       "id": "N3",
       "about": "Principles, User stories, Components, Concept model, Sequences",
-      "what": "Does each principle item, user story, component, and concept trace to what the README promises the users, or to a need of the product's development or operation?",
+      "what": "Does each principle item, user story, component, and concept trace to what the product promises its users, or to a need of the product's development or operation?",
       "why": "A part that nothing needs costs effort to build and to keep, and gives no one anything.",
       "items": [
-       {
-        "at": "decide",
-        "text": "For each story, ask which activity, doubt, or need it carries, from three sources. The README and the product vision carry what the users get: the objectives and the promises that N2 lists, and the doubts that the README's How it works answers. Development adds what the developers need to build, test, and change the parts. Operation adds what keeps the product working across runs and updates, such as where its work outlives a run."
-       },
-       {
-        "at": "make",
-        "text": "Once you have written Principles, for each principle item, name the doubt of the README's How it works, or the need of development or operation, that it carries."
-       },
-       {
-        "at": "make",
-        "text": "Once you have written the views, for each component and each concept, find the strategy or the arrow of a sequence that reaches it."
-       },
-       {
-        "at": "make",
-        "text": "Remove each story or principle item that carries none, and each component or data that none reaches, from every figure, list, and sentence that names it."
-       },
-       {
-        "at": "make",
-        "text": "Where the product already exists, follow each story's path through its code, and where a behavior that the users meet there doesn't serve them as the README promises, such as how an invoice shows its amounts, write it as a decision of the component that changes it, since a behavior kept unasked becomes the specification, and every case built on it fixes its faults in place."
-       }
+       "For each story, ask which activity, doubt, or need it carries, from three sources. What the users get carries the objectives and the promises that N2 lists, and the doubts that the users have of how the product works. Development adds what the developers need to build, test, and change the parts. Operation adds what keeps the product working across runs and updates, such as where its work outlives a run.",
+       "Once you have written Principles, for each principle item, name the users' doubt of how the product works, or the need of development or operation, that it carries.",
+       "Once you have written the views, for each component and each concept, find the strategy or the arrow of a sequence that reaches it.",
+       "Remove each story or principle item that carries none, and each component or data that none reaches, from every figure, list, and sentence that names it.",
+       "Where the product already exists, follow each story's path through its code, and where a behavior that the users meet there doesn't serve them as the product promises, such as how an invoice shows its amounts, write it as a decision of the component that changes it, since a behavior kept unasked becomes the specification, and every case built on it fixes its faults in place."
       ]
      }
     ]
    },
    {
-    "id": "C2",
     "what": "Parts that different developers build fit together.",
     "necessary_conditions": [
      {
@@ -94,34 +53,13 @@
       "what": "Does each principle name what it values, and each of its items one decision, with no name that a later section decides, from which two developers decide a case that no line names the same way?",
       "why": "Developers of different parts meet the same kind of decision, and decide it apart unless a decision that every view follows settles it. A principle that names what it values carries a developer to a case that no decision names.",
       "items": [
-       {
-        "at": "decide",
-        "text": "Take each idea of the product vision's Concept, each key result, each user story that spans parts, and each constraint of the host, of development, or of operation, such as how much one conversation holds, and ask what every part must value for the one idea to keep holding there, such as nothing lost on a stop."
-       },
-       {
-        "at": "decide",
-        "text": "Name each value in the people's words, as a few words that a developer weighs a case by, and write it as a principle, `P<n>`. Where two sources give the same value, keep one."
-       },
-       {
-        "at": "decide",
-        "text": "Under each value, ask what every part must hold alike for it to come true, such as where the work's state lives. Take each from a doubt of the README's How it works whose answer the value keeps. For a value that comes from a story or a constraint and keeps no doubt's answer, take each from what that story or constraint needs. A part that held it otherwise would break a key result. Each is a decision of the principle."
-       },
-       {
-        "at": "make",
-        "text": "Write each decision under its principle as `P<n>.<m>`, one decision in one sentence that says what happens by it, in the words of the README, without any name that a later section decides, such as a component, a data, a tool, or a count, since Principles comes before the sections that decide them. Read each as a developer who has read only the README, and rewrite each they can't follow, such as one that names what the product keeps without saying what."
-       },
-       {
-        "at": "make",
-        "text": "Check that each doubt of the README's How it works lands in a value, and derive again the value it keeps where it lands in none. Remove each value that holds no decision, as it gives a developer nothing to hold to."
-       },
-       {
-        "at": "make",
-        "text": "Where your cut names an architecture that the product builds on, point to its principles, and write only what this product adds or changes."
-       },
-       {
-        "at": "make",
-        "text": "Take a case that no decision names, and decide it from each principle's value as two developers of different parts would. Where they differ, sharpen the decision that left the case open."
-       }
+       "Take each idea of the one way by which the product brings its users to their objectives, each key result, each user story that spans parts, and each constraint of the host, of development, or of operation, such as how much one conversation holds, and ask what every part must value for the one idea to keep holding there, such as nothing lost on a stop.",
+       "Name each value in the people's words, as a few words that a developer weighs a case by, and write it as a principle, `P<n>`. Where two sources give the same value, keep one.",
+       "Under each value, ask what every part must hold alike for it to come true, such as where the work's state lives. Take each from a doubt that the users have of how the product works, whose answer the value keeps. For a value that comes from a story or a constraint and keeps no doubt's answer, take each from what that story or constraint needs. A part that held it otherwise would break a key result. Each is a decision of the principle.",
+       "Write each decision under its principle as `P<n>.<m>`, one decision in one sentence that says what happens by it, in the users' words, without any name that a later section decides, such as a component, a data, a tool, or a count, since Principles comes before the sections that decide them. Read each as a developer who knows only what the product promises its users, and rewrite each they can't follow, such as one that names what the product keeps without saying what.",
+       "Check that each of the users' doubts of how the product works lands in a value, and derive again the value it keeps where it lands in none. Remove each value that holds no decision, as it gives a developer nothing to hold to.",
+       "Where the steering names an architecture that the product builds on, point to its principles, and write only what this product adds or changes.",
+       "Take a case that no decision names, and decide it from each principle's value as two developers of different parts would. Where they differ, sharpen the decision that left the case open."
       ]
      },
      {
@@ -130,30 +68,12 @@
       "what": "Does each component state its expected role, what it answers for toward the users' aim, and does each decision that the stories need belong to exactly one component?",
       "why": "Two components that make the same decision make it twice, and the two copies drift apart. David Parnas's information hiding gives each module one decision that's hard to make or likely to change, and hides it from the rest.",
       "items": [
-       {
-        "at": "decide",
-        "text": "Walk each story's steps, and name who acts at each: the role, a part of the product, or a thing outside the product. Each part of the product that acts is a component, of a kind that the architecture the product builds on offers where it offers kinds, such as a skill, a hook, or a script of a Claude Code plugin."
-       },
-       {
-        "at": "decide",
-        "text": "Take from the stories the decisions that are hard to make or likely to change, such as where the product keeps the work's state, or the form of a file that two parts share."
-       },
-       {
-        "at": "decide",
-        "text": "Give each decision to the one component that holds what it decides on, such as the form of the work's state to the component that writes the state. Where no component holds it, make a component for it."
-       },
-       {
-        "at": "decide",
-        "text": "Where another component needs the same decision, leave it with the component that holds it, and draw an arrow by which the other asks it, such as a hook that asks a script whether a step is done instead of reading the state itself."
-       },
-       {
-        "at": "make",
-        "text": "Write under the figure each component with its expected role in one sentence: what it answers for toward the users' aim, not its tasks, such as `leads the work to the people's aim`, so that a developer knows what to build and what to leave to the others."
-       },
-       {
-        "at": "make",
-        "text": "Draw the roles and how they act on one another and on the data, with no implementation's name, and label each arrow with what one does to another and the data it hands on, as a word such as `uses` names no act."
-       }
+       "Walk each story's steps, and name who acts at each: the role, a part of the product, or a thing outside the product. Each part of the product that acts is a component, of a kind that the architecture the product builds on offers where it offers kinds, such as a skill, a hook, or a script of a Claude Code plugin.",
+       "Take from the stories the decisions that are hard to make or likely to change, such as where the product keeps the work's state, or the form of a file that two parts share.",
+       "Give each decision to the one component that holds what it decides on, such as the form of the work's state to the component that writes the state. Where no component holds it, make a component for it.",
+       "Where another component needs the same decision, leave it with the component that holds it, and draw an arrow by which the other asks it, such as a hook that asks a script whether a step is done instead of reading the state itself.",
+       "Write under the figure each component with its expected role in one sentence: what it answers for toward the users' aim, not its tasks, such as `leads the work to the people's aim`, so that a developer knows what to build and what to leave to the others.",
+       "Draw the roles and how they act on one another and on the data, with no implementation's name, and label each arrow with what one does to another and the data it hands on, as a word such as `uses` names no act."
       ]
      },
      {
@@ -162,18 +82,9 @@
       "what": "Does each component state its type?",
       "why": "A developer who doesn't know what kind of thing a component is chooses alone, and the components stop fitting. The [C4 model](https://c4model.com/diagrams/container) gives each box its name and its type, such as a script.",
       "items": [
-       {
-        "at": "decide",
-        "text": "For each component, decide its type from the product's constraints and the kinds that the architecture the product builds on offers, such as a skill, a hook, or a script of a Claude Code plugin."
-       },
-       {
-        "at": "make",
-        "text": "Copy the template's skeleton of the figure to the deliverable's own."
-       },
-       {
-        "at": "make",
-        "text": "Give the figure a legend for every symbol."
-       }
+       "For each component, decide its type from the product's constraints and the kinds that the architecture the product builds on offers, such as a skill, a hook, or a script of a Claude Code plugin.",
+       "Copy the template's skeleton of the figure to the deliverable's own.",
+       "Give the figure a legend for every symbol."
       ]
      },
      {
@@ -182,26 +93,11 @@
       "what": "Does Concept model say what each concept is for, and show how the concepts relate, without their fields or any role's name?",
       "why": "Two developers who build the writer and the reader of the same concept must join it to the other concepts in the same way, while its fields stay free to change. A concept model in a class diagram of the Unified Modeling Language (UML), which most developers read, shows this. Concept model comes before Components, so it names no role, and each later view names only what came before it.",
       "items": [
-       {
-        "at": "decide",
-        "text": "Walk each story and each principle item, and list each concept that the product keeps or hands on, by the name the README gives it where it gives one, such as the work's record."
-       },
-       {
-        "at": "decide",
-        "text": "For each pair that relates, name the relation, and give how many of each it joins at both ends, such as a piece of work that holds one or more rounds."
-       },
-       {
-        "at": "make",
-        "text": "Draw each once, as a class by its name alone."
-       },
-       {
-        "at": "make",
-        "text": "Leave the fields to where the developer builds the data."
-       },
-       {
-        "at": "make",
-        "text": "Below the figure, say for each concept what it's for, in one or two sentences, with no role's name, such as `holds what to make, why, and how far the work got`."
-       }
+       "Walk each story and each principle item, and list each concept that the product keeps or hands on, by the name the users know it by where they have one, such as the work's record.",
+       "For each pair that relates, name the relation, and give how many of each it joins at both ends, such as a piece of work that holds one or more rounds.",
+       "Draw each once, as a class by its name alone.",
+       "Leave the fields to where the developer builds the data.",
+       "Below the figure, say for each concept what it's for, in one or two sentences, with no role's name, such as `holds what to make, why, and how far the work got`."
       ]
      },
      {
@@ -210,26 +106,11 @@
       "what": "Does each user story have a sequence that shows, one action on each arrow, which component hands what to which and where the story branches, with each arrow and each branch condition tagged with the story or principle item that it carries out?",
       "why": "A developer building a step must know who hands them what, and what they hand on. A [UML](https://www.omg.org/spec/UML) sequence diagram draws a story's handoffs in order, from the role's first request to what the story gives them, while a step that stays inside one component belongs to its role, as a diagram that draws each such step buries the handoffs.",
       "items": [
-       {
-        "at": "make",
-        "text": "For each story, draw each handoff from one component to another as an arrow with one action, the data it hands on in parentheses, named as in Concept model, and write each step that stays inside one component in that component's role in place of an arrow."
-       },
-       {
-        "at": "make",
-        "text": "At each handoff, ask what can go otherwise there that changes what the role meets or gets, from the README's walkthrough and from what each component alone decides: an input that a component refuses, a check that fails, or a choice that only the role can make, such as a question that the walkthrough shows the role answering."
-       },
-       {
-        "at": "make",
-        "text": "Draw an input refused as a branch, a check that fails as a step that sends work back to the step it repeats, and a choice of the role as a question put to the role with its answers, since each path of the story, and its integration test, rests on them."
-       },
-       {
-        "at": "make",
-        "text": "Tag each arrow and each branch condition, in brackets at its end, with the story or principle item that it carries out, such as `[P1.2]`, so that a developer sees why the step is there, and each story and principle item is carried out somewhere."
-       },
-       {
-        "at": "make",
-        "text": "Read each sequence as the developer who builds one of its steps, and check that they can tell who hands them what, along which arrow of Components, and what they hand on. Where no arrow carries a handoff, add the arrow, or give the step to another component."
-       }
+       "For each story, draw each handoff from one component to another as an arrow with one action, the data it hands on in parentheses, named as in Concept model, and write each step that stays inside one component in that component's role in place of an arrow.",
+       "At each handoff, ask what can go otherwise there that changes what the role meets or gets, from the users' use as agreed and from what each component alone decides: an input that a component refuses, a check that fails, or a choice that only the role can make, such as a question that the role answers in that use.",
+       "Draw an input refused as a branch, a check that fails as a step that sends work back to the step it repeats, and a choice of the role as a question put to the role with its answers, since each path of the story, and its integration test, rests on them.",
+       "Tag each arrow and each branch condition, in brackets at its end, with the story or principle item that it carries out, such as `[P1.2]`, so that a developer sees why the step is there, and each story and principle item is carried out somewhere.",
+       "Read each sequence as the developer who builds one of its steps, and check that they can tell who hands them what, along which arrow of Components, and what they hand on. Where no arrow carries a handoff, add the arrow, or give the step to another component."
       ]
      },
      {
@@ -238,20 +119,13 @@
       "what": "Do the figures, lists, and sentences agree with one another, and with the architecture that the product builds on, on what each part does?",
       "why": "A developer who finds two places that say different things about a part must choose which to follow, and two developers choose differently.",
       "items": [
-       {
-        "at": "make",
-        "text": "For each part, gather what every figure, list, and sentence says it does, and, where your cut names an architecture that the product builds on, what each of its rules asks of a part of that kind, such as a rule that every hook gives its result as JSON."
-       },
-       {
-        "at": "make",
-        "text": "Where two disagree, decide by the values of Principles and of the architecture it builds on which is right, and change the other."
-       }
+       "For each part, gather what every figure, list, and sentence says it does, and, where the steering names an architecture that the product builds on, what each of its rules asks of a part of that kind, such as a rule that every hook gives its result as JSON.",
+       "Where two disagree, decide by the values of Principles and of the architecture it builds on which is right, and change the other."
       ]
      }
     ]
    },
    {
-    "id": "C3",
     "what": "The developers can place, set up, and start every part without asking anyone.",
     "necessary_conditions": [
      {
@@ -260,26 +134,11 @@
       "what": "Does Deployment show each environment the product runs in, what runs in it, each store of data, each service outside the product, and how the product starts?",
       "why": "A developer setting up the product needs to know where each part runs, what it can reach, and how it starts. A [C4 deployment diagram](https://c4model.com/diagrams/deployment) shows this.",
       "items": [
-       {
-        "at": "decide",
-        "text": "List each environment the product runs in, such as the user's computer or CI, with its technology."
-       },
-       {
-        "at": "decide",
-        "text": "Place in its environment each component and each store of data by what runs there and where the data is kept, such as the work's folder in the user's repository. Name no process or other unit of the implementation."
-       },
-       {
-        "at": "decide",
-        "text": "Add each service outside the product that the components depend on, with what they use of it, so that the figure holds what a developer sets up for the components."
-       },
-       {
-        "at": "make",
-        "text": "Write in one sentence how the product starts."
-       },
-       {
-        "at": "make",
-        "text": "Check that a developer could set the product up from nothing by the figure and that sentence."
-       }
+       "List each environment the product runs in, such as the user's computer or CI, with its technology.",
+       "Place in its environment each component and each store of data by what runs there and where the data is kept, such as the work's folder in the user's repository. Name no process or other unit of the implementation.",
+       "Add each service outside the product that the components depend on, with what they use of it, so that the figure holds what a developer sets up for the components.",
+       "Write in one sentence how the product starts.",
+       "Check that a developer could set the product up from nothing by the figure and that sentence."
       ]
      },
      {
@@ -288,29 +147,16 @@
       "what": "Does Directory structure show the folders, with only the vital few files, and beside each top folder its purpose?",
       "why": "A developer making a change must find the one place it belongs. Simon Brown's package by component, in Robert C. Martin's *Clean Architecture*, lays out the code by the components that the architecture draws.",
       "items": [
-       {
-        "at": "decide",
-        "text": "Lay out the folders by component, so that each component and each concept has its own place, such as a folder for the hooks and one for the code they call."
-       },
-       {
-        "at": "make",
-        "text": "Show each folder by its real name, nested as on disk, with only the files that a developer looks for first, such as the prompt of each component."
-       },
-       {
-        "at": "make",
-        "text": "Beside each top folder, write its purpose, such as what Claude Code installs for the user, and beside another folder or file only where its name doesn't say what it holds."
-       },
-       {
-        "at": "make",
-        "text": "Check that, for any change to a component, a developer can name the one folder it goes in."
-       }
+       "Lay out the folders by component, so that each component and each concept has its own place, such as a folder for the hooks and one for the code they call.",
+       "Show each folder by its real name, nested as on disk, with only the files that a developer looks for first, such as the prompt of each component.",
+       "Beside each top folder, write its purpose, such as what Claude Code installs for the user, and beside another folder or file only where its name doesn't say what it holds.",
+       "Check that, for any change to a component, a developer can name the one folder it goes in."
       ]
      }
     ]
    },
    {
-    "id": "C4",
-    "what": "The developers find each gap between the parts before they build any part, and know, as they build, that the product does what the document and the product vision say.",
+    "what": "The developers find each gap between the parts before they build any part, and know, as they build, that the product does what the document says and what it promises its users.",
     "necessary_conditions": [
      {
       "id": "N12",
@@ -318,62 +164,26 @@
       "what": "Does Test strategy give, in its table alone, only the checks that the product's purpose needs, picked from the test strategy guide, each with its test target, its kind, when it runs, and for a quality its criterion or for a benchmark what it measures?",
       "why": "A failure that no test looks for reaches the users unseen, and a case's pass or fail decides the work only where its criterion is set before anyone writes it. Where a result varies from run to run, as a prompt's does, a criterion passes or fails by chance, so a benchmark measures it and a person decides. A row for every check of the guide decides nothing for most of them, so Test strategy holds only the types the product's purpose needs.",
       "items": [
-       {
-        "at": "decide",
-        "text": "Read [the test strategy guide](test-strategy-guide.md) to its end."
-       },
-       {
-        "at": "decide",
-        "text": "Take each check's test target from the guide. Unit tests try the parts against their contracts. Integration tests try the parts joined against each element of this document. End-to-end (E2E) tests try the product in real use against each key result of the product vision. Use no other name for a test, so that each case's level tells which target it checks."
-       },
-       {
-        "at": "decide",
-        "text": "Pick each check that the guide says to pick always, and each other check whose condition the product meets, given what it is and what it builds on, such as a contract test where the tests use a double of a host that changes on its own schedule."
-       },
-       {
-        "at": "decide",
-        "text": "Set when each check runs, as the guide's rule of timing gives it: during the work, at the stages of a test that runs the product whole, or apart from the work. Change it only where the product needs another, and say why in the row, since a check that the work waits on decides whether a part is done, and one that waits on another's schedule, such as a new version of the host, would hold up the work."
-       },
-       {
-        "at": "decide",
-        "text": "Take each quality's criterion that the guide recommends, or the one that the architecture the product builds on sets. Change it only where the product can't meet it, or a key result needs more, and say why in the row."
-       },
-       {
-        "at": "decide",
-        "text": "For each benchmark, name what it measures, such as a key result. Set no criterion, as a person judges from the results."
-       },
-       {
-        "at": "decide",
-        "text": "Set how many times a benchmark runs each case by its first runs: add runs until one more no longer changes what the results show, such as the mean of a key result by a step of its measure, since the AI's variance shows only across runs. Where the product can't run yet, write this rule in place of the number, for the first run to set it."
-       },
-       {
-        "at": "decide",
-        "text": "For the trace of the architecture, set as the criterion that every element of this document, each story, principle item, component, and data, has an integration test, and that every test names an element or a case one level up that exists. Where the product holds a prompt, pick no integration test and no trace, as the guide's rule of Prompts says."
-       },
-       {
-        "at": "make",
-        "text": "Write one row for each check picked, in the guide's order, in the template's table, with its kind as the guide gives it, and name no tool and no means in it."
-       }
+       "Read [the test strategy guide](test-strategy-guide.md) to its end.",
+       "Take each check's test target from the guide. Unit tests try the parts against their contracts. Integration tests try the parts joined against each element of this document. End-to-end (E2E) tests try the product in real use against each key result of the users' objectives. Use no other name for a test, so that each case's level tells which target it checks.",
+       "Pick each check that the guide says to pick always, and each other check whose condition the product meets, given what it is and what it builds on, such as a contract test where the tests use a double of a host that changes on its own schedule.",
+       "Set when each check runs, as the guide's rule of timing gives it: during the work, at the stages of a test that runs the product whole, or apart from the work. Change it only where the product needs another, and say why in the row, since a check that the work waits on decides whether a part is done, and one that waits on another's schedule, such as a new version of the host, would hold up the work.",
+       "Take each quality's criterion that the guide recommends, or the one that the architecture the product builds on sets. Change it only where the product can't meet it, or a key result needs more, and say why in the row.",
+       "For each benchmark, name what it measures, such as a key result. Set no criterion, as a person judges from the results.",
+       "Set how many times a benchmark runs each case by its first runs: add runs until one more no longer changes what the results show, such as the mean of a key result by a step of its measure, since the AI's variance shows only across runs. Where the product can't run yet, write this rule in place of the number, for the first run to set it.",
+       "For the trace of the architecture, set as the criterion that every element of this document, each story, principle item, component, and data, has an integration test, and that every test names an element or a case one level up that exists. Where the product holds a prompt, pick no integration test and no trace, as the guide's rule of Prompts says.",
+       "Write one row for each check picked, in the guide's order, in the template's table, with its kind as the guide gives it, and name no tool and no means in it."
       ]
      },
      {
       "id": "N13",
       "about": "the whole",
-      "what": "Is each gap that the software design and the test design found from the document mended in it, so that the two designs, made again from it, find none?",
+      "what": "Is each gap that a skeleton of the parts and the test cases through it, made from the document, found mended in it, so that the two, made again from it, find none?",
       "why": "A skeleton of the parts and test cases through it, made from the document before any body is built, show each gap between the parts while it's still cheap to mend: a case that no part can hold, or a handoff that no interface carries. Each gap mended in the document, not in the code around it, keeps the document true for each developer who builds on it.",
       "items": [
-       {
-        "at": "make",
-        "text": "Once Test strategy is written, have the skeleton made from the document by [the software design best practice](../software-design/best-practice.json), and then the test cases by [the test design best practice](../test-design/best-practice.json), each with its list of gaps."
-       },
-       {
-        "at": "make",
-        "text": "For each gap that the lists name, change the document: give a case a part, or a decision a component; remove a part that no case reaches, as N3 says; split a component by its decisions or its reasons to change; and give a handoff an arrow and a data."
-       },
-       {
-        "at": "make",
-        "text": "Have the two designs follow the changed document as their practices say, and mend each gap they list again, until they list none."
-       }
+       "Once Test strategy is written, have a skeleton of the parts made from the document, each module with its interface and an empty body, and then the test cases through it, each with its list of gaps.",
+       "For each gap that the lists name, change the document: give a case a part, or a decision a component; remove a part that no case reaches, as N3 says; split a component by its decisions or its reasons to change; and give a handoff an arrow and a data.",
+       "Have the skeleton and the test cases follow the changed document, and mend each gap they list again, until they list none."
       ]
      },
      {
@@ -382,24 +192,14 @@
       "what": "Does each thing that the document says the product does rest on a part that a unit or integration test can check?",
       "why": "A test that runs the product whole is slow and few, and for a product that holds a prompt it's the user's E2E run that a developer watches, so only the lower levels show what each change does, and a thing that only a prompt holds shows only in that run. The [Humble Object](https://martinfowler.com/bliki/HumbleObject.html) pattern of Gerard Meszaros's *xUnit Test Patterns* moves the logic out of a part that's hard to test into a part that a test can run.",
       "items": [
-       {
-        "at": "decide",
-        "text": "For each thing the document says the product does, name the part that holds it."
-       },
-       {
-        "at": "decide",
-        "text": "Where only a prompt holds a rule that must hold on every run, give the rule to a part that a test can run, such as a hook, and draw that part in Components."
-       },
-       {
-        "at": "decide",
-        "text": "Leave a judgment that only an AI can make, such as whether a point is the user's, with the AI, and try it by the user's E2E run of the test strategy guide."
-       }
+       "For each thing the document says the product does, name the part that holds it.",
+       "Where only a prompt holds a rule that must hold on every run, give the rule to a part that a test can run, such as a hook, and draw that part in Components.",
+       "Leave a judgment that only an AI can make, such as whether a point is the user's, with the AI, and try it by the user's E2E run of the test strategy guide."
       ]
      }
     ]
    },
    {
-    "id": "C5",
     "what": "The developers can change the product without making the document wrong.",
     "necessary_conditions": [
      {
@@ -408,67 +208,26 @@
       "what": "Does each view's Strategies give each decision of the view, tagged with the story or principle item that it carries out, with its intent?",
       "why": "A developer who doubts a decision and can't see what it was for may undo it and bring back the problem it solved. An [architecture decision record](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions), by Michael Nygard, keeps a decision with its context, and its intent is what a developer needs to keep it.",
       "items": [
-       {
-        "at": "decide",
-        "text": "For each view, take each decision that a story or principle item rests on, such as a technology, a tool, or the form of a file that two parts share, and name the story or principle item that it carries out."
-       },
-       {
-        "at": "make",
-        "text": "Write each under its view's Strategies in one sentence, tagged in brackets with that story or principle item, such as `[P1.1]`, then `Intent:` with its purpose alone, with no means and no key result's ID."
-       },
-       {
-        "at": "make",
-        "text": "State a decision that the implementation spells out item by item as its policy, such as each step that has one right result done by a script, since a list goes untrue at the next change."
-       },
-       {
-        "at": "make",
-        "text": "Leave out Strategies where the view takes no decision."
-       }
+       "For each view, take each decision that a story or principle item rests on, such as a technology, a tool, or the form of a file that two parts share, and name the story or principle item that it carries out.",
+       "Write each under its view's Strategies in one sentence, tagged in brackets with that story or principle item, such as `[P1.1]`, then `Intent:` with its purpose alone, with no means and no key result's ID.",
+       "State a decision that the implementation spells out item by item as its policy, such as each step that has one right result done by a script, since a list goes untrue at the next change.",
+       "Leave out Strategies where the view takes no decision."
       ]
      },
      {
       "id": "N16",
       "about": "the whole",
-      "what": "Does the document hold only what stays true while the product vision and Principles stay, with no name of the implementation outside Directory structure?",
+      "what": "Does the document hold only what stays true while the users' objectives, the one way, and Principles stay, with no name of the implementation outside Directory structure?",
       "why": "A line about how a component works inside becomes untrue at the next change to that component, and the developer then can't trust the document. David Parnas's [information hiding](https://doi.org/10.1145/361598.361623) keeps such details inside the module.",
       "items": [
-       {
-        "at": "make",
-        "text": "For each line, ask whether it would become untrue if a component's internals changed while the product vision and Principles stayed."
-       },
-       {
-        "at": "make",
-        "text": "If it would, move it to where the developer builds the component."
-       },
-       {
-        "at": "make",
-        "text": "Read each line for what stays out: a name of the implementation outside Directory structure, a means or a key result's ID in an intent, a negative where the positive says it, a list that the implementation already decides, a term that no decision needs, and a sentence that another section or best practice holds. Remove each."
-       }
+       "For each line, ask whether it would become untrue if a component's internals changed while the users' objectives, the one way, and Principles stayed.",
+       "If it would, move it to where the developer builds the component.",
+       "Read each line for what stays out: a name of the implementation outside Directory structure, a means or a key result's ID in an intent, a negative where the positive says it, a list that the implementation already decides, a term that no decision needs, and a sentence that another section or best practice holds. Remove each."
       ]
      }
     ]
    }
   ]
  },
- "template": "template.md",
- "inputs": [
-  {
-   "kind": "product-vision",
-   "takes": [
-    "Roles",
-    "Objectives and key results",
-    "Concept"
-   ]
-  },
-  {
-   "kind": "readme",
-   "takes": [
-    "the opening",
-    "Non-goals",
-    "Requirements",
-    "Walkthrough",
-    "How it works"
-   ]
-  }
- ]
+ "template": "template.md"
 }

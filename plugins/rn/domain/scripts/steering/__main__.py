@@ -19,4 +19,4 @@ from steering.command import main
 
 if __name__ == "__main__":
     root = os.path.dirname(os.path.dirname(SCRIPTS))
-    end(lambda: main(sys.argv[1:], os.getcwd(), root, run, sys.stdin.read))
+    end(lambda: main(sys.argv[1:], os.getcwd(), root, sys.stdin.read, run))

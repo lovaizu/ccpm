@@ -50,7 +50,7 @@
   <rect class="box" x="60" y="60" width="180" height="60" rx="6"/>
   <text class="name" x="150.0" y="95.0">Steering</text>
   <rect class="box" x="390" y="60" width="180" height="60" rx="6"/>
-  <text class="name" x="480.0" y="95.0">Step</text>
+  <text class="name" x="480.0" y="95.0">Task</text>
   <rect class="box" x="720" y="60" width="180" height="60" rx="6"/>
   <text class="name" x="810.0" y="95.0">Deliverable</text>
   <rect class="box" x="60" y="260" width="180" height="60" rx="6"/>
@@ -66,11 +66,11 @@
   <path class="line" d="M240,90 L390,90"/>
   <text class="label halo mid" x="315" y="80">lists</text>
   <text class="label small halo start" x="252" y="82">1</text>
-  <text class="label small halo end" x="378" y="82">1..*</text>
+  <text class="label small halo end" x="378" y="82">*</text>
   <path class="line" d="M570,90 L720,90"/>
-  <text class="label halo mid" x="645" y="80">makes</text>
-  <text class="label small halo start" x="582" y="82">1</text>
-  <text class="label small halo end" x="708" y="82">*</text>
+  <text class="label halo mid" x="645" y="80">changes</text>
+  <text class="label small halo start" x="582" y="82">*</text>
+  <text class="label small halo end" x="708" y="82">1</text>
   <path class="line" d="M150,120 L150,260"/>
   <text class="label halo start" x="160" y="195">holds</text>
   <text class="label small halo end" x="140" y="140">1</text>
@@ -78,15 +78,15 @@
   <path class="line" d="M150,320 L150,460"/>
   <text class="label halo start" x="160" y="395">is met by</text>
   <text class="label small halo end" x="140" y="340">1</text>
-  <text class="label small halo end" x="140" y="452">0..1</text>
+  <text class="label small halo end" x="140" y="452">*</text>
   <path class="line" d="M240,280 L300,280 L300,305 L240,305"/>
-  <text class="label halo start" x="308" y="297">holds the more specific</text>
+  <text class="label halo start" x="308" y="297">breaks into</text>
   <text class="label small halo start" x="252" y="272">0..1</text>
   <text class="label small halo start" x="252" y="322">*</text>
-  <path class="line" d="M430,120 L220,260"/>
-  <text class="label halo end" x="318" y="182">meets</text>
-  <text class="label small halo start" x="440" y="140">*</text>
-  <text class="label small halo start" x="232" y="250">1</text>
+  <path class="line" d="M450,120 L450,490 L240,490"/>
+  <text class="label halo mid" x="345" y="482">serves</text>
+  <text class="label small halo start" x="458" y="140">*</text>
+  <text class="label small halo start" x="252" y="482">1</text>
   <path class="line" d="M760,120 L620,260"/>
   <text class="label halo start" x="700" y="196">is made by</text>
   <text class="label small halo start" x="764" y="140">*</text>
