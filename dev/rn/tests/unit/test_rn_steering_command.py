@@ -1,9 +1,8 @@
 """The unit cases of steering/command.py, steering's command line as the orchestrator runs it: each
-aim taken in, each mark, the inspection's pass, each written to the steering alone, what's due
-read, each start of a deliverable's next role with what it's given, and each refusal: a steering
-missing or out of its schema, an aim that isn't JSON, leaves its schema, or that the steering
-refuses, a step's number that isn't one, a mark that the steering refuses, a start that can't be,
-and arguments of another form."""
+aim taken in, each mark of the stage, each written to the steering alone, what's due read, each
+start of a task's next role with what it's given, and each refusal: a steering missing or out of its
+schema, an aim that isn't JSON, leaves its schema, or that the steering refuses, a mark that the
+steering refuses, a start that can't be, and arguments of another form."""
 
 from __future__ import annotations
 
@@ -21,13 +20,7 @@ from steering.command import USAGE, main
 
 NAME = "20261126-invoice-from-statement"
 FOLDER = f".rn/{NAME}"
-STEP = rn_files.WAY
 MADE = {"result": "made", "files": [rn_files.COMMAND]}
-# The walkthrough's walking skeleton, its command made again by its generator.
-AGAIN = {
-    **rn_files.WAY,
-    "deliverables": [{**rn_files.WAY["deliverables"][0], "next": "generator"}],
-}
 
 
 @pytest.fixture
@@ -61,29 +54,27 @@ def held(work: WorkPlace) -> Any:
 
 
 def test_the_first_aim_makes_the_steering_and_commits_nothing(made: WorkPlace) -> None:
-    """Given the work with no steering, and an aim with the pick still asked.
+    """Given the work with no steering, and the walkthrough's aim.
     When it's given to `steering aim`.
-    Then the steering holds its tree and its question, not committed, as the orchestrator commits,
-    and the question is due."""
-    aim = {"ost": rn_files.ost(target=None, questions=["Which need first?"])}
+    Then the steering holds it, not committed, as the orchestrator commits, and the command is
+    due to make."""
     before = git(made.worktree, "rev-parse", "HEAD")
-    assert call(made, "aim", words=json.dumps(aim)) == (0, "question\tWhich need first?\n", "")
-    assert git(made.worktree, "rev-parse", "HEAD") == before
-    assert held(made)["ost"]["questions"] == ["Which need first?"]
-
-
-def test_a_later_aim_takes_in_the_steps_and_keeps_the_issues(made: WorkPlace) -> None:
-    """Given a steering with its issues and no step, and an aim with the target and the steps.
-    When it's given to `steering aim`.
-    Then the steering holds the steps open and the issues kept, and the command is due to make."""
-    steering(made, rn_files.steering([]))
-    aim = {"ost": rn_files.ost(), "steps": [rn_files.WAY]}
-    assert call(made, "aim", words=json.dumps(aim)) == (
+    assert call(made, "aim", words=json.dumps(rn_files.aim())) == (
         0,
-        f"make\t1\t{rn_files.COMMAND}\tcode\tgenerator\n",
+        f"make\t{rn_files.COMMAND}\tcode\tgenerator\n",
         "",
     )
+    assert git(made.worktree, "rev-parse", "HEAD") == before
     assert held(made) == rn_files.steering()
+
+
+def test_a_later_aim_keeps_the_stage(made: WorkPlace) -> None:
+    """Given a steering in the user's hands with no task left, and an aim with a task to mend.
+    When it's given to `steering aim`.
+    Then the steering holds the task, and keeps the stage, so the try waits once it's mended."""
+    steering(made, rn_files.steering(paths=(), stage="trying"))
+    code, _, _ = call(made, "aim", words=json.dumps(rn_files.aim(rn_files.TASKS[:1])))
+    assert (code, held(made)) == (0, rn_files.steering((rn_files.COMMAND,), stage="trying"))
 
 
 @pytest.mark.parametrize(
@@ -91,7 +82,7 @@ def test_a_later_aim_takes_in_the_steps_and_keeps_the_issues(made: WorkPlace) ->
     [
         ("{", "the aim isn't JSON"),
         (json.dumps({}), "aim.schema.json: /ost: is required"),
-        (json.dumps({"ost": rn_files.ost(), "steps": [AGAIN]}), "has had its 2 judged Rounds"),
+        (json.dumps(rn_files.aim([{**rn_files.TASKS[0], "next": "generator"}])), "has had its 2"),
     ],
     ids=["not-json", "schema", "refused"],
 )
@@ -107,22 +98,26 @@ def test_an_aim_that_can_not_be_taken_in_is_refused_and_changes_nothing(
     assert (code, says in err, unchanged(made)) == (1, True, True)
 
 
-def test_each_mark_is_written_and_gives_whats_due(made: WorkPlace) -> None:
-    """Given a steering whose step has each deliverable done.
-    When step 1 is marked trying.
-    Then the steering holds it, and the user's try is due."""
-    steering(made, rn_files.steering([rn_files.step(done=(rn_files.COMMAND, rn_files.GUIDE))]))
-    assert call(made, "step", "1", "trying") == (0, f"trying\t1\t{rn_files.SETTLES}\n", "")
-    assert held(made)["state"]["steps"][0]["status"] == "trying"
+@pytest.mark.parametrize(
+    ("stage", "line"),
+    [("trying", f"trying\t{rn_files.SOLUTION}\n"), ("inspected", "ended\n")],
+)
+def test_each_mark_is_written_and_gives_whats_due(made: WorkPlace, stage: str, line: str) -> None:
+    """Given a steering with no task left.
+    When the work is marked trying, or inspected.
+    Then the steering holds it, and the user's try, or the work's end, is due."""
+    steering(made, rn_files.steering(paths=()))
+    assert call(made, "mark", stage) == (0, line, "")
+    assert held(made)["stage"] == stage
 
 
-def test_the_final_checks_pass_is_written_and_ends_the_work(made: WorkPlace) -> None:
-    """Given a steering whose one step is done.
-    When the inspection is marked passed.
-    Then the steering holds it, and the work's end is due."""
-    steering(made, rn_files.steering([rn_files.step("done")]))
-    assert call(made, "inspected") == (0, "ended\n", "")
-    assert held(made)["state"]["inspected"] is True
+def test_a_mark_that_can_not_be_is_refused_and_changes_nothing(made: WorkPlace) -> None:
+    """Given the walkthrough's steering.
+    When the work is marked at a stage that isn't one.
+    Then it gives 1 saying why, and changes nothing."""
+    steering(made, rn_files.steering())
+    code, _, err = call(made, "mark", "waiting")
+    assert (code, "isn't a stage" in err, unchanged(made)) == (1, True, True)
 
 
 def test_whats_due_is_read_from_the_steering(made: WorkPlace) -> None:
@@ -130,47 +125,29 @@ def test_whats_due_is_read_from_the_steering(made: WorkPlace) -> None:
     When `steering due` runs.
     Then the command is due to make."""
     steering(made, rn_files.steering())
-    assert call(made, "due") == (0, f"make\t1\t{rn_files.COMMAND}\tcode\tgenerator\n", "")
+    assert call(made, "due") == (0, f"make\t{rn_files.COMMAND}\tcode\tgenerator\n", "")
 
 
 def test_a_steering_out_of_its_schema_is_refused(made: WorkPlace) -> None:
-    """Given a steering with no state.
+    """Given a steering with no tasks.
     When `steering due` runs.
     Then it gives 1 naming the place."""
     value = rn_files.steering()
-    del value["state"]
+    del value["tasks"]
     steering(made, value)
     code, _, err = call(made, "due")
-    assert (code, "/state: is required" in err) == (1, True)
+    assert (code, "/tasks: is required" in err) == (1, True)
 
 
 def test_a_mark_on_the_work_with_no_steering_is_refused(made: WorkPlace) -> None:
     """Given the work with no steering yet.
-    When a step is marked done.
+    When the work is marked trying.
     Then it gives 1 saying that no steering lies there."""
-    code, _, err = call(made, "step", "1", "done")
+    code, _, err = call(made, "mark", "trying")
     assert (code, "no the steering lies there" in err) == (1, True)
 
 
-@pytest.mark.parametrize(
-    ("argv", "says"),
-    [
-        (("step", "one", "done"), "isn't a step's number"),
-        (("step", "1", "trying"), "isn't made yet"),
-    ],
-)
-def test_a_mark_that_can_not_be_is_refused_and_changes_nothing(
-    made: WorkPlace, argv: Sequence[str], says: str
-) -> None:
-    """Given the walkthrough's steering, its step not made.
-    When a step is marked by a word in place of its number, or trying.
-    Then it gives 1 saying why, and changes nothing."""
-    steering(made, rn_files.steering())
-    code, _, err = call(made, *argv)
-    assert (code, says in err, unchanged(made)) == (1, True, True)
-
-
-@pytest.mark.parametrize("argv", [(), ("push", FOLDER), ("due",), ("aim",), ("step", FOLDER, "1")])
+@pytest.mark.parametrize("argv", [(), ("push", FOLDER), ("due",), ("aim",), ("mark", FOLDER)])
 def test_arguments_of_another_form_give_the_usage(argv: Sequence[str]) -> None:
     """Given no subcommand, one that isn't steering's, or too few arguments.
     When steering runs.
@@ -179,19 +156,19 @@ def test_arguments_of_another_form_give_the_usage(argv: Sequence[str]) -> None:
 
 
 def rounds_of(work: WorkPlace, path: str = rn_files.COMMAND) -> str:
-    """The folder of the deliverable's Rounds and Fixes in step 1."""
-    return os.path.join(work.rounds, "1", quote(path, safe=""))
+    """The folder of the deliverable's Rounds and Fixes."""
+    return os.path.join(work.rounds, quote(path, safe=""))
 
 
 def at(work: WorkPlace, **fields: Any) -> None:
     """Writes the walkthrough's steering, its command with the fields given."""
     value = rn_files.steering()
-    value["state"]["steps"][0]["deliverables"][0].update(fields)
+    value["tasks"][0].update(fields)
     steering(work, value)
 
 
 def command_of(work: WorkPlace) -> Any:
-    return held(work)["state"]["steps"][0]["deliverables"][0]
+    return held(work)["tasks"][0]
 
 
 def practice_of(kind: str) -> str:
@@ -294,19 +271,18 @@ def test_a_refactoring_takes_its_kinds_refactor_best_practice(made: WorkPlace) -
 @pytest.mark.parametrize(
     ("fields", "path", "words", "says"),
     [
-        ({}, "x.md", "", "no open deliverable"),
-        ({"status": "done"}, rn_files.COMMAND, "", "no open deliverable"),
+        ({}, "x.md", "", "no task has the path"),
         ({"next": "fixer"}, rn_files.COMMAND, " ", "the problem's words are empty"),
         ({"kind": "poster"}, rn_files.COMMAND, "", "no best practice of the kind 'poster'"),
         ({"next": "evaluator"}, rn_files.COMMAND, "", "no Round to judge"),
         ({"next": "weigh", "entry": "content-1"}, rn_files.COMMAND, "", "no result to weigh"),
     ],
-    ids=["unnamed", "done", "no-words", "no-practice", "no-round", "nothing-to-weigh"],
+    ids=["unnamed", "no-words", "no-practice", "no-round", "nothing-to-weigh"],
 )
 def test_a_start_that_can_not_be_is_refused(
     made: WorkPlace, fields: dict[str, Any], path: str, words: str, says: str
 ) -> None:
-    """Given a command that no step names, done, mended with no words, of a kind rn has no best
+    """Given a command that no task names, mended with no words, of a kind rn has no best
     practice of, with its evaluator next and no Round made, or waiting on a weighing of a Round
     that holds no result.
     When its next role is started.

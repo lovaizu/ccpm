@@ -1,7 +1,6 @@
 """Decides where each Round and each Fix of a deliverable lies in the work's folder and what it
-holds: `rounds/<step>/<deliverable>/<stage>-<n>/`, `<step>` the number of the step that makes or
-adds to the deliverable, so that a later step that adds to it starts its own Rounds, the
-deliverable's path percent-encoded whole, so that no two paths share a folder, `<stage>`
+holds: `rounds/<deliverable>/<stage>-<n>/`, the deliverable's path percent-encoded whole, so that
+no two paths share a folder, `<stage>`
 `content` or `refactor` for a Round and `fix` for a Fix, and
 `<n>` its number among the deliverable's Rounds and Fixes, from 1 in the order made; each holding
 the role's result, and a Fix its problem in `problem.md`."""
@@ -40,15 +39,15 @@ class Entry(NamedTuple):
     results: dict[str, dict[str, Any]]
 
 
-def folder_of(work: WorkPlace, step: int, deliverable: str) -> str:
-    """The folder of the deliverable's Rounds and Fixes in the step."""
-    return os.path.join(work.rounds, str(step), quote(deliverable, safe=""))
+def folder_of(work: WorkPlace, deliverable: str) -> str:
+    """The folder of the deliverable's Rounds and Fixes."""
+    return os.path.join(work.rounds, quote(deliverable, safe=""))
 
 
 def entries(root: str, schemas: str) -> list[Entry]:
-    """Each Round and Fix of the deliverable in the step, in the order made.
+    """Each Round and Fix of the deliverable, in the order made.
 
-    Takes: the folder of the deliverable's Rounds and Fixes in the step, as `folder_of` gives it,
+    Takes: the folder of the deliverable's Rounds and Fixes, as `folder_of` gives it,
     and the folder of rn's schemas.
     Gives: each, read from its folder, each result checked against its schema; none where the
     deliverable has none yet.

@@ -6,6 +6,7 @@ that a case calls rn's parts only through their interfaces."""
 
 from __future__ import annotations
 
+import copy
 import functools
 import json
 import os
@@ -25,28 +26,28 @@ OUTCOME = (
     "An accountant who sends invoices at the month's end prints one from a statement file,"
     " without a developer's help."
 )
-# The user's words that the outcome rests on, as the walkthrough has them.
-WORDS = (
-    "the user on 2026-11-26:"
-    " 経理チームが、Pythonを書かずに、明細から請求書を印刷できるコマンドがほしい"
-)
 PRINT = "I print one invoice from a statement file."
 RULES = "It meets the invoice rules."
-SETTLES = "the least that prints one invoice"
+SOLUTION = "A command that reads a statement file and prints one invoice."
 COMMAND = "invoice/__main__.py"
 GUIDE = "docs/guide.md"
+DECISION = "Talk in Japanese, and write in English."
 
-
-# The walkthrough's walking skeleton as the orchestrator's aim gives it: the command, then the
-# guide.
-WAY = {
-    "for": "O1",
-    "settles": SETTLES,
-    "deliverables": [
-        {"path": COMMAND, "kind": "code", "refactor": "refactor-code"},
-        {"path": GUIDE, "kind": "readme", "refactor": "refactor-doc"},
-    ],
-}
+# The walkthrough's tasks as the orchestrator's aim gives them: the command, then the guide.
+TASKS = [
+    {
+        "task": "Print one invoice from a statement file.",
+        "path": COMMAND,
+        "kind": "code",
+        "refactor": "refactor-code",
+    },
+    {
+        "task": "Tell the accountants how to print one.",
+        "path": GUIDE,
+        "kind": "readme",
+        "refactor": "refactor-doc",
+    },
+]
 
 
 def schema(name: str = "steering") -> dict[str, Any]:
@@ -55,62 +56,37 @@ def schema(name: str = "steering") -> dict[str, Any]:
         return json.load(f)
 
 
-def opportunity(id_: str, words: str) -> dict[str, Any]:
-    """An opportunity of the steering, named by the user on the walkthrough's day, with no
-    solution."""
-    return {"id": id_, "opportunity": words, "by": "the user on 2026-11-26", "solution": None}
-
-
-def ost(target: str | None = "O1", questions: list[str] | None = None) -> dict[str, Any]:
-    """The walkthrough's opportunity solution tree: printing an invoice, and meeting the rules,
-    with its solution where it's the target."""
-    picked = opportunity("O1", PRINT)
-    if target == "O1":
-        picked["solution"] = {
-            "solution": "A command that reads a statement file and prints one invoice.",
-            "why": "It's the least that prints.",
-        }
+def ost(target: bool = True) -> dict[str, Any]:
+    """The walkthrough's opportunity solution tree: printing an invoice, with its solution, the
+    target where told, and meeting the rules."""
+    solution: dict[str, Any] = {
+        "solution": SOLUTION,
+        "assumptions": ["An accountant prints an invoice with the command and the guide alone."],
+    }
+    if target:
+        solution["target"] = True
     return {
         "outcome": OUTCOME,
-        "words": [WORDS],
-        "opportunities": [picked, opportunity("O2", RULES)],
-        "target": target,
-        "decisions": [{"decision": "Talk in Japanese, and write in English.", "by": "user"}],
-        "questions": questions or [],
+        "opportunities": [{"opportunity": PRINT, "solutions": [solution]}, {"opportunity": RULES}],
     }
 
 
-def step(status: str = "open", done: tuple[str, ...] = ()) -> dict[str, Any]:
-    """The walkthrough's walking skeleton: the command, then its guide, each done where named."""
-    return {
-        "for": "O1",
-        "settles": SETTLES,
-        "deliverables": [
-            {
-                "path": path,
-                "kind": kind,
-                "refactor": refactor,
-                "status": "done" if path in done else "open",
-            }
-            for path, kind, refactor in (
-                (COMMAND, "code", "refactor-code"),
-                (GUIDE, "readme", "refactor-doc"),
-            )
-        ],
-        "status": status,
-    }
-
-
-def steering(steps: list[dict[str, Any]] | None = None, **fields: Any) -> dict[str, Any]:
-    """A steering in its schema's form: the walkthrough's tree, with its fields as given, and the
-    steps as given, or its walking skeleton, open."""
+def aim(tasks: list[dict[str, Any]] | None = None, **fields: Any) -> dict[str, Any]:
+    """An aim of the walkthrough: its tree, its tasks or those given, and its decision."""
     return {
         "ost": ost(**fields),
-        "state": {
-            "issues": {"closes": [38], "refs": []},
-            "steps": [step()] if steps is None else steps,
-        },
+        "tasks": copy.deepcopy(TASKS if tasks is None else tasks),
+        "decisions": [DECISION],
     }
+
+
+def steering(
+    paths: tuple[str, ...] = (COMMAND, GUIDE), stage: str | None = None, **fields: Any
+) -> dict[str, Any]:
+    """A steering in its schema's form: the walkthrough's tree, with its fields as given, its tasks
+    left at the paths given, none started, and the stage given, absent where none is."""
+    held = aim([each for each in TASKS if each["path"] in paths], **fields)
+    return {**held, **({"stage": stage} if stage else {})}
 
 
 @functools.cache

@@ -1,6 +1,6 @@
 """Decides what rn's hook does once one of rn's roles ends, so that no instruction to a role or
 restart of it holds what must happen every time: it checks each result of the work against its
-schema and keeps the role going until each holds, moves each deliverable on by its role's result,
+schema and keeps the role going until each holds, moves each task on by its role's result,
 and removes the trials' folders that the role leaves."""
 
 from __future__ import annotations
@@ -33,7 +33,7 @@ def main(argv: Sequence[str], given: str, plugin_root: str, host: Host) -> Answe
       in, the one rn runs in, as `worktree.works` gives them: 2 with each result that leaves its
       schema, a Round's or a Fix's, a line each as `form.held` names it, changing nothing, so that
       Claude Code keeps the role going with those words until each holds. Otherwise it moves each
-      deliverable on by its next role's result as `record.moved` does, writing the steering where
+      task on by its next role's result as `record.moved` does, writing the steering where
       it changes, removes each of its trials' folders as `trial.removed` does, and gives 0.
     - 2 with the usage where the arguments are other than `ended`.
     """
@@ -57,7 +57,7 @@ def main(argv: Sequence[str], given: str, plugin_root: str, host: Host) -> Answe
 def _faults(work: WorkPlace, schemas: str) -> list[str]:
     """Each result of the work that leaves its schema, in words."""
     found = []
-    for root in sorted(glob.glob(os.path.join(work.rounds, "*", "*"))):
+    for root in sorted(glob.glob(os.path.join(work.rounds, "*"))):
         try:
             rounds.entries(root, schemas)
         except Wrong as why:
@@ -66,7 +66,7 @@ def _faults(work: WorkPlace, schemas: str) -> list[str]:
 
 
 def _moved(work: WorkPlace, schemas: str) -> None:
-    """Moves each deliverable on by its next role's result, writing the steering where it changes;
+    """Moves each task on by its next role's result, writing the steering where it changes;
     the work with no steering yet, before its first aim, has nothing to move."""
     held = _steering(work, schemas)
     if held is None:
@@ -79,15 +79,14 @@ def _moved(work: WorkPlace, schemas: str) -> None:
 
 
 def _results(work: WorkPlace, steering: dict[str, Any], schemas: str) -> dict[str, Any]:
-    """For each open deliverable with an entry, the results that its entry holds, by role."""
-    found = {}
-    for number, step in enumerate(steering["state"]["steps"], 1):
-        for each in step["deliverables"]:
-            if each["status"] != "open" or "entry" not in each:
-                continue
-            folder = os.path.join(rounds.folder_of(work, number, each["path"]), each["entry"])
-            found[each["path"]] = rounds.results(folder, schemas)
-    return found
+    """For each task with an entry, the results that its entry holds, by role."""
+    return {
+        each["path"]: rounds.results(
+            os.path.join(rounds.folder_of(work, each["path"]), each["entry"]), schemas
+        )
+        for each in steering["tasks"]
+        if "entry" in each
+    }
 
 
 def _steering(work: WorkPlace, schemas: str) -> dict[str, Any] | None:

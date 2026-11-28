@@ -16,9 +16,8 @@ from steering import due, record, start
 
 USAGE = """\
 usage: steering aim <work>   (the aim on stdin)
-       steering step <work> <number> open|trying|done
        steering start <work> <path>   (a Fix's problem in words on stdin)
-       steering inspected <work>
+       steering mark <work> trying|enough|inspected
        steering due <work>
 """
 
@@ -32,18 +31,17 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, stdin: Callable[[], st
     - `aim <work>`: takes the aim on stdin, in the form of `aim.schema.json`, into the steering
       as `record.taken_in` makes it, the steering made where the work has none yet, and gives 0
       printing what's due.
-    - `step <work> <number> <status>`: marks the step as `record.step_marked` does, and gives 0
-      printing what's due.
-    - `start <work> <path>`: starts the deliverable's next role as `start.started` does, writing
-      the steering where it changes, and gives 0 printing the line that gives the role.
-    - `inspected <work>`: marks the inspection passed as `record.inspected_marked` does, and gives
-      0 printing what's due.
+    - `start <work> <path>`: starts the task's next role as `start.started` does, writing the
+      steering where it changes, and gives 0 printing the line that gives the role.
+    - `mark <work> <stage>`: marks the stage that the work reached as `record.marked` does, and
+      gives 0 printing what's due.
     - `due <work>`: gives 0 printing each line that `due.due` gives, a line each.
 
     `<work>` is the work's folder, as `place.of_folder` takes it. 1 with `steering: <what's wrong>`,
     changing nothing, where the input is Wrong: a result or a steering that's missing, isn't JSON,
     or leaves its schema, naming each place, an aim that isn't JSON or leaves its schema, or an aim
-    or a mark that `record` refuses; 2 with the usage where the arguments are other than these.
+    or a mark that `record` refuses, or a start that `start` refuses; 2 with the usage where the
+    arguments are other than these.
     """
     if not argv or argv[0] not in _SUBCOMMANDS or len(argv) != _SUBCOMMANDS[argv[0]][1]:
         return 2, "", USAGE
@@ -75,10 +73,8 @@ def _aim(work: WorkPlace, plugin_root: str, stdin: Callable[[], str]) -> Answer:
     return 0, _lines(due.due(steering)), ""
 
 
-def _step(work: WorkPlace, given: list[str], schemas: str) -> Answer:
-    if not given[0].isdigit():
-        raise Wrong(f"{given[0]!r} isn't a step's number; give its number from 1")
-    steering = record.step_marked(_steering(work, schemas), int(given[0]), given[1])
+def _mark(work: WorkPlace, given: list[str], schemas: str) -> Answer:
+    steering = record.marked(_steering(work, schemas), given[0])
     _written(work, steering)
     return 0, _lines(due.due(steering)), ""
 
@@ -94,17 +90,10 @@ def _start(work: WorkPlace, path: str, plugin_root: str, stdin: Callable[[], str
 
 
 def _next(steering: dict[str, Any], path: str) -> str:
-    for step in steering["state"]["steps"]:
-        for each in step["deliverables"]:
-            if each["path"] == path and each["status"] == "open":
-                return str(each.get("next", "generator"))
+    for each in steering["tasks"]:
+        if each["path"] == path:
+            return str(each.get("next", "generator"))
     return ""
-
-
-def _inspected(work: WorkPlace, given: list[str], schemas: str) -> Answer:
-    steering = record.inspected_marked(_steering(work, schemas))
-    _written(work, steering)
-    return 0, _lines(due.due(steering)), ""
 
 
 def _due(work: WorkPlace, given: list[str], schemas: str) -> Answer:
@@ -128,8 +117,7 @@ def _lines(lines: list[str]) -> str:
 # Each subcommand, by its name, with the number of arguments it takes, its name among them.
 _SUBCOMMANDS: dict[str, tuple[Callable[[WorkPlace, list[str], str], Answer], int]] = {
     "aim": (_due, 2),
-    "step": (_step, 4),
     "start": (_due, 3),
-    "inspected": (_inspected, 2),
+    "mark": (_mark, 3),
     "due": (_due, 2),
 }

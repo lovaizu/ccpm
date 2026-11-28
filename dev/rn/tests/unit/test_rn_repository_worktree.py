@@ -71,9 +71,7 @@ def test_the_work_of_the_worktree_is_found_newest_first(worktree: str) -> None:
     rn_files.write_json(first.steering, rn_files.steering())
     later = new(WorkPlace(worktree, OTHER))
     ended = new(WorkPlace(worktree, "20261125-print"))
-    done = rn_files.steering([rn_files.step("done")])
-    done["state"]["inspected"] = True
-    rn_files.write_json(ended.steering, done)
+    rn_files.write_json(ended.steering, rn_files.steering(paths=(), stage="inspected"))
     write_files(os.path.join(worktree, ".rn", "notes"), {"a.md": "a\n"})
     assert works(worktree, run) == [later, first, ended]
     assert left(worktree, run) == [later, first]

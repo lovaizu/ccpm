@@ -1,5 +1,5 @@
 """The unit cases of role/command.py, rn's hook once a role ends: an agent that isn't rn's left
-alone, a role's result moving its deliverable on with nothing committed, a session outside git, each
+alone, a role's result moving its task on with nothing committed, a session outside git, each
 result out of its schema keeping the role going, work in another worktree left alone, the trials'
 folders removed, the inspector left alone, and arguments of another form."""
 
@@ -65,15 +65,15 @@ def test_a_roles_result_moves_its_deliverable_on_in_the_steering(made: WorkPlace
     Then the steering has the command's evaluator next, not committed, as the orchestrator
     commits."""
     value = rn_files.steering()
-    value["state"]["steps"][0]["deliverables"][0]["entry"] = "content-1"
+    value["tasks"][0]["entry"] = "content-1"
     rn_files.write_json(made.steering, value)
-    folder = os.path.join(made.rounds, "1", "invoice%2F__main__.py", "content-1")
+    folder = os.path.join(made.rounds, "invoice%2F__main__.py", "content-1")
     rn_files.write_json(
         os.path.join(folder, "generator.json"), {"result": "made", "files": [rn_files.COMMAND]}
     )
     assert ended(made, "rn:generator") == (0, "", "")
     with open(made.steering, encoding="utf-8") as f:
-        assert json.load(f)["state"]["steps"][0]["deliverables"][0]["next"] == "evaluator"
+        assert json.load(f)["tasks"][0]["next"] == "evaluator"
     assert git(made.worktree, "log", "--format=%s") == "accounting\n"
 
 
@@ -120,7 +120,7 @@ def test_a_result_out_of_its_schema_keeps_the_role_going(
     """Given the work whose Round's result leaves its schema or isn't JSON.
     When the role ends.
     Then it gives 2 naming the place, so that the role goes on, and commits nothing."""
-    target = os.path.join(made.folder, "rounds", "1", "a", "content-1", "generator.json")
+    target = os.path.join(made.folder, "rounds", "a", "content-1", "generator.json")
     os.makedirs(os.path.dirname(target), exist_ok=True)
     with open(target, "w", encoding="utf-8") as f:
         f.write(text)
@@ -139,7 +139,7 @@ def test_the_hook_leaves_work_in_another_worktree_alone(made: WorkPlace, tmp_pat
     other = WorkPlace(
         rn_files.worktree_of(top(made), str(tmp_path / "rules"), "rules"), "20261127-invoice-rules"
     )
-    write_files(other.folder, {"rounds/1/a/content-1/generator.json": "{"})
+    write_files(other.folder, {"rounds/a/content-1/generator.json": "{"})
     assert ended(made, "rn:generator") == (0, "", "")
 
 
